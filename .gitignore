@@ -1,0 +1,6 @@
+# Composer library
+/vendor
+
+#IDE files
+.idea
+

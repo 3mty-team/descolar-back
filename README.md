@@ -1,14 +1,20 @@
 # descolar/descolar-back
 
+## Description
+
+This is the backend for the Descolar project. 
+It is a REST API that will be consumed by the frontend.
+
+The API is built using PHP 8.3, without any framework.
 
 
 ## Getting Started
 
 Download links:
-
-SSH clone URL: ssh://git@git.jetbrains.space/3mty/descolar/descolar-back.git
-
-HTTPS clone URL: https://git.jetbrains.space/3mty/descolar/descolar-back.git
+- **SSH clone URL:** 
+```ssh://git@git.jetbrains.space/3mty/descolar/descolar-back.git```
+- **HTTPS clone URL:** 
+  - https://git.jetbrains.space/3mty/descolar/descolar-back.git
 
 
 
@@ -18,14 +24,17 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software and how to install them.
 
-```
-Examples
-```
+1. Install Composer https://getcomposer.org/download/
+2. Install Composer Files 
+    - ```composer install```
+3. Have a LAMP server installed (Linux, Apache, MySQL, PHP8.3<).
 
-## Deployment
+## Used Libraries
 
-Add additional notes about how to deploy this on a production system.
+1. PHPStan https://phpstan.org/
+2. Var-Dumper https://packagist.org/packages/symfony/var-dumper
+3. Pest https://pestphp.com/
 
-## Resources
+## Contact
 
-Add links to external resources for this project, such as CI server, bug tracker, etc.
+If you have any questions, please contact us at: [development@descolar.fr](mailto:development@descolar.fr)

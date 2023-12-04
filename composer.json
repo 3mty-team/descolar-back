@@ -1,0 +1,28 @@
+{
+    "name": "descolar/descolar-back",
+    "description": "Projet BackEnd de Descolar",
+    "type": "project",
+    "require": {
+        "phpstan/phpstan": "^1.10",
+        "symfony/var-dumper": "^6.3"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.24"
+    },
+    "autoload": {
+        "psr-4": {
+            "Descolar\\": "App/",
+            "Descolar\\Router\\": "App/Adapters/Router/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Descolar Team"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
