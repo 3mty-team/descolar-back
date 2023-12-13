@@ -1,9 +1,8 @@
 <?php
 
-
 namespace Descolar\Managers\Router;
 
-use Descolar\Adapters\Router\Route;
+use Closure;
 use Descolar\App;
 use Descolar\Managers\Annotation\RouterAnnotationManager;
 use Descolar\Managers\Router\Exceptions\NotFoundException;
@@ -15,10 +14,15 @@ use ReflectionMethod;
 
 class Router
 {
-    private static ?Route $actualRoute = null;
+    private static ?IRoute $actualRoute = null;
     private static ?Router $_routerInstance = null;
 
-    public static function getInstance(): Router
+    /**
+     * Simple Singleton to retrieve the Router Instance
+     *
+     * @return self Router Instance
+     */
+    public static function getInstance(): self
     {
         if (!isset(self::$_routerInstance)) {
             self::$_routerInstance = new self($_GET['url'] ?? "");
@@ -27,16 +31,33 @@ class Router
         return self::$_routerInstance;
     }
 
-    public static function getActualRoute(): ?Route
+    /**
+     * Get the actual route
+     *
+     * @return IRoute|null Actual Route
+     */
+    public static function getActualRoute(): ?IRoute
     {
         return self::$actualRoute;
     }
 
-    public static function setActualRoute(?Route $actualRoute): void
+    /**
+     * Set the actual route
+     *
+     * @param IRoute|null $actualRoute Actual Route
+     * @return void
+     */
+    public static function setActualRoute(?IRoute $actualRoute): void
     {
         self::$actualRoute = $actualRoute;
     }
 
+    /**
+     * Main Router constructor
+     *
+     * @param string $url Actual URL
+     * @param array<string, IRoute[]> $routeList List of available route, separated by subarray with <b>REQUEST_METHOD</b>, by default is empty
+     */
     public function __construct(
         private readonly string $url,
         private array           $routeList = array()
@@ -44,6 +65,13 @@ class Router
     {
     }
 
+    /**
+     * Add a route to the route list
+     *
+     * @throws RouteAlreadyExistsException If the route already exists
+     * @param ILink $link Link to add (It's an attribute)
+     * @param IRoute $route Route to add (It's the link with the callable)
+     */
     private function addRoute(ILink $link, IRoute $route): void
     {
         if(!isset($this->routeList[$link->getMethod()])) {
@@ -51,7 +79,7 @@ class Router
         }
 
         foreach ($this->routeList[$link->getMethod()] as $routeFromRouter) {
-            /** @var Route $route */
+            /** @var IRoute $route */
             if ($routeFromRouter->getPath() === $link->getPath()) {
                 throw new RouteAlreadyExistsException($routeFromRouter->getPath());
             }
@@ -61,18 +89,27 @@ class Router
         $this->routeList[$link->getMethod()][] = $route;
     }
 
+    /**
+     * Get the route list
+     *
+     * @return array<string, IRoute[]> Route list
+     */
     public function &getRoutes(): array
     {
         return $this->routeList;
     }
 
+    /**
+     * Get the route by the URL, null otherwise
+     *
+     * @param string $url URL to match
+     * @return IRoute|null Route matched, null if not
+     */
     public function getRouteByUrl(string $url): ?IRoute
     {
         $matchedRoute = null;
         foreach ($this->getRoutes()[$_SERVER['REQUEST_METHOD']] as $route) {
 
-
-            /** @var Route $route */
             if ($route->match($url)) {
                 $matchedRoute = $route;
             }
@@ -81,6 +118,12 @@ class Router
         return $matchedRoute;
     }
 
+    /**
+     * Register a route to the route list
+     *
+     * @param ILink $link Link to add (It's an attribute)
+     * @param ReflectionMethod $method Method to add
+     */
     public function registerRoute(ILink $link, ReflectionMethod $method): void
     {
         $route = App::getRouterManager()->registerRoute($link, $method, $this->getRoutes());
@@ -97,21 +140,30 @@ class Router
 
     }
 
+    /**
+     * Load the routes and register them
+     * @uses RouterAnnotationManager::getAttributeList() To get the attribute list
+     */
     private function loadRoutes(): void
     {
         $routes = RouterAnnotationManager::getAttributeList();
 
+        /**
+         * @var ILink $link
+         * @var ReflectionMethod $method
+         */
         foreach ($routes as [$link, $method]) {
-
-            /**
-             * @var ILink $link
-             * @var ReflectionMethod $method
-             */
             $this->registerRoute($link, $method);
         }
     }
 
-    public function listen()
+    /**
+     * Listen to the request and call the route
+     *
+     * @throws NotFoundException If the route is not found
+     * @throws RequestException If the request method is not supported
+     */
+    public function listen(): void
     {
         $this->loadRoutes();
 
@@ -126,8 +178,8 @@ class Router
         }
 
         self::setActualRoute($matchedRoute);
-        return $matchedRoute->call();
 
+        $matchedRoute->call();
     }
 
 

@@ -1,10 +1,10 @@
 <?php
 
-
 namespace Descolar\Managers\Annotation;
 
 use Descolar\Managers\Endpoint\Interfaces\IEndpoint;
 use Descolar\Managers\Router\Annotations\Link;
+use Descolar\Managers\Router\Interfaces\ILink;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -14,12 +14,16 @@ class RouterAnnotationManager
 {
 
     /**
-     * @var [ILink, ReflectionMethod][] $attributeList
+     * @var array<array{ILink, ReflectionMethod}> $attributeList The list of ILink attributes
      */
     private static array $_attributeList = [];
 
     /**
-     * @return [ILink, ReflectionMethod][]
+     * Get the reference of the list of ILink attributes, the key is the ILink attribute and the value is the method that has the attribute
+     *
+     * @return array<array{ILink, ReflectionMethod}> The reference of the list of ILink attributes
+     * @see ReflectionMethod
+     * @see ILink
      */
     public static function &getAttributeList(): array
     {
@@ -27,7 +31,11 @@ class RouterAnnotationManager
     }
 
     /**
-     * @throws ReflectionException
+     * Check if the attribute is a subclass of {@see Link}
+     *
+     * @param ReflectionAttribute $attribute The attribute to check
+     * @return bool If the attribute is a subclass of Link
+     * @throws ReflectionException If the attribute class does not exist
      */
     private static function isSubClassOfLinkAttribute(ReflectionAttribute $attribute): bool
     {
@@ -38,12 +46,12 @@ class RouterAnnotationManager
     }
 
     /**
-     * @param ReflectionMethod[] $classMethods
-     * @param string $className
-     * @return void
-     * @throws ReflectionException
+     * Retrieve the attributes from the class methods
+     *
+     * @param ReflectionMethod[] $classMethods The methods of the class
+     * @throws ReflectionException If the attribute class does not exist
      */
-    private static function retrieveAttributesFromClass(array $classMethods, string $className): void
+    private static function retrieveAttributesFromClass(array $classMethods): void
     {
         foreach ($classMethods as $method) {
             $attributes = $method->getAttributes();
@@ -55,6 +63,12 @@ class RouterAnnotationManager
         }
     }
 
+    /**
+     * Define the namespace by the path
+     *
+     * @param string $className The path of the class
+     * @return string The path of the class
+     */
     private static function defineClassName(string $className): string
     {
         $className = str_replace('/', '\\', $className);
@@ -68,10 +82,14 @@ class RouterAnnotationManager
         return "Descolar\\$className";
     }
 
+
     /**
-     * @throws ReflectionException
+     * Get all the interfaced {@see IEndpoint} classes with Link attributes from the directory
+     *
+     * @param string $directory The directory to search
+     * @throws ReflectionException If the attribute class does not exist
      */
-    public static function getClassesWithLinkAttributes($directory): void
+    public static function getClassesWithLinkAttributes(string $directory): void
     {
         $items = scandir($directory);
 
@@ -102,7 +120,7 @@ class RouterAnnotationManager
 
             $reflectionClass = new ReflectionClass($className);
             $methods = $reflectionClass->getMethods();
-            self::retrieveAttributesFromClass($methods, $className);
+            self::retrieveAttributesFromClass($methods);
         }
     }
 }
