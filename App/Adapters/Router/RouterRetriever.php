@@ -57,6 +57,6 @@ class RouterRetriever implements IRouterManager
      */
     private function defineRouteName(ILink $route, ReflectionMethod $method): string
     {
-        return $route->getName() ?? "route-" . $method->getName() . uniqid('');
+        return $route->getName() ?? "route-" . $method->getName() . uniqid();
     }
 }

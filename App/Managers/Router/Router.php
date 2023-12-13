@@ -2,7 +2,6 @@
 
 namespace Descolar\Managers\Router;
 
-use Closure;
 use Descolar\App;
 use Descolar\Managers\Annotation\RouterAnnotationManager;
 use Descolar\Managers\Router\Exceptions\NotFoundException;

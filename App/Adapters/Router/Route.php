@@ -74,7 +74,7 @@ class Route implements IRoute
     /**
      * @see IRoute::with()
      */
-    public function with($param, $regex): self
+    public function with(string $param, string $regex): self
     {
         $this->getParams()[$param] = str_replace('(', '(?:', $regex);
         return $this;

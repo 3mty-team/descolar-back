@@ -13,6 +13,7 @@ profile:
 #  - name: <SomeEnabledInspectionId>
 
 #Disable inspections
+#exclude:
 #  - name: <SomeDisabledInspectionId>
 #    paths:
 #      - <path/where/not/run/inspection>
@@ -21,11 +22,20 @@ php:
   version: 8.3 #(Applied in CI/CD pipeline)
 
 #Execute shell command before Qodana execution (Applied in CI/CD pipeline)
-#bootstrap: sh ./prepare-qodana.sh
+bootstrap: sh ./qodana/prepare-qodana.sh
 
 #Install IDE plugins before Qodana execution (Applied in CI/CD pipeline)
 #plugins:
 #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
 
 #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-linter: ghcr.io/shyim/qodana-php:8.2
+linter: jetbrains/qodana-php:latest
+
+exclude:
+  - name: HttpUrlsUsage
+    paths:
+      - composer.json
+      - composer.lock
+  - name: PhpUnusedPrivateMethodInspection
+    paths:
+      - App\Endpoints

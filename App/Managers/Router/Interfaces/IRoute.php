@@ -44,7 +44,7 @@ interface IRoute
      * @param string $regex The regex to define the param
      * @return self The route with the new param
      */
-    public function with($param, $regex): self;
+    public function with(string $param, string $regex): self;
 
     /**
      * check if the url match the route

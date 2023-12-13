@@ -2,7 +2,6 @@
 
 namespace Descolar;
 
-use Descolar\Adapters\Router\Exceptions\EndPointIsNotPrivateException;
 use Descolar\Managers\Annotation\RouterAnnotationManager;
 use Descolar\Managers\Router\Exceptions\RouterManagerNotFoundException;
 use Descolar\Managers\Router\Interfaces\IRouterManager;

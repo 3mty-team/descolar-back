@@ -12,7 +12,7 @@ class RouteAlreadyExistsException extends RouterException
 {
     public function __construct(string $name, int $code = 500, ?Throwable $previous = null)
     {
-        parent::__construct("Route $name already exists", 500, $previous);
+        parent::__construct("Route $name already exists", $code, $previous);
     }
 
 }
