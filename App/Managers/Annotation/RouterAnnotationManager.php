@@ -39,6 +39,10 @@ class RouterAnnotationManager
      */
     private static function isSubClassOfLinkAttribute(ReflectionAttribute $attribute): bool
     {
+        if(!str_contains($attribute->getName(),"Descolar")) {
+            return false;
+        }
+
         $reflectionClass = new ReflectionClass(Link::class);
         $attributeClass = new ReflectionClass($attribute->getName());
 

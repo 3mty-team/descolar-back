@@ -9,6 +9,7 @@
 
 use Descolar\App;
 use Descolar\Adapters\Router\RouterRetriever;
+use Descolar\Adapters\Swagger\SwaggerManager;
 
 /**
  * The autoloader of the project
@@ -24,6 +25,7 @@ const DIR_ROOT = __DIR__;
  * Load Router Adapter
  */
 App::useRouter(RouterRetriever::class);
+App::useSwagger(SwaggerManager::class);
 
 /**
  * Run the application

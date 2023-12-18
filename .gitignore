@@ -1,6 +1,6 @@
-# Composer library
+# Composer files
 /vendor
+composer.lock
 
 #IDE files
 .idea
-
