@@ -3,7 +3,8 @@
 namespace Descolar\Managers\Router;
 
 use Descolar\App;
-use Descolar\Managers\Annotation\RouterAnnotationManager;
+use Descolar\Managers\Annotation\AnnotationManager;
+use Descolar\Managers\Router\Annotations\Link;
 use Descolar\Managers\Router\Exceptions\NotFoundException;
 use Descolar\Managers\Router\Exceptions\RequestException;
 use Descolar\Managers\Router\Exceptions\RouteAlreadyExistsException;
@@ -141,12 +142,10 @@ class Router
 
     /**
      * Load the routes and register them
-     * @uses RouterAnnotationManager::getAttributeList() To get the attribute list
      */
     private function loadRoutes(): void
     {
-        $routes = RouterAnnotationManager::getAttributeList();
-
+        $routes = (new AnnotationManager(Link::class))->getAttributeList();
         /**
          * @var ILink $link
          * @var ReflectionMethod $method

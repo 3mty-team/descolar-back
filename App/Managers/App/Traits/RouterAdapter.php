@@ -2,7 +2,8 @@
 
 namespace Descolar\Managers\App\Traits;
 
-use Descolar\Managers\Annotation\RouterAnnotationManager;
+use Descolar\Managers\Annotation\AnnotationManager;
+use Descolar\Managers\Router\Annotations\Link;
 use Descolar\Managers\Router\Exceptions\RouterManagerNotFoundException;
 use Descolar\Managers\Router\Interfaces\IRouterManager;
 use ReflectionException;
@@ -47,7 +48,8 @@ trait RouterAdapter
     private static function manageRouter(): void
     {
         $ENDPOINT_DIR = DIR_ROOT . "/App/Endpoints";
-        (new RouterAnnotationManager())->getClassesWithLinkAttributes($ENDPOINT_DIR);
+        $routerAnnotation = new AnnotationManager(Link::class);
+        $routerAnnotation->generateAttributes($ENDPOINT_DIR);
     }
 
 }

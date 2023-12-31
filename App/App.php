@@ -3,7 +3,7 @@
 namespace Descolar;
 
 use Descolar\Managers\Router\Router;
-use Descolar\Managers\App\Traits\{RouterAdapter, SwaggerAdapter};
+use Descolar\Managers\App\Traits\{RouterAdapter, SwaggerAdapter, EventAdapter};
 use ReflectionException;
 
 /**
@@ -15,6 +15,7 @@ class App
 
     use RouterAdapter;
     use SwaggerAdapter;
+    use EventAdapter;
 
 
     /**
@@ -25,6 +26,7 @@ class App
     public static function run(): void
     {
         self::manageRouter();
+        self::manageEvent();
         Router::getInstance()->listen();
     }
 }
