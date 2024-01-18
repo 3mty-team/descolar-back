@@ -63,7 +63,12 @@ class JsonBuilderManager implements IJsonBuilder
         echo json_encode($this->jsonData);
     }
 
-    #[Override] public function getJson(): string
+    #[Override] public function getJson(): array
+    {
+        return $this->jsonData;
+    }
+
+    #[Override] public function getString(): string
     {
         $json = "{";
         foreach ($this->jsonData as $key => $value) {

@@ -6,6 +6,7 @@ use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Event\Annotations\Listener;
 use Descolar\Managers\Event\Emitter;
+use Descolar\Managers\JsonBuilder\JsonBuilder;
 use OpenAPI\Attributes as OA;
 
 /**
@@ -30,7 +31,8 @@ class ExampleClass extends AbstractEndpoint
     {
         JsonBuilder::build()
             ->addData('element', 'data')
-            ->addData("anotherElement", "yes !")
+            ->addData("anotherElement", ["data1", "data2"])
+            ->addData("anotherElement2", ["Date" => date("Y-m-d H:i:s")])
             ->getResult();
     }
 

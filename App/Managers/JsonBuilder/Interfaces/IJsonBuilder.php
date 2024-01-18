@@ -27,9 +27,15 @@ interface IJsonBuilder
     public function getResult(): void;
 
     /**
+     * Get the JSON as a data
+     * @return array The JSON
+     */
+    public function getJson(): array;
+
+    /**
      * Get the JSON as a string
      * @return string The JSON
      */
-    public function getJson(): string;
+    public function getString(): string;
 
 }
