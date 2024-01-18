@@ -6,6 +6,7 @@ use Descolar\Adapters\Router\Exceptions\EndPointIsNotPrivateException;
 use Descolar\Managers\Router\Interfaces\ILink;
 use Descolar\Managers\Router\Interfaces\IRoute;
 use Descolar\Managers\Router\Interfaces\IRouterManager;
+use Override;
 use ReflectionMethod;
 
 /**
@@ -13,10 +14,7 @@ use ReflectionMethod;
  */
 class RouterRetriever implements IRouterManager
 {
-    /**
-     * @see IRouterManager::registerRoute()
-     */
-    public function registerRoute(ILink $route, ReflectionMethod $method, array &$routeList): ?IRoute
+    #[Override] public function registerRoute(ILink $route, ReflectionMethod $method, array &$routeList): ?IRoute
     {
         return match ($route->getMethod()) {
             'GET', 'POST' => $this->createRoute($route, $method),
@@ -32,14 +30,15 @@ class RouterRetriever implements IRouterManager
      * @param ReflectionMethod $method The method of the route
      * @return Route The route created
      */
-    private function createRoute(ILink $route, ReflectionMethod $method): IRoute {
+    private function createRoute(ILink $route, ReflectionMethod $method): IRoute
+    {
         return new Route(
             $route->getPath(),
             $this->defineRouteName($route, $method),
             function (...$values) use ($method) {
 
                 $classInstance = $method->getDeclaringClass()->getMethod("getInstance")->invoke(null);
-                if(!$method->isPrivate()) {
+                if (!$method->isPrivate()) {
                     throw new EndPointIsNotPrivateException($method);
                 }
                 $method->invoke($classInstance, ...$values);

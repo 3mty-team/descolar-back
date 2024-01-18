@@ -4,6 +4,7 @@ namespace Descolar\Managers\Event\Annotations;
 
 use Attribute;
 use Descolar\Managers\Event\Interfaces\IListener;
+use Override;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 readonly class Listener implements IListener
@@ -17,10 +18,7 @@ readonly class Listener implements IListener
     {
     }
 
-    /**
-     * @see IListener::getName()
-     */
-    public function getName(): string
+    #[Override] public function getName(): string
     {
         return $this->name;
     }

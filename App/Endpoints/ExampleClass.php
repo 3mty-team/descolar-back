@@ -25,6 +25,15 @@ class ExampleClass extends AbstractEndpoint
         echo 'Hello World';
     }
 
+    #[Get('/json', name: 'jsonPage')]
+    private function indexJSON(): void
+    {
+        JsonBuilder::build()
+            ->addData('element', 'data')
+            ->addData("anotherElement", "yes !")
+            ->getResult();
+    }
+
     /**
      * Another mehtod, this method will be called when the user access the page "/a/eventLink". This method will call an event.
      */
@@ -33,8 +42,8 @@ class ExampleClass extends AbstractEndpoint
     #[OA\Response(response: '200', description: 'link with event')]
     private function indexa(): void
     {
-        echo 'Do i work?<br>';
-        Emitter::fire('helloEvent', 'aa');
+        echo 'Do I work?<br>';
+        Emitter::fire('helloEvent', 'I work');
     }
 
     /**

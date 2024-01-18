@@ -3,13 +3,12 @@
 namespace Descolar\Adapters\Swagger;
 
 use Descolar\Managers\Swagger\Interfaces\ISwagger;
+use Override;
 
 class SwaggerManager implements ISwagger
 {
 
-    /**
-     * @see ISwagger::getContent()
-     */
+    #[Override]
     public function getContent(): string
     {
         $data = ob_start();

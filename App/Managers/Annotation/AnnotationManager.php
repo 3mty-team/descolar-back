@@ -6,6 +6,7 @@ use Descolar\Managers\Annotation\Exceptions\ClassDontExistException;
 use Descolar\Managers\Annotation\Exceptions\NameIsNotSetException;
 use Descolar\Managers\Annotation\Interfaces\IAnnotationManager;
 use Descolar\Managers\Endpoint\Interfaces\IEndpoint;
+use Override;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
@@ -111,7 +112,7 @@ class AnnotationManager implements IAnnotationManager
      * @return array<array{object, ReflectionMethod}> The reference of the list of {@see $this->_attributeClass} attributes
      * @see ReflectionMethod
      */
-    public function &getAttributeList(?string $annotationClazz = null): array
+    #[Override] public function &getAttributeList(?string $annotationClazz = null): array
     {
         if ($annotationClazz !== null && isset(self::$_attributeList[$annotationClazz])) {
             return self::$_attributeList[$annotationClazz];
@@ -131,7 +132,7 @@ class AnnotationManager implements IAnnotationManager
      * @param string $directory The directory to search
      * @throws ReflectionException If the attribute class does not exist
      */
-    public function generateAttributes(string $directory): void
+    #[Override] public function generateAttributes(string $directory): void
     {
         $items = scandir($directory);
 

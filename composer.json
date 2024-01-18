@@ -12,8 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Descolar\\": "App/",
-            "Descolar\\Router\\": "App/Adapters/Router/"
+            "Descolar\\": "App/"
         }
     },
     "authors": [

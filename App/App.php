@@ -3,7 +3,7 @@
 namespace Descolar;
 
 use Descolar\Managers\Router\Router;
-use Descolar\Managers\App\Traits\{RouterAdapter, SwaggerAdapter, EventAdapter};
+use Descolar\Managers\App\Traits\{JsonBuilderAdapter, RouterAdapter, SwaggerAdapter, EventAdapter};
 use ReflectionException;
 
 /**
@@ -14,6 +14,7 @@ class App
 {
 
     use RouterAdapter;
+    use JsonBuilderAdapter;
     use SwaggerAdapter;
     use EventAdapter;
 

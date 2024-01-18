@@ -8,6 +8,7 @@
  */
 
 use Descolar\Adapters\Event\EventReader;
+use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
 use Descolar\App;
 use Descolar\Adapters\Router\RouterRetriever;
 use Descolar\Adapters\Swagger\SwaggerManager;
@@ -28,6 +29,7 @@ const DIR_ROOT = __DIR__;
 App::useRouter(RouterRetriever::class);
 App::useSwagger(SwaggerManager::class);
 App::useEvent(EventReader::class);
+App::useJsonBuilder(JsonBuilderManager::class);
 
 /**
  * Run the application

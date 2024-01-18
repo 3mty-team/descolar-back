@@ -4,6 +4,7 @@ namespace Descolar\Adapters\Router\Annotations;
 
 use Attribute;
 use Descolar\Managers\Router\Annotations\Link;
+use Override;
 
 /**
  * Annotation for GET requests
@@ -12,9 +13,7 @@ use Descolar\Managers\Router\Annotations\Link;
 readonly class Get extends Link
 {
 
-    /**
-     * @see Link::getMethod()
-     */
+    #[Override]
     public final function getMethod(): string
     {
         return 'GET';

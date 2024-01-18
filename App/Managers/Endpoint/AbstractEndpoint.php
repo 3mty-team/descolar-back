@@ -3,6 +3,7 @@
 namespace Descolar\Managers\Endpoint;
 
 use Descolar\Managers\Endpoint\Interfaces\IEndpoint;
+use Override;
 
 /**
  * Base class for endpoints
@@ -15,10 +16,7 @@ abstract class AbstractEndpoint implements IEndpoint
      */
     protected static array $_instances = [];
 
-    /**
-     * @see IEndpoint::getInstance()
-     */
-    public final static function getInstance(): static
+    #[Override] public final static function getInstance(): static
     {
         $class = static::class;
 

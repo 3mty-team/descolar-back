@@ -3,6 +3,7 @@
 namespace Descolar\Adapters\Router\Annotations;
 
 use Attribute;
+use Override;
 use Descolar\Managers\Router\Annotations\Link;
 
 /**
@@ -12,9 +13,7 @@ use Descolar\Managers\Router\Annotations\Link;
 readonly class Post extends Link
 {
 
-    /**
-     * @see Link::getMethod()
-     */
+    #[Override]
     public final function getMethod(): string
     {
         return 'POST';

@@ -3,6 +3,7 @@
 namespace Descolar\Adapters\Router;
 
 use Descolar\Managers\Router\Interfaces\IRoute;
+use Override;
 
 /**
  * Route adapted for the router
@@ -35,34 +36,22 @@ class Route implements IRoute
         $this->params = [];
     }
 
-    /**
-     * @see IRoute::getPath()
-     */
-    public function getPath(): string
+    #[Override] public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @see IRoute::getName()
-     */
-    public function getName(): string
+    #[Override] public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @see IRoute::getCallable()
-     */
-    public function &getParams(): array
+    #[Override] public function &getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @see IRoute::getUrl()
-     */
-    public function getUrl(array $params = array()): string
+    #[Override] public function getUrl(array $params = array()): string
     {
         $path = $this->path;
         foreach ($params as $k => $v) {
@@ -71,10 +60,7 @@ class Route implements IRoute
         return $path;
     }
 
-    /**
-     * @see IRoute::with()
-     */
-    public function with(string $param, string $regex): self
+    #[Override] public function with(string $param, string $regex): self
     {
         $this->getParams()[$param] = str_replace('(', '(?:', $regex);
         return $this;
@@ -100,7 +86,7 @@ class Route implements IRoute
      * @param $url
      * @return bool
      */
-    public function match($url): bool
+    #[Override] public function match($url): bool
     {
         $url = trim($url, '/');
         $path = preg_replace_callback('#:(\w+)#', [$this, 'paramMatch'], $this->path);
@@ -115,10 +101,7 @@ class Route implements IRoute
         return true;
     }
 
-    /**
-     * @see IRoute::call()
-     */
-    public function call(): void
+    #[Override] public function call(): void
     {
         call_user_func_array($this->callable, $this->matches);
     }
