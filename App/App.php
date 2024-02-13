@@ -2,8 +2,15 @@
 
 namespace Descolar;
 
+use Descolar\Managers\Error\ErrorHandler;
 use Descolar\Managers\Router\Router;
-use Descolar\Managers\App\Traits\{JsonBuilderAdapter, RouterAdapter, SwaggerAdapter, EventAdapter};
+use Descolar\Managers\App\Traits\{EnvAdapter,
+    ErrorHandlerAdapter,
+    JsonBuilderAdapter,
+    RouterAdapter,
+    SwaggerAdapter,
+    EventAdapter
+};
 use ReflectionException;
 
 /**
@@ -13,19 +20,22 @@ use ReflectionException;
 class App
 {
 
+    use ErrorHandlerAdapter;
     use RouterAdapter;
     use JsonBuilderAdapter;
     use SwaggerAdapter;
     use EventAdapter;
+    use EnvAdapter;
 
 
     /**
-     * Start the application and run the router.
+     * Start the application
      *
      * @throws ReflectionException
      */
     public static function run(): void
     {
+        ErrorHandler::handle();
         self::manageRouter();
         self::manageEvent();
         Router::getInstance()->listen();

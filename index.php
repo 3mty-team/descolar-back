@@ -7,6 +7,8 @@
  * @author Descolar Team <development@descolar.fr>
  */
 
+use Descolar\Adapters\Env\EnvManager;
+use Descolar\Adapters\Error\ErrorManager;
 use Descolar\Adapters\Event\EventReader;
 use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
 use Descolar\App;
@@ -24,12 +26,15 @@ require __DIR__ . '/vendor/autoload.php';
 const DIR_ROOT = __DIR__;
 
 /**
- * Load Router Adapter
+ * Load Adapters
  */
+App::useErrorHandler(ErrorManager::class);
 App::useRouter(RouterRetriever::class);
 App::useSwagger(SwaggerManager::class);
 App::useEvent(EventReader::class);
 App::useJsonBuilder(JsonBuilderManager::class);
+App::useEnv(EnvManager::class);
+
 
 /**
  * Run the application

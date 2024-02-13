@@ -26,14 +26,22 @@ class ExampleClass extends AbstractEndpoint
         echo 'Hello World';
     }
 
-    #[Get('/json', name: 'jsonPage')]
-    private function indexJSON(): void
+    #[Get('/user/call', name: 'callUser')]
+    #[OA\Get(path: "/user/call", summary: "callUser", tags: ["User"])]
+    #[OA\Response(response: '200', description: 'Call an user and fire an event [not implemented]')]
+    private function callUser(): void
     {
+        $userData = [
+            'name' => 'Mehdi ALI',
+            'age' => 20
+        ];
         JsonBuilder::build()
-            ->addData('element', 'data')
-            ->addData("anotherElement", ["data1", "data2"])
-            ->addData("anotherElement2", ["Date" => date("Y-m-d H:i:s")])
+            ->setCode(200)
+            ->addData('user', $userData['name'])
+            ->addData('age', $userData['age'])
             ->getResult();
+
+        Emitter::fire('userCalled', $userData['name']);
     }
 
     /**

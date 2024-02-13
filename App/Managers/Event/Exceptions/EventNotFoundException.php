@@ -11,6 +11,6 @@ class EventNotFoundException extends EventException
 {
     public function __construct(int $code = 500, ?Throwable $previous = null)
     {
-        parent::__construct('Swagger class does not exist or is not instantiated', $code, $previous);
+        parent::__construct('Event class does not exist or is not instantiated', $code, $previous);
     }
 }

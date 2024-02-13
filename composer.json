@@ -5,7 +5,10 @@
     "require": {
         "phpstan/phpstan": "^1.10",
         "symfony/var-dumper": "^6.3",
-        "zircote/swagger-php": "^4.8"
+        "zircote/swagger-php": "^4.8",
+        "doctrine/orm": "^3.0",
+        "symfony/cache": "^7.0",
+        "filp/whoops": "2.*"
     },
     "require-dev": {
         "pestphp/pest": "^2.24"
