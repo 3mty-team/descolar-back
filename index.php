@@ -11,9 +11,10 @@ use Descolar\Adapters\Env\EnvManager;
 use Descolar\Adapters\Error\ErrorManager;
 use Descolar\Adapters\Event\EventReader;
 use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
-use Descolar\App;
+use Descolar\Adapters\Orm\OrmManager;
 use Descolar\Adapters\Router\RouterRetriever;
 use Descolar\Adapters\Swagger\SwaggerManager;
+use Descolar\App;
 
 /**
  * The autoloader of the project
@@ -29,12 +30,12 @@ const DIR_ROOT = __DIR__;
  * Load Adapters
  */
 App::useErrorHandler(ErrorManager::class);
+App::useEnv(EnvManager::class);
+App::useOrm(OrmManager::class);
 App::useRouter(RouterRetriever::class);
 App::useSwagger(SwaggerManager::class);
 App::useEvent(EventReader::class);
 App::useJsonBuilder(JsonBuilderManager::class);
-App::useEnv(EnvManager::class);
-
 
 /**
  * Run the application
