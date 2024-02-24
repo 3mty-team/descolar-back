@@ -7,10 +7,10 @@ use Descolar\Managers\Router\Router;
 use Descolar\Managers\App\Traits\{EnvAdapter,
     ErrorHandlerAdapter,
     JsonBuilderAdapter,
+    OrmAdapter,
     RouterAdapter,
     SwaggerAdapter,
-    EventAdapter
-};
+    EventAdapter};
 use ReflectionException;
 
 /**
@@ -26,6 +26,7 @@ class App
     use SwaggerAdapter;
     use EventAdapter;
     use EnvAdapter;
+    use OrmAdapter;
 
 
     /**
