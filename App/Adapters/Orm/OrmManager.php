@@ -21,6 +21,7 @@ class OrmManager implements IOrmManager
         }
 
         $paths = ['App/Entities'];
+        $proxyDir = DIR_ROOT . '\App\Adapters\Orm\Proxies';
         $isDevMode = EnvReader::getInstance()->get('is_dev') === 'dev' ?? false;
 
         $ormHost = EnvReader::getInstance()->get('ORM_HOST');
@@ -44,7 +45,7 @@ class OrmManager implements IOrmManager
             'charset' => $ormCharset
         ];
 
-        $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
+        $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode, $proxyDir);
         $connection = DriverManager::getConnection($dbParams, $config);
 
         self::$_entityManagerInstance = new EntityManager($connection, $config);
