@@ -13,7 +13,7 @@ class User
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "user_id", type: "integer")]
+    #[ORM\Column(name: "user_id", type: "guid")]
     private int $id;
 
     #[ORM\Column(name: "user_username", type: "string", length: 20, unique: true)]
