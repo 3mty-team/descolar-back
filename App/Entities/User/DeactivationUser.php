@@ -14,8 +14,7 @@ class DeactivationUser
     #[ORM\Column(name: "userdeactivation_id", type: "integer", length: 11)]
     private int $id;
 
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
     private int $userId;
 

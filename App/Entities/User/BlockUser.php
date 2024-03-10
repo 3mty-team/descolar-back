@@ -10,12 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 class BlockUser
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_blocking_id", referencedColumnName: "user_id")]
     private int $blockingId; # A, the person blocking B
 
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_blocked_id", referencedColumnName: "user_id")]
     private int $blockedId; # B, the person being blocked by A
 

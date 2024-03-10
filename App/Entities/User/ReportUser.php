@@ -15,18 +15,15 @@ class ReportUser
     #[ORM\Column(name: "userreport_id", type: "integer", length: 11)]
     private int $id;
 
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_reported_id", referencedColumnName: "user_id")]
     private int $reportedId; # A, the person being reported
 
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_reporting_id", referencedColumnName: "user_id")]
     private int $reporterId; # B, the person reporting A
 
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: ReportCategory::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: ReportCategory::class)]
     #[ORM\JoinColumn(name: "reportcategory_id", referencedColumnName: "reportcategory_id")]
     private int $reportCategory;
 

@@ -10,12 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 class FollowUser
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_follower_id", referencedColumnName: "user_id")]
     private int $followerId; # A, the person following B
 
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_following_id", referencedColumnName: "user_id")]
     private int $followingId; # B, the person being followed by A
 
