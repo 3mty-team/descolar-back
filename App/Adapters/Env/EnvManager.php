@@ -60,7 +60,7 @@ class EnvManager implements IEnv
 
     #[Override] public function get(string $key): ?string
     {
-        return $this->envContent[$key] ?? null;
+        return $this->envContent[strtoupper($key)] ?? null;
     }
 
     #[Override] public function set(string $key, string $value, bool $secure = true): void
