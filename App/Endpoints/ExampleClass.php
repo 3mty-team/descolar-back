@@ -18,7 +18,7 @@ class ExampleClass extends AbstractEndpoint
     /**
      * Example method, this method will be called when the user access the page "/".
      */
-    #[Get('/', name: 'indexPage')]
+    #[Get('/', name: 'indexPage', auth: true)]
     #[OA\Get(path: "/", summary: "indexPage", tags: ["Example"])]
     #[OA\Response(response: '200', description: 'Example response')]
     private function index(): void
@@ -26,7 +26,7 @@ class ExampleClass extends AbstractEndpoint
         echo 'Hello World';
     }
 
-    #[Get('/user/call', name: 'callUser')]
+    #[Get('/user/call', name: 'callUser', auth: true)]
     #[OA\Get(path: "/user/call", summary: "callUser", tags: ["User"])]
     #[OA\Response(response: '200', description: 'Call an user and fire an event [not implemented]')]
     private function callUser(): void
@@ -47,7 +47,7 @@ class ExampleClass extends AbstractEndpoint
     /**
      * Another mehtod, this method will be called when the user access the page "/a/eventLink". This method will call an event.
      */
-    #[Get('/a/eventLink', name: 'eventLink')]
+    #[Get('/a/eventLink', name: 'eventLink', auth: true)]
     #[OA\Get(path: "/a/eventLink", summary: "eventLink", tags: ["Example"])]
     #[OA\Response(response: '200', description: 'link with event')]
     private function indexa(): void

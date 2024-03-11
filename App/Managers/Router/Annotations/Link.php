@@ -16,11 +16,13 @@ abstract readonly class Link implements ILink
      * @param string $path The path of the route
      * @param array<string, string> $variables The variables of the route
      * @param string|null $name The name of the route
+     * @param bool|null $auth The auth of the route
      */
     public function __construct(
         private string $path,
         private array $variables = array(),
-        private ?string $name = null
+        private ?string $name = null,
+        private ?bool $auth = false
     )
     {
     }
@@ -52,5 +54,13 @@ abstract readonly class Link implements ILink
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * @see ILink::getAuth()
+     */
+    public function getAuth(): ?bool
+    {
+        return $this->auth;
     }
 }

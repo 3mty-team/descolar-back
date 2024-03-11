@@ -2,7 +2,9 @@
 
 namespace Descolar\Adapters\Router;
 
+use Descolar\Managers\Router\Interfaces\ILink;
 use Descolar\Managers\Router\Interfaces\IRoute;
+use Descolar\Middleware\AuthMiddleware;
 use Override;
 
 /**
@@ -24,11 +26,13 @@ class Route implements IRoute
      * @param string $path The path of the route
      * @param string $name The name of the route
      * @param callable $callable The callable of the route
+     * @param ILInk $route The path of the route
      */
     public function __construct(
         private string          $path,
         private readonly string $name,
         private readonly mixed  $callable,
+        private readonly ILink  $route,
     )
     {
         $this->path = trim($path, '/');
@@ -58,6 +62,11 @@ class Route implements IRoute
             $path = str_replace(":$k", $v, $path);
         }
         return $path;
+    }
+
+    #[Override] public function getRoute(): ILink
+    {
+        return $this->route;
     }
 
     #[Override] public function with(string $param, string $regex): self
@@ -103,6 +112,10 @@ class Route implements IRoute
 
     #[Override] public function call(): void
     {
+        if ($this->route->getAuth()) {
+            AuthMiddleware::validateJwt();
+        }
+
         call_user_func_array($this->callable, $this->matches);
     }
 

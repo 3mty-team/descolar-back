@@ -38,6 +38,13 @@ interface IRoute
     public function getUrl(array $params = array()): string;
 
     /**
+     * get the route
+     *
+     * @return ILink The route
+     */
+    public function getRoute(): ILink;
+
+    /**
      * add a param to the route
      *
      * @param string $param The param to add

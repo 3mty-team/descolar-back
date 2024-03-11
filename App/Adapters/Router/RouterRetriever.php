@@ -43,7 +43,8 @@ class RouterRetriever implements IRouterManager
                 }
                 $method->invoke($classInstance, ...$values);
 
-            }
+            },
+            $route
         );
     }
 
