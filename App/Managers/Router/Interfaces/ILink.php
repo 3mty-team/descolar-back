@@ -35,4 +35,11 @@ interface ILink
      * @return string|null The name of the route
      */
     public function getName(): ?string;
+
+    /**
+     * Get the auth of the route
+     *
+     * @return bool|null The auth of the route
+     */
+    public function getAuth(): ?bool;
 }
