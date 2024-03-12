@@ -1,6 +1,7 @@
 <?php
 
 namespace Descolar\Data\Entities\Institution;
+
 use Descolar\Data\Repository\Institution\FormationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
