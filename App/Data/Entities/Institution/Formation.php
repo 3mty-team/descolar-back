@@ -23,7 +23,7 @@ class Formation
     #[ORM\Column(name: "formation_name", type: "string", length: 100)]
     private string $name;
 
-    #[ORM\Column(name: "formation_shortname", type: "string", length: 10)]
+    #[ORM\Column(name: "formation_shortname", type: "string", length: 10, nullable: true)]
     private string $shortName;
 
     #[ORM\Column(name: "formation_isactive", type: "boolean", options: ["default" => 1])]
@@ -78,7 +78,6 @@ class Formation
     {
         $this->isActive = $isActive;
     }
-
 
 
 }
