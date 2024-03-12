@@ -2,9 +2,9 @@
 
 namespace Descolar\Adapters\Router;
 
+use Descolar\Adapters\Security\AuthMiddleware;
 use Descolar\Managers\Router\Interfaces\ILink;
 use Descolar\Managers\Router\Interfaces\IRoute;
-use Descolar\Middleware\AuthMiddleware;
 use Override;
 
 /**

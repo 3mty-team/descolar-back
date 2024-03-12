@@ -1,6 +1,6 @@
 <?php
 
-namespace Descolar\Middleware\Exceptions;
+namespace Descolar\Adapters\Security\Exceptions;
 
 use Throwable;
 

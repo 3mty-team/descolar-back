@@ -1,6 +1,6 @@
 <?php
 
-namespace Descolar\Endpoints;
+namespace Descolar\Endpoints\Security;
 
 use DateTimeImmutable;
 use Descolar\Adapters\Router\Annotations\Get;
@@ -11,7 +11,7 @@ use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Firebase\JWT\JWT;
 use OpenAPI\Attributes as OA;
 
-class authentication extends AbstractEndpoint
+class Authentication extends AbstractEndpoint
 {
     #[Get('/authentication', name: 'Authentication', auth: false)]
     #[OA\Get(
@@ -23,13 +23,13 @@ class authentication extends AbstractEndpoint
     #[OA\Response(response: '200', description: 'Token generated successfully')]
     private function getToken(): void
     {
-        $secret_Key = EnvReader::getInstance()->get('JWT_SECRET');
-        $secret_Key_encoded = base64_encode($secret_Key);
+        $secretKey = EnvReader::getInstance()->get('JWT_SECRET');
+        $secretKeyEncoded = base64_encode($secretKey ?? '');
 
         $date       = new DateTimeImmutable();
         $expire_at  = $date->modify('+1 hour')->getTimestamp();
         $domainName = "internal-api.descolar.fr";
-        $username   = $_GET['username'];
+        $username   = $_GET['username']; //TODO : secure this !!
 
         $request_data = [
             'iat'  => $date->getTimestamp(),        // Issued at: time when the token was generated
@@ -39,7 +39,7 @@ class authentication extends AbstractEndpoint
             'userName' => $username,                // User name
         ];
 
-        $jwt = JWT::encode($request_data, $secret_Key_encoded, 'HS256');
+        $jwt = JWT::encode($request_data, $secretKeyEncoded, 'HS256');
 
         JsonBuilder::build()
             ->setCode(200)
