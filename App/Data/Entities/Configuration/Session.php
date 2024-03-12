@@ -25,8 +25,8 @@ class Session
     private ?DateTimeInterface $date;
 
     #[ORM\Id]
-    #[ORM\Column(name: "session_localisation", type: "//TODO find inet4 equivalent")]
-    private Object $localisation;
+    #[ORM\Column(name: "session_localisation", type: "string", length: 255)]
+    private string $localisation;
 
     #[ORM\Id]
     #[ORM\Column(name: "session_useragent", type: "string", length: 200)]
@@ -35,5 +35,63 @@ class Session
     #[ORM\Column(name: "session_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
-    //TODO generate getters and setters
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(int $userId): void
+    {
+        $this->userId = $userId;
+    }
+
+    public function getDate(): ?DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?DateTimeInterface $date): void
+    {
+        $this->date = $date;
+    }
+
+    public function getLocalisation(): string
+    {
+        return $this->localisation;
+    }
+
+    public function setLocalisation(string $localisation): void
+    {
+        $this->localisation = $localisation;
+    }
+
+    public function getUserAgent(): string
+    {
+        return $this->userAgent;
+    }
+
+    public function setUserAgent(string $userAgent): void
+    {
+        $this->userAgent = $userAgent;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
+    }
 }
