@@ -1,40 +1,41 @@
 <?php
 
-namespace Descolar\Data\Entities\User;
+namespace Descolar\Data\Entities\Report;
 
 use DateTimeInterface;
-use Descolar\Data\Entities\Report\ReportCategory;
-use Descolar\Data\Repository\User\ReportUserRepository;
+use Descolar\Data\Entities\Post\Post;
+use Descolar\Data\Entities\User\User;
+use Descolar\Data\Repository\Report\PostReportRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ReportUserRepository::class)]
-#[ORM\Table(name: "user_report")]
-class ReportUser
+#[ORM\Entity(repositoryClass: PostReportRepository::class)]
+#[ORM\Table(name: "post_report")]
+class PostReport
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "userreport_id", type: "integer", length: 11)]
+    #[ORM\Column(name: "postreport_id", type: "integer", length: 11)]
     private int $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "user_reported_id", referencedColumnName: "user_id")]
-    private User $reported; # A, the person being reported
+    #[ORM\ManyToOne(targetEntity: Post::class)]
+    #[ORM\JoinColumn(name: "post_id", referencedColumnName: "post_id")]
+    private Post $post;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "user_reporting_id", referencedColumnName: "user_id")]
-    private User $reporter; # B, the person reporting A
+    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
+    private User $reporter;
 
     #[ORM\ManyToOne(targetEntity: ReportCategory::class)]
     #[ORM\JoinColumn(name: "reportcategory_id", referencedColumnName: "reportcategory_id")]
     private ReportCategory $reportCategory;
 
-    #[ORM\Column(name: "userreport_comment", type: "string", length: 100, nullable: true)]
+    #[ORM\Column(name: "postreport_comment", type: "string", length: 100, nullable: true)]
     private string $comment;
 
-    #[ORM\Column(name: "userreport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "postreport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTimeInterface $date;
 
-    #[ORM\Column(name: "userreport_isactive", type: "boolean", options: ["default" => 1])]
+    #[ORM\Column(name: "postreport_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
     public function getId(): int
@@ -47,14 +48,14 @@ class ReportUser
         $this->id = $id;
     }
 
-    public function getReported(): User
+    public function getPost(): Post
     {
-        return $this->reported;
+        return $this->post;
     }
 
-    public function setReported(User $reported): void
+    public function setPost(Post $post): void
     {
-        $this->reported = $reported;
+        $this->post = $post;
     }
 
     public function getReporter(): User
