@@ -1,10 +1,11 @@
 <?php
 
-namespace Descolar\Entities\Institution;
+namespace Descolar\Data\Entities\Institution;
 
+use Descolar\Data\Repository\Institution\DiplomaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: DiplomaRepository::class)]
 #[ORM\Table(name: "diploma")]
 class Diploma
 {
