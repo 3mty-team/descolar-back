@@ -18,7 +18,7 @@ class AuthMiddleware
         try {
             $jwt = $_SERVER['HTTP_AUTHORIZATION'];
             $jwt = str_replace('Bearer ', '', $jwt);
-            $decoded = JWT::decode($jwt, new Key($secretKeyEncoded, 'HS256')); //Todo: Do something with this variable ??
+            JWT::decode($jwt, new Key($secretKeyEncoded, 'HS256'));
         } catch (Exception $e) {
             throw new UnauthorizedException();
         }

@@ -29,14 +29,14 @@ class Authentication extends AbstractEndpoint
         $date       = new DateTimeImmutable();
         $expire_at  = $date->modify('+1 hour')->getTimestamp();
         $domainName = "internal-api.descolar.fr";
-        $username   = $_GET['username']; //TODO : secure this !!
+        $username   = htmlspecialchars($_GET['username']);
 
         $request_data = [
             'iat'  => $date->getTimestamp(),        // Issued at: time when the token was generated
             'iss'  => $domainName,                  // Issuer
             'nbf'  => $date->getTimestamp(),        // Not before
             'exp'  => $expire_at,                   // Expire
-            'userName' => $username,                // User name
+            'username' => $username,                // User name
         ];
 
         $jwt = JWT::encode($request_data, $secretKeyEncoded, 'HS256');
