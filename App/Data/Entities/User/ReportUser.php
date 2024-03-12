@@ -18,15 +18,15 @@ class ReportUser
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_reported_id", referencedColumnName: "user_id")]
-    private int $reportedId; # A, the person being reported
+    private User $reported; # A, the person being reported
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_reporting_id", referencedColumnName: "user_id")]
-    private int $reporterId; # B, the person reporting A
+    private User $reporter; # B, the person reporting A
 
     #[ORM\ManyToOne(targetEntity: ReportCategory::class)]
     #[ORM\JoinColumn(name: "reportcategory_id", referencedColumnName: "reportcategory_id")]
-    private int $reportCategory;
+    private ReportCategory $reportCategory;
 
     #[ORM\Column(name: "userreport_comment", type: "string", length: 100, nullable: true)]
     private string $comment;
@@ -47,32 +47,32 @@ class ReportUser
         $this->id = $id;
     }
 
-    public function getReportedId(): int
+    public function getReported(): User
     {
-        return $this->reportedId;
+        return $this->reported;
     }
 
-    public function setReportedId(int $reportedId): void
+    public function setReported(User $reported): void
     {
-        $this->reportedId = $reportedId;
+        $this->reported = $reported;
     }
 
-    public function getReporterId(): int
+    public function getReporter(): User
     {
-        return $this->reporterId;
+        return $this->reporter;
     }
 
-    public function setReporterId(int $reporterId): void
+    public function setReporter(User $reporter): void
     {
-        $this->reporterId = $reporterId;
+        $this->reporter = $reporter;
     }
 
-    public function getReportCategory(): int
+    public function getReportCategory(): ReportCategory
     {
         return $this->reportCategory;
     }
 
-    public function setReportCategory(int $reportCategory): void
+    public function setReportCategory(ReportCategory $reportCategory): void
     {
         $this->reportCategory = $reportCategory;
     }

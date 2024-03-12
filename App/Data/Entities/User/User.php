@@ -3,8 +3,8 @@
 namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
-use Descolar\Data\Entities\Institution\Formation;
 use Descolar\Data\Repository\User\UserRepository;
+use Descolar\Data\Entities\Institution\Formation;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]

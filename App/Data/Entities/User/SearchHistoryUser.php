@@ -17,7 +17,7 @@ class SearchHistoryUser
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
-    private int $userId;
+    private User $user;
 
     #[ORM\Column(name: "usersearchhistory_search", type: "string", length: 200)]
     private string $search;
@@ -38,14 +38,14 @@ class SearchHistoryUser
         $this->id = $id;
     }
 
-    public function getUserId(): int
+    public function getUser(): User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(int $userId): void
+    public function setUser(User $user): void
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 
     public function getSearch(): string

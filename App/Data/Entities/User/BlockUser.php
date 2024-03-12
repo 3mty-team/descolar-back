@@ -13,12 +13,12 @@ class BlockUser
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_blocking_id", referencedColumnName: "user_id")]
-    private int $blockingId; # A, the person blocking B
+    private User $blocking; # A, the person blocking B
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_blocked_id", referencedColumnName: "user_id")]
-    private int $blockedId; # B, the person being blocked by A
+    private User $blocked; # B, the person being blocked by A
 
     #[ORM\Column(name: "userblock_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTimeInterface $date;
@@ -26,24 +26,24 @@ class BlockUser
     #[ORM\Column(name: "userblock_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
-    public function getBlockingId(): int
+    public function getBlocking(): User
     {
-        return $this->blockingId;
+        return $this->blocking;
     }
 
-    public function setBlockingId(int $blockingId): void
+    public function setBlocking(User $blocking): void
     {
-        $this->blockingId = $blockingId;
+        $this->blocking = $blocking;
     }
 
-    public function getBlockedId(): int
+    public function getBlocked(): User
     {
-        return $this->blockedId;
+        return $this->blocked;
     }
 
-    public function setBlockedId(int $blockedId): void
+    public function setBlocked(User $blocked): void
     {
-        $this->blockedId = $blockedId;
+        $this->blocked = $blocked;
     }
 
     public function getDate(): ?DateTimeInterface

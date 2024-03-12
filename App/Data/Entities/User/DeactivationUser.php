@@ -17,7 +17,7 @@ class DeactivationUser
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
-    private int $userId;
+    private User $user;
 
     #[ORM\Column(name: "userdeactivation_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTimeInterface $date;
@@ -38,14 +38,14 @@ class DeactivationUser
         $this->id = $id;
     }
 
-    public function getUserId(): int
+    public function getUserId(): User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(int $userId): void
+    public function setUserId(User $user): void
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 
     public function getDate(): ?DateTimeInterface
