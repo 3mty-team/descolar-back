@@ -21,7 +21,7 @@ class User
     private string $username;
 
     #[ORM\Column(name: "user_profilepicturepath", type: "string", length: 200, nullable: true)]
-    private ?string $profile;
+    private ?string $pfpPath;
 
     #[ORM\Column(name: "user_firstname", type: "string", length: 100)]
     private string $firstname;
@@ -35,12 +35,12 @@ class User
     #[ORM\Column(name: "user_dateofbirth", type: "date", nullable: true)]
     private ?DateTimeInterface $date;
 
+    #[ORM\Column(name: "user_biography", type: "string", length: 100, nullable: true)]
+    private ?string $biography;
+
     #[ORM\ManyToOne(targetEntity: Formation::class, fetch: "EAGER")]
     #[ORM\JoinColumn(name: "user_formation", referencedColumnName: "formation_id")]
     private ?Formation $formation;
-
-    #[ORM\Column(name: "user_biography", type: "string", length: 100, nullable: true)]
-    private ?string $biography;
 
     #[ORM\Column(name: "user_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
@@ -65,14 +65,14 @@ class User
         $this->username = $username;
     }
 
-    public function getProfile(): ?string
+    public function getProfilePicturePath(): ?string
     {
-        return $this->profile;
+        return $this->pfpPath;
     }
 
-    public function setProfile(?string $profile): void
+    public function setProfilePicturePath(?string $pfpPath): void
     {
-        $this->profile = $profile;
+        $this->pfpPath = $pfpPath;
     }
 
     public function getFirstname(): string
