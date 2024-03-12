@@ -14,7 +14,7 @@ class UserPrivacyPreferences
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
-    private int $userId;
+    private User $user;
 
     #[ORM\Column(name: "feed_visibility", type: "boolean", options: ["default" => 1])]
     private bool $feedVisibility;
@@ -22,14 +22,14 @@ class UserPrivacyPreferences
     #[ORM\Column(name:"search_visibility", type: "boolean", options: ["default" => 1])]
     private bool $searchVisibility;
 
-    public function getUserId(): int
+    public function getUser(): User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(int $userId): void
+    public function setUserId(User $user): void
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 
     public function isFeedVisibility(): bool

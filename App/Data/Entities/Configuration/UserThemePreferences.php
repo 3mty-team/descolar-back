@@ -13,31 +13,30 @@ class UserThemePreferences
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
-    private int $userId;
+    private User $user;
 
     #[ORM\ManyToOne(targetEntity: Theme::class)]
     #[ORM\JoinColumn(name: "theme_id", referencedColumnName: "theme_id")]
-    private int $themeId;
+    private Theme $theme;
 
-    public function getUserId(): int
+    public function getUser(): User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(int $userId): void
+    public function setUser(User $user): void
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 
-    public function getThemeId(): int
+    public function getTheme(): Theme
     {
-        return $this->themeId;
+        return $this->theme;
     }
 
-    public function setThemeId(int $themeId): void
+    public function setTheme(Theme $theme): void
     {
-        $this->themeId = $themeId;
+        $this->theme = $theme;
     }
-
 }
 
