@@ -13,7 +13,6 @@ use Descolar\Adapters\Event\EventReader;
 use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
 use Descolar\Adapters\Orm\OrmManager;
 use Descolar\Adapters\Router\RouterRetriever;
-use Descolar\Adapters\Swagger\SwaggerManager;
 use Descolar\App;
 
 /**
@@ -33,7 +32,6 @@ App::useErrorHandler(ErrorManager::class);
 App::useEnv(EnvManager::class);
 App::useOrm(OrmManager::class);
 App::useRouter(RouterRetriever::class);
-App::useSwagger(SwaggerManager::class);
 App::useEvent(EventReader::class);
 App::useJsonBuilder(JsonBuilderManager::class);
 

@@ -3,10 +3,10 @@
 namespace Descolar\Endpoints;
 
 use Descolar\Adapters\Router\Annotations\Get;
-use Descolar\App;
-use OpenApi\Attributes as OA;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
+
 use OpenApi\Generator;
+use OpenApi\Attributes as OA;
 
 #[OA\Info(
     version: "1.0.0",
@@ -15,8 +15,8 @@ use OpenApi\Generator;
 )]
 #[OA\Contact(
     name: "Descolar Team",
-    url: "https://descolar.com",
-    email: "contact@descolar.com"
+    url: "https://descolar.fr",
+    email: "contact@descolar.fr",
 )]
 #[OA\Tag(
     name: "Example",
@@ -36,7 +36,7 @@ use OpenApi\Generator;
         )
     ]
 )]
-class DescolarAPI extends AbstractEndpoint
+class Descolar extends AbstractEndpoint
 {
 
     /**
@@ -50,15 +50,5 @@ class DescolarAPI extends AbstractEndpoint
         $openapi = Generator::scan([DIR_ROOT . '/App/Endpoints']);
         header('Content-Type: application/json');
         echo $openapi->toJson();
-    }
-
-    /**
-     * Route for swagger ui
-     */
-    #[Get(path: '/api', name: 'retrieve-swagger', auth: false)]
-    private function getSwagger(): void
-    {
-        //TODO View class
-        echo App::getSwaggerAdapter()->getContent();
     }
 }
