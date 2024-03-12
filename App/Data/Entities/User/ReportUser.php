@@ -1,12 +1,13 @@
 <?php
 
-namespace Descolar\Entities\User;
+namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
-use Descolar\Entities\Report\ReportCategory;
+use Descolar\Data\Entities\Report\ReportCategory;
+use Descolar\Data\Repository\User\ReportUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ReportUserRepository::class)]
 #[ORM\Table(name: "user_report")]
 class ReportUser
 {

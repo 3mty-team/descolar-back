@@ -1,11 +1,12 @@
 <?php
 
-namespace Descolar\Entities\Configuration;
+namespace Descolar\Data\Entities\Configuration;
 
-use Descolar\Entities\User\User;
+use Descolar\Data\Entities\User\User;
+use Descolar\Data\Repository\Configuration\LoginRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: LoginRepository::class)]
 #[ORM\Table(name: "login")]
 class Login
 {

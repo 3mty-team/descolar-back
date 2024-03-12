@@ -1,12 +1,13 @@
 <?php
 
-namespace Descolar\Entities\User;
+namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
-use Descolar\Entities\Institution\Formation;
+use Descolar\Data\Entities\Institution\Formation;
+use Descolar\Data\Repository\User\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user")]
 class User
 {

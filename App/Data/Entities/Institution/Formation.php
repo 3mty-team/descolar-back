@@ -1,9 +1,11 @@
 <?php
 
-namespace Descolar\Entities\Institution;
+namespace Descolar\Data\Entities\Institution;
+
+use Descolar\Data\Repository\Institution\FormationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: FormationRepository::class)]
 #[ORM\Table(name: "formation")]
 class Formation
 {
@@ -14,7 +16,7 @@ class Formation
     private int $id;
 
 
-    #[ORM\ManyToOne(targetEntity: Diploma::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: Diploma::class)]
     #[ORM\JoinColumn(name: "diploma_id", referencedColumnName: "diploma_id")]
     private Diploma $diploma;
 

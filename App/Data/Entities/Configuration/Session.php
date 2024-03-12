@@ -1,12 +1,13 @@
 <?php
 
-namespace Descolar\Entities\Configuration;
+namespace Descolar\Data\Entities\Configuration;
 
 use DateTimeInterface;
-use Descolar\Entities\User\User;
+use Descolar\Data\Entities\User\User;
+use Descolar\Data\Repository\Configuration\SessionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: SessionRepository::class)]
 #[ORM\Table(name: "session")]
 class Session
 {

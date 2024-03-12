@@ -1,10 +1,11 @@
 <?php
 
-namespace Descolar\Entities\Report;
+namespace Descolar\Data\Entities\Report;
 
+use Descolar\Data\Repository\Report\ReportCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ReportCategoryRepository::class)]
 #[ORM\Table(name: "report_category")]
 class ReportCategory
 {

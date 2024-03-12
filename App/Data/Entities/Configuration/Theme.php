@@ -1,23 +1,24 @@
 <?php
 
-namespace Descolar\Entities\Institution;
+namespace Descolar\Data\Entities\Configuration;
 
+use Descolar\Data\Repository\Configuration\ThemeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
-#[ORM\Table(name: "diploma")]
-class Diploma
+#[ORM\Entity(repositoryClass: ThemeRepository::class)]
+#[ORM\Table(name: "theme")]
+class Theme
 {
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "diploma_id", type: "integer", length: 11)]
+    #[ORM\Column(name: "theme_id", type: "integer", length: 11)]
     private int $id;
 
-    #[ORM\Column(name: "diploma_name", type: "string", length: 100)]
+    #[ORM\Column(name: "theme_name", type: "string", length: 30)]
     private string $name;
 
-    #[ORM\Column(name:"diploma_isactive", type: "boolean", options: ["default" => 1])]
+    #[ORM\Column(name:"theme_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
     public function getId(): int
@@ -49,7 +50,4 @@ class Diploma
     {
         $this->isActive = $isActive;
     }
-
-
-
 }

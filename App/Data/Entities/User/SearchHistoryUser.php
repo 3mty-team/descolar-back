@@ -1,12 +1,12 @@
 <?php
 
-namespace Descolar\Entities\User;
+namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
-use Descolar\Entities\Report\ReportCategory;
+use Descolar\Data\Repository\User\SearchHistoryUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: SearchHistoryUserRepository::class)]
 #[ORM\Table(name: "user_search_history")]
 class SearchHistoryUser
 {

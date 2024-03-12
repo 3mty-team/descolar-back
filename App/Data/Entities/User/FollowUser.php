@@ -1,11 +1,12 @@
 <?php
 
-namespace Descolar\Entities\User;
+namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
+use Descolar\Data\Repository\User\FollowUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: FollowUserRepository::class)]
 #[ORM\Table(name: "user_follow")]
 class FollowUser
 {

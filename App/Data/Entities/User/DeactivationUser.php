@@ -1,11 +1,12 @@
 <?php
 
-namespace Descolar\Entities\User;
+namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
+use Descolar\Data\Repository\User\DeactivationUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: DeactivationUserRepository::class)]
 #[ORM\Table(name: "user_deactivation")]
 class DeactivationUser
 {
