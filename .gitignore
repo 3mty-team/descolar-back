@@ -1,5 +1,5 @@
 # Composer files
-/vendor
+/vendor/*
 composer.lock
 
 #IDE files
@@ -7,3 +7,6 @@ composer.lock
 
 # Environment file
 .env
+
+# Proxies ORM Files
+App/Orm/Proxies/*

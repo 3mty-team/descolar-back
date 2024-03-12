@@ -46,9 +46,3 @@ App::useJsonBuilder(JsonBuilderManager::class);
  */
 
 App::run();
-
-
-$e = OrmConnector::getInstance()->createQueryBuilder()->select('u')->from('Descolar\Entities\User\User', 'u')->getQuery();
-
-//It generates an error, I don't know why...
-dump($e->getResult());
