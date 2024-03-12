@@ -1,8 +1,10 @@
 <?php
 
-namespace Descolar\Middleware;
+namespace Descolar\Adapters\Security;
+
+use Descolar\Adapters\Security\Exceptions\UnauthorizedException;
 use Descolar\Managers\Env\EnvReader;
-use Descolar\Middleware\Exceptions\UnauthorizedException;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -10,14 +12,14 @@ class AuthMiddleware
 {
     public static function validateJwt(): void
     {
-        $secret_Key = EnvReader::getInstance()->get('JWT_SECRET');
-        $secret_Key_encoded = base64_encode($secret_Key);
+        $secretKey = EnvReader::getInstance()->get('JWT_SECRET');
+        $secretKeyEncoded = base64_encode($secretKey ?? '');
 
         try {
             $jwt = $_SERVER['HTTP_AUTHORIZATION'];
             $jwt = str_replace('Bearer ', '', $jwt);
-            $decoded = JWT::decode($jwt, new Key($secret_Key_encoded, 'HS256'));
-        } catch (\Exception $e) {
+            JWT::decode($jwt, new Key($secretKeyEncoded, 'HS256'));
+        } catch (Exception $e) {
             throw new UnauthorizedException();
         }
     }
