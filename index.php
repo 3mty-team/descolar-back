@@ -14,6 +14,10 @@ use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
 use Descolar\Adapters\Orm\OrmManager;
 use Descolar\Adapters\Router\RouterRetriever;
 use Descolar\App;
+use Descolar\Managers\Orm\OrmConnector;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+
 
 /**
  * The autoloader of the project
@@ -38,4 +42,5 @@ App::useJsonBuilder(JsonBuilderManager::class);
 /**
  * Run the application
  */
+
 App::run();

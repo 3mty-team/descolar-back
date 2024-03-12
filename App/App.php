@@ -2,6 +2,7 @@
 
 namespace Descolar;
 
+use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\Error\ErrorHandler;
 use Descolar\Managers\Router\Router;
 use Descolar\Managers\App\Traits\{EnvAdapter,
@@ -25,6 +26,11 @@ class App
     use EventAdapter;
     use EnvAdapter;
     use OrmAdapter;
+
+    public static function isDev(): bool
+    {
+        return EnvReader::getInstance()->get('env') === "DEV" ?? false;
+    }
 
 
     /**
