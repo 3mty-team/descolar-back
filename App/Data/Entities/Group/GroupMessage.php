@@ -3,8 +3,10 @@
 namespace Descolar\Data\Entities\Group;
 
 use DateTimeInterface;
+use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Group\GroupMessageRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GroupMessageRepository::class)]
@@ -33,6 +35,12 @@ class GroupMessage
 
     #[ORM\Column(name: "groupmessage_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
+
+    #[ORM\JoinTable(name: 'link_groupmessagemedia')]
+    #[ORM\JoinColumn(name: 'groupmessage_id', referencedColumnName: 'groupmessage_id')]
+    #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'media_id')]
+    #[ORM\ManyToMany(targetEntity: Media::class)]
+    private Collection $medias;
 
     public function getId(): int
     {
@@ -92,5 +100,15 @@ class GroupMessage
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+
+    public function setMedias(Collection $medias): void
+    {
+        $this->medias = $medias;
     }
 }
