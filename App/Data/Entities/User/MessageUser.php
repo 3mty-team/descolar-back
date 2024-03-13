@@ -3,7 +3,9 @@
 namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
+use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Repository\User\MessageUserRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageUserRepository::class)]
@@ -37,6 +39,12 @@ class MessageUser
 
     #[ORM\Column(name: "message_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
+
+    #[ORM\JoinTable(name: 'link_messagemedia')]
+    #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'message_id')]
+    #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'media_id')]
+    #[ORM\ManyToMany(targetEntity: Media::class)]
+    private Collection $medias;
 
     public function getId(): int
     {
@@ -116,5 +124,15 @@ class MessageUser
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+
+    public function setMedias(Collection $medias): void
+    {
+        $this->medias = $medias;
     }
 }

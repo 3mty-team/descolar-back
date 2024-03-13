@@ -36,12 +36,12 @@ class FollowUser
         $this->follower = $follower;
     }
 
-    public function getFollowingId(): User
+    public function getFollowing(): User
     {
         return $this->following;
     }
 
-    public function setFollowingId(User $following): void
+    public function setFollowing(User $following): void
     {
         $this->following = $following;
     }

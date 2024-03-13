@@ -3,8 +3,10 @@
 namespace Descolar\Data\Entities\Post;
 
 use DateTimeInterface;
+use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Post\PostRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
@@ -39,6 +41,12 @@ class Post
 
     #[ORM\Column(name: "post_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
+
+    #[ORM\JoinTable(name: 'link_postmedia')]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'post_id')]
+    #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'media_id')]
+    #[ORM\ManyToMany(targetEntity: Media::class)]
+    private Collection $medias;
 
     public function getId(): int
     {
@@ -118,5 +126,15 @@ class Post
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+
+    public function setMedias(Collection $medias): void
+    {
+        $this->medias = $medias;
     }
 }
