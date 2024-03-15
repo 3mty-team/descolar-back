@@ -14,7 +14,7 @@ class GroupMember
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Group::class)]
     #[ORM\JoinColumn(name: "group_id", referencedColumnName: "group_id")]
-    private int $id;
+    private Group $group;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
@@ -26,14 +26,14 @@ class GroupMember
     #[ORM\Column(name: "groupmember_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
-    public function getId(): int
+    public function getGroup(): Group
     {
-        return $this->id;
+        return $this->group;
     }
 
-    public function setId(int $id): void
+    public function setGroup(Group $group): void
     {
-        $this->id = $id;
+        $this->group = $group;
     }
 
     public function getUser(): User

@@ -14,7 +14,7 @@ class GroupMessageLike
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: GroupMessage::class)]
     #[ORM\JoinColumn(name: "groupmessage_id", referencedColumnName: "groupmessage_id")]
-    private int $id;
+    private GroupMessage $groupMessage;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
@@ -26,14 +26,14 @@ class GroupMessageLike
     #[ORM\Column(name: "groupmessagelike_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
-    public function getId(): int
+    public function getGroupMessage(): GroupMessage
     {
-        return $this->id;
+        return $this->groupMessage;
     }
 
-    public function setId(int $id): void
+    public function setGroupMessage(GroupMessage $groupMessage): void
     {
-        $this->id = $id;
+        $this->groupMessage = $groupMessage;
     }
 
     public function getUser(): User

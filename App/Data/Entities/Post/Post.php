@@ -132,9 +132,4 @@ class Post
     {
         return $this->medias;
     }
-
-    public function setMedias(Collection $medias): void
-    {
-        $this->medias = $medias;
-    }
 }
