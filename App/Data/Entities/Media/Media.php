@@ -17,8 +17,8 @@ class Media
     #[ORM\Column(name: "media_path", type: "string", length: 200)]
     private string $path;
 
-    #[ORM\Column(name: "media_type", type: "string", length: 5)]
-    private ?string $mediaType; // "image" or "video"
+    #[ORM\Column(name: "media_type", type: "string", enumType: mediaType::class)]
+    private ?mediaType $mediaType;
 
     #[ORM\Column(name: "media_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
@@ -43,12 +43,12 @@ class Media
         $this->path = $path;
     }
 
-    public function getMediaType(): ?string
+    public function getMediaType(): mediaType
     {
         return $this->mediaType;
     }
 
-    public function setMediaType(?string $mediaType): void
+    public function setMediaType(?mediaType $mediaType): void
     {
         $this->mediaType = $mediaType;
     }
