@@ -2,7 +2,7 @@
 
 namespace Descolar\Data\Entities\Media;
 
-enum mediaType: string
+enum MediaType: string
 {
     case IMAGE = 'image';
     case VIDEO = 'video';

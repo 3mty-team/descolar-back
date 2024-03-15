@@ -17,8 +17,8 @@ class Media
     #[ORM\Column(name: "media_path", type: "string", length: 200)]
     private string $path;
 
-    #[ORM\Column(name: "media_type", type: "string", enumType: mediaType::class)]
-    private ?mediaType $mediaType;
+    #[ORM\Column(name: "media_type", type: "string", enumType: MediaType::class)]
+    private ?MediaType $mediaType;
 
     #[ORM\Column(name: "media_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
