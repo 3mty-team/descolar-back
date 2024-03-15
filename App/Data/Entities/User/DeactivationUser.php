@@ -43,7 +43,7 @@ class DeactivationUser
         return $this->user;
     }
 
-    public function setUserId(User $user): void
+    public function setUser(User $user): void
     {
         $this->user = $user;
     }
