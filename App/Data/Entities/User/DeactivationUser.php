@@ -38,7 +38,7 @@ class DeactivationUser
         $this->id = $id;
     }
 
-    public function getUserId(): User
+    public function getUser(): User
     {
         return $this->user;
     }
