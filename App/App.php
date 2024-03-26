@@ -40,6 +40,9 @@ class App
      */
     public static function run(): void
     {
+        if (session_status() != PHP_SESSION_ACTIVE) {
+            session_start();
+        }
         ErrorHandler::handle();
         self::manageRouter();
         self::manageEvent();
@@ -51,8 +54,8 @@ class App
         $_SESSION['userUuid'] = $userUuid;
     }
 
-    public static function getUserUuid(): String
+    public static function getUserUuid(): ?string
     {
-        return  $_SESSION['userUuid'];
+        return  $_SESSION['userUuid'] ?? null;
     }
 }

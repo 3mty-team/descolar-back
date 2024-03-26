@@ -17,8 +17,7 @@ class RouterRetriever implements IRouterManager
     #[Override] public function registerRoute(ILink $route, ReflectionMethod $method, array &$routeList): ?IRoute
     {
         return match ($route->getMethod()) {
-            'GET', 'POST' => $this->createRoute($route, $method),
-            default => null,
+            'GET', 'POST', 'PUT', 'DELETE' => $this->createRoute($route, $method),
         };
 
     }

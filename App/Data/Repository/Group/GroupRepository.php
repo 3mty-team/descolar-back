@@ -6,6 +6,7 @@ use DateTime;
 use Descolar\App;
 use Descolar\Data\Entities\Group\Group;
 use Descolar\Data\Entities\User\User;
+use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Doctrine\ORM\EntityRepository;
 
 class GroupRepository extends EntityRepository
@@ -20,16 +21,27 @@ class GroupRepository extends EntityRepository
             ->getResult();
     }
 
-    public function create(?string $name, ?string $userUUID): Group|int {
+    public function findById(int $id): Group|int
+    {
+        $group = $this->find($id);
 
-        if(empty($name) || empty($userId)) {
-            return 404;
+        if ($group === null) {
+            throw new EndpointException("Group not found", 404);
+        }
+
+        return $group;
+    }
+
+    public function create(?string $name, ?string $userUUID): Group {
+
+        if(empty($name) || empty($userUUID)) {
+            throw new EndpointException('Missing parameters "name" or "admin"', 400);
         }
 
         $admin = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
 
         if ($admin === null) {
-            return 404;
+            throw new EndpointException('User not found', 404);
         }
 
         $group = new Group();
@@ -42,6 +54,51 @@ class GroupRepository extends EntityRepository
         App::getOrmManager()->connect()->flush();
 
         return $group;
+    }
+
+    public function editGroup(?int $id, ?string $name, ?string $userUUID): Group {
+
+        if(empty($id) || (empty($name) && empty($userUUID))) {
+            throw new EndpointException('Missing parameter "id" or ["name" or "admin"]', 400);
+        }
+
+        $group = $this->find($id);
+        $admin = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
+
+        if($group === null || $admin === null) {
+            throw new EndpointException('Group or User not found', 404);
+        }
+
+        if(!empty($name)) {
+            $group->setName($name);
+        }
+
+        if(!empty($userUUID)) {
+            $group->setAdmin($admin);
+        }
+
+        App::getOrmManager()->connect()->flush();
+
+        return $group;
+    }
+
+    public function deleteGroup(?int $id): int {
+
+        if(empty($id)) {
+            throw new EndpointException('Missing parameter "id"', 400);
+        }
+
+        $group = $this->find($id);
+
+        if($group === null) {
+            throw new EndpointException('Group not found', 404);
+        }
+
+        $group->setIsActive(false);
+
+        App::getOrmManager()->connect()->flush();
+
+        return $id;
     }
 
     public function toJson(Group $group): array {

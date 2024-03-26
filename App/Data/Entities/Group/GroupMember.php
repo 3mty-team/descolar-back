@@ -16,6 +16,7 @@ class GroupMember
     #[ORM\JoinColumn(name: "group_id", referencedColumnName: "group_id")]
     private Group $group;
 
+    #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
     private User $user;
