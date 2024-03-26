@@ -5,6 +5,7 @@ namespace Descolar\Endpoints\Configuration;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\App;
 use Descolar\Data\Entities\Configuration\Login;
+use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
 use OpenAPI\Attributes as OA;
@@ -23,10 +24,13 @@ class LoginEndpoint extends AbstractEndpoint
     )]
     private function login(): void
     {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $username = $_POST['username'] ?? "";
+        $password = $_POST['password'] ?? "";
 
         if($username != null && $username != '' && $password != null && $password != '') {
+            /*
+             * @var User $user
+             */
             $user = App::getOrmManager()->connect()->getRepository(Login::class)->getLoginInformation($username, $password);
             if ($user == null) {
                 JsonBuilder::build()
@@ -35,20 +39,17 @@ class LoginEndpoint extends AbstractEndpoint
                     ->getResult();
                 return;
             }
+            JsonBuilder::build()
+                ->setCode(200)
+                ->addData('message', 'Login success')
+                ->addData('user', App::getOrmManager()->connect()->getRepository(User::class)->toJson($user))
+                ->getResult();
         }
         else {
             JsonBuilder::build()
                 ->setCode(404)
                 ->addData('message', 'Username or Password is not valid')
                 ->getResult();
-            return;
         }
-
-        JsonBuilder::build()
-            ->setCode(200)
-            ->addData('message', 'Login success')
-            ->addData('username', $user.getUsername())
-            ->getResult();
-        return;
     }
 }

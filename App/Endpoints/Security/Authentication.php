@@ -28,7 +28,7 @@ class Authentication extends AbstractEndpoint
         $secretKeyEncoded = base64_encode($secretKey ?? '');
 
         $date       = new DateTimeImmutable();
-        $expire_at  = $date->modify('+1 hour')->getTimestamp();
+        $expire_at  = $date->modify('+24 hour')->getTimestamp();
         $domainName = "internal-api.descolar.fr";
 
         $request_data = [

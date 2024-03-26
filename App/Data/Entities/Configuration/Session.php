@@ -11,24 +11,25 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "session")]
 class Session
 {
+    #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: "session_id", type: "integer", length: 11, unique: true)]
     private int $id;
 
-    #[ORM\Id]
+    //#[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
     private User $user;
 
-    #[ORM\Id]
+    //#[ORM\Id]
     #[ORM\Column(name: "session_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTimeInterface $date;
 
-    #[ORM\Id]
+    //#[ORM\Id]
     #[ORM\Column(name: "session_localisation", type: "string", length: 255)]
     private string $localisation;
 
-    #[ORM\Id]
+    //#[ORM\Id]
     #[ORM\Column(name: "session_useragent", type: "string", length: 200)]
     private string $userAgent;
 
