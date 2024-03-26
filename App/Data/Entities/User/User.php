@@ -15,7 +15,7 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: "user_id", type: "guid")]
-    private int $id;
+    private string $uuid;
 
     #[ORM\Column(name: "user_username", type: "string", length: 20, unique: true)]
     private string $username;
@@ -45,14 +45,14 @@ class User
     #[ORM\Column(name: "user_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
-    public function getId(): int
+    public function getUUID(): string
     {
-        return $this->id;
+        return $this->uuid;
     }
 
-    public function setId(int $id): void
+    public function setUUID(string $uuid): void
     {
-        $this->id = $id;
+        $this->uuid = $uuid;
     }
 
     public function getUsername(): string

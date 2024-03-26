@@ -59,6 +59,7 @@ class JsonBuilderManager implements IJsonBuilder
 
     #[Override] public function getResult(): void
     {
+        header('Content-Type: application/json');
         http_response_code($this->code);
         echo json_encode($this->jsonData);
     }
