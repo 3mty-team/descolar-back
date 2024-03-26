@@ -5,6 +5,7 @@ namespace Descolar\Endpoints\Security;
 use DateTimeImmutable;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
+use Descolar\App;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
@@ -13,7 +14,7 @@ use OpenAPI\Attributes as OA;
 
 class Authentication extends AbstractEndpoint
 {
-    #[Get('/authentication', name: 'Authentication', auth: false)]
+    #[Get('/authentication/:userUuid', name: 'Authentication', auth: false)]
     #[OA\Get(
         path: "/authentication",
         summary: "Authentication",
@@ -21,7 +22,7 @@ class Authentication extends AbstractEndpoint
         tags: ["Authentication"],
     )]
     #[OA\Response(response: '200', description: 'Token generated successfully')]
-    private function getToken(): void
+    private function getToken(String $userUuid): void
     {
         $secretKey = EnvReader::getInstance()->get('JWT_SECRET');
         $secretKeyEncoded = base64_encode($secretKey ?? '');
@@ -29,14 +30,13 @@ class Authentication extends AbstractEndpoint
         $date       = new DateTimeImmutable();
         $expire_at  = $date->modify('+1 hour')->getTimestamp();
         $domainName = "internal-api.descolar.fr";
-        $username   = htmlspecialchars($_GET['username']);
 
         $request_data = [
             'iat'  => $date->getTimestamp(),        // Issued at: time when the token was generated
             'iss'  => $domainName,                  // Issuer
             'nbf'  => $date->getTimestamp(),        // Not before
             'exp'  => $expire_at,                   // Expire
-            'username' => $username,                // User name
+            'username' => $userUuid,                // User name
         ];
 
         $jwt = JWT::encode($request_data, $secretKeyEncoded, 'HS256');
@@ -64,6 +64,7 @@ class Authentication extends AbstractEndpoint
         JsonBuilder::build()
             ->setCode(200)
             ->addData('message', 'Token is valid')
+            ->addData('user_uuid', App::getUserUuid())
             ->getResult();
     }
 }
