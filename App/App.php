@@ -45,4 +45,14 @@ class App
         self::manageEvent();
         Router::getInstance()->listen();
     }
+
+    public static function setUserUuid(String $userUuid): void
+    {
+        $_SESSION['userUuid'] = $userUuid;
+    }
+
+    public static function getUserUuid(): String
+    {
+        return  $_SESSION['userUuid'];
+    }
 }
