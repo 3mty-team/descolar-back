@@ -76,6 +76,8 @@ class GroupMessageEndpoint extends AbstractEndpoint
             }
 
             $response->setCode(200);
+            $response->getResult();
+
         } catch (EndpointException $e) {
             $response->setCode($e->getCode());
             $response->addData('message', $e->getMessage());
@@ -107,6 +109,7 @@ class GroupMessageEndpoint extends AbstractEndpoint
 
             $response->setCode(200);
             $response->getResult();
+
         } catch (EndpointException $e) {
             $response->setCode($e->getCode());
             $response->addData('message', $e->getMessage());
@@ -128,6 +131,7 @@ class GroupMessageEndpoint extends AbstractEndpoint
             $response->addData("id", $group);
             $response->setCode(200);
             $response->getResult();
+
         } catch (EndpointException $e) {
             $response->setCode($e->getCode());
             $response->addData('message', $e->getMessage());
