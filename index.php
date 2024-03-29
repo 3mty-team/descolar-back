@@ -42,5 +42,4 @@ App::useJsonBuilder(JsonBuilderManager::class);
 /**
  * Run the application
  */
-
 App::run();
