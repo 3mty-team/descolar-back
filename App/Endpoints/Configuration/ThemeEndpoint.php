@@ -17,8 +17,7 @@ use OpenAPI\Attributes as OA;
 class ThemeEndpoint extends AbstractEndpoint
 {
     #[Get('/config/themes', name: 'Retrieve all Themes', auth: true)]
-    #[OA\Get(path: "/config/themes", summary: "Retrieve all Themes", tags: ["Configuration"])]
-    #[Oa\Response(response: 200, description: 'All themes retrieved')]
+    #[OA\Get(path: "/config/themes", summary: "Retrieve all Themes", tags: ["Configuration"], responses: [new OA\Response(response: 200, description: "All themes retrieved")])]
     private function getAllThemes(): void
     {
         $themes = App::getOrmManager()->connect()->getRepository(Theme::class)->getAllThemesToJson();
@@ -31,8 +30,7 @@ class ThemeEndpoint extends AbstractEndpoint
     }
 
     #[Get('/config/theme', name: 'Retrieve Theme preference', auth: true)]
-    #[OA\Get(path: '/config/theme', summary: 'Retrieve Theme preference', tags: ['Configuration'])]
-    #[OA\Response(response: 200, description: 'Theme preference retrieved')]
+    #[OA\Get(path: '/config/theme', summary: 'Retrieve Theme preference', tags: ['Configuration'], responses: [new OA\Response(response: 200, description: 'Theme preference retrieved')])]
     private function getThemePreference(): void
     {
         $theme = App::getOrmManager()->connect()->getRepository(UserThemePreferences::class)->getThemePreferenceToJson();
@@ -85,9 +83,7 @@ class ThemeEndpoint extends AbstractEndpoint
     }
 
     #[Put('/config/theme', name: 'Update theme to user', auth: true)]
-    #[OA\Put(path: '/config/theme', summary: 'Update theme to user', tags: ['Configuration'])]
-    #[OA\Response(response: 201, description: 'Theme set')]
-    #[OA\Response(response: 400, description: 'Missing parameters or invalid parameters')]
+    #[OA\Put(path: '/config/theme', summary: 'Update theme to user', tags: ['Configuration'], responses: [new OA\Response(response: 201, description: 'Theme set'), new OA\Response(response: 400, description: 'Missing parameters or invalid parameters')])]
     private function updateThemeToUser(): void
     {
         global $_REQ;

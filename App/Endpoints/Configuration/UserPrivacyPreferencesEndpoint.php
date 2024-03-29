@@ -18,8 +18,7 @@ use OpenAPI\Attributes as OA;
 class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 {
     #[Get('/config/privacy', name: 'Retrieve all Themes', auth: true)]
-    #[OA\Get(path: "/config/privacy", summary: "Retrieve all Themes", tags: ["Configuration"])]
-    #[OA\Response(response: 200, description: 'All themes retrieved')]
+    #[OA\Get(path: "/config/privacy", summary: "Retrieve all Themes", tags: ["Configuration"], responses: [new OA\Response(response: 200, description: "All themes retrieved")])]
     private function getPrivacy(): void
     {
         $userPrivacyPreferences = App::getOrmManager()->connect()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();

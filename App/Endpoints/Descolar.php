@@ -50,8 +50,7 @@ class Descolar extends AbstractEndpoint
     /**
      * Get OpenAPI Json file
      */
-    #[OA\Get(path: '/api/data.json', security: [])]
-    #[OA\Response(response: '200', description: 'Data JSON File')]
+    #[OA\Get(path: '/api/data.json', summary: 'Get OpenAPI Json file', security: [], responses: [new OA\Response(response: 200, description: 'Data JSON File')])]
     #[Get('/api/data.json', name: 'retrieve-swagger-data', auth: false)]
     private function getResource(): void
     {

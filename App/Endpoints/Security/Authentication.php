@@ -20,8 +20,11 @@ class Authentication extends AbstractEndpoint
         summary: "Authentication",
         security: [],
         tags: ["Authentication"],
+        responses: [
+            new OA\Response(response: 200, description: "Token generated successfully"),
+            new OA\Response(response: 404, description: "User not found"),
+        ]
     )]
-    #[OA\Response(response: '200', description: 'Token generated successfully')]
     private function getToken(String $userUuid): void
     {
         $secretKey = EnvReader::getInstance()->get('JWT_SECRET');
