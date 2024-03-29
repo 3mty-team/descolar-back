@@ -9,16 +9,6 @@ use Doctrine\ORM\EntityRepository;
 
 class LoginRepository extends EntityRepository
 {
-    public function createLogin(User $user, String $password): ?Login
-    {
-        $login = new Login();
-        $login->setUser($user);
-        $login->setPassword(password_hash($password, PASSWORD_DEFAULT));
-        $this->getEntityManager()->persist($login);
-        $this->getEntityManager()->flush();
-        return $login;
-    }
-
     public function getLoginInformation(String $username, String $password) : ?User
     {
         /**
@@ -29,7 +19,7 @@ class LoginRepository extends EntityRepository
         /**
          * @var Login $login
          */
-        $login = $this->findOneBy(["user" => $user->getUUID()]);
+        $login = $this->findOneBy(["user" => $user->getId()]);
 
         $isValid = password_verify($password, $login->getPassword());
 
