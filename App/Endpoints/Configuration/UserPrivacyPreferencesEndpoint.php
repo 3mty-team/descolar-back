@@ -38,8 +38,7 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         tags: ['Configuration'],
         responses: [
             new OA\Response(response: 201, description: 'Privacy set'),
-            new OA\Response(response: 400, description: 'Missing parameters'),
-            new OA\Response(response: 400, description: 'Invalid parameters'),
+            new OA\Response(response: 400, description: 'Missing parameters or invalid parameters'),
         ]
     )]
     private function createPrivacyToUser(): void
@@ -63,8 +62,7 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         tags: ['Configuration'],
         responses: [
             new OA\Response(response: 201, description: 'Privacy updated'),
-            new OA\Response(response: 400, description: 'Missing parameters'),
-            new OA\Response(response: 400, description: 'Invalid parameters'),
+            new OA\Response(response: 400, description: 'Missing parameters or invalid parameters'),
         ]
     )]
     private function updatePrivacyToUser(): void

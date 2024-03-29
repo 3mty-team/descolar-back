@@ -51,8 +51,7 @@ class ThemeEndpoint extends AbstractEndpoint
         tags: ['Configuration'],
         responses: [
             new OA\Response(response: 201, description: 'Theme set'),
-            new OA\Response(response: 400, description: 'Missing parameters'),
-            new OA\Response(response: 400, description: 'Invalid parameters'),
+            new OA\Response(response: 400, description: 'Missing parameters or invalid parameters'),
         ]
     )]
     private function createThemeToUser(): void
@@ -88,8 +87,7 @@ class ThemeEndpoint extends AbstractEndpoint
     #[Put('/config/theme', name: 'Update theme to user', auth: true)]
     #[OA\Put(path: '/config/theme', summary: 'Update theme to user', tags: ['Configuration'])]
     #[OA\Response(response: 201, description: 'Theme set')]
-    #[OA\Response(response: 400, description: 'Missing parameters')]
-    #[OA\Response(response: 400, description: 'Invalid parameters')]
+    #[OA\Response(response: 400, description: 'Missing parameters or invalid parameters')]
     private function updateThemeToUser(): void
     {
         global $_REQ;
