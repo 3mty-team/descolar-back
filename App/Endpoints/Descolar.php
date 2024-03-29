@@ -18,20 +18,15 @@ use OpenApi\Attributes as OA;
     url: "https://descolar.fr",
     email: "contact@descolar.fr",
 )]
-#[OA\Tag(
-    name: "Group",
-    description: "Group endpoint"
-)]
-#[OA\Tag(
-    name: "Authentication",
-    description: "Authentication endpoint"
-)]
-#[OA\Tag(
-    name: "Configuration",
-    description: "Configuration endpoint"
-)]
+
 #[OA\OpenApi(
-    security: [['JWT' => []]]
+    servers: [new OA\Server(url: "https://internal-api.descolar.fr/v1")],
+    security: [['JWT' => []]],
+    tags: [
+        new OA\Tag(name: "Group", description: "Endpoints for group"),
+        new OA\Tag(name: "Authentication", description: "Endpoints for authentication"),
+        new OA\Tag(name: "Configuration", description: "Endpoints for configuration"),
+    ]
 )]
 #[OA\Components(
     securitySchemes: [
