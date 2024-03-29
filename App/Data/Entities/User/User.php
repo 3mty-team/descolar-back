@@ -3,6 +3,7 @@
 namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
+use Descolar\Adapters\Orm\Generator\UUIDGenerator;
 use Descolar\Data\Repository\User\UserRepository;
 use Descolar\Data\Entities\Institution\Formation;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +14,8 @@ class User
 {
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: UUIDGenerator::class)]
     #[ORM\Column(name: "user_id", type: "guid")]
     private string $uuid;
 
