@@ -2,10 +2,10 @@
 
 namespace Descolar\Adapters\Error;
 
-use _PHPStan_6b522806f\Nette\Neon\Exception;
 use Descolar\Adapters\Error\Handlers\CustomHandler;
 use Descolar\App;
 use Descolar\Managers\Error\Interfaces\IErrorManager;
+use Exception;
 use Override;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;

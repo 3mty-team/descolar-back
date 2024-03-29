@@ -107,8 +107,10 @@ class OrmManager implements IOrmManager
             return self::$_entityManagerInstance;
         }
 
-        $paths = ['App/Entities'];
-        $proxyDir = DIR_ROOT . '\App\Adapters\Orm\Proxies';
+        $directorySeparator = DIRECTORY_SEPARATOR;
+
+        $paths = ["App{$directorySeparator}Entities"];
+        $proxyDir = DIR_ROOT . "{$directorySeparator}App{$directorySeparator}Adapters{$directorySeparator}Orm{$directorySeparator}Proxies";
         $proxyNamespace = 'Descolar\Adapters\Orm\Proxies';
 
         $isDevMode = App::isDev();

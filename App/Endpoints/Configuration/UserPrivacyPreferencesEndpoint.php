@@ -18,6 +18,8 @@ use OpenAPI\Attributes as OA;
 class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 {
     #[Get('/config/privacy', name: 'Retrieve all Themes', auth: true)]
+    #[OA\Get(path: "/config/privacy", summary: "Retrieve all Themes", tags: ["Configuration"])]
+    #[OA\Response(response: 200, description: 'All themes retrieved')]
     private function getPrivacy(): void
     {
         $userPrivacyPreferences = App::getOrmManager()->connect()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
@@ -30,6 +32,16 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     }
 
     #[Post('/config/privacy', name: 'Create Privacy to user', auth: true)]
+    #[OA\Post(
+        path: '/config/privacy',
+        summary: 'Create Privacy to user',
+        tags: ['Configuration'],
+        responses: [
+            new OA\Response(response: 201, description: 'Privacy set'),
+            new OA\Response(response: 400, description: 'Missing parameters'),
+            new OA\Response(response: 400, description: 'Invalid parameters'),
+        ]
+    )]
     private function createPrivacyToUser(): void
     {
         $feedVisibility = $_POST['feed_visibility'] ?? "";
@@ -45,6 +57,16 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     }
 
     #[Put('/config/privacy', name: 'Update Privacy to user', auth: true)]
+    #[OA\Put(
+        path: '/config/privacy',
+        summary: 'Update Privacy to user',
+        tags: ['Configuration'],
+        responses: [
+            new OA\Response(response: 201, description: 'Privacy updated'),
+            new OA\Response(response: 400, description: 'Missing parameters'),
+            new OA\Response(response: 400, description: 'Invalid parameters'),
+        ]
+    )]
     private function updatePrivacyToUser(): void
     {
         global $_REQ;

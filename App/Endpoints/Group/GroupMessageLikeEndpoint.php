@@ -15,8 +15,9 @@ use OpenAPI\Attributes as OA;
 class GroupMessageLikeEndpoint extends AbstractEndpoint
 {
 
-    #[Get('/group/:groupId/:messageId/like', variables: ["groupId" => "[0-9]+", "messageId" => "[0-9]+"], name: 'getAllGroupLike', auth: false)]
+    #[Get('/group/:groupId/:messageId/like', variables: ["groupId" => "[0-9]+", "messageId" => "[0-9]+"], name: 'getAllGroupLike', auth: true)]
     #[OA\Get(path: "/group/{groupId}/{messageId}/like", summary: "getAllGroupLike", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "All group messages like retrieved")]
     private function getAllGroupMessageLike(int $groupId, int $messageId): void
     {
         $response = App::getJsonBuilder();
@@ -38,8 +39,9 @@ class GroupMessageLikeEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/group/:groupId/:messageId/like', variables: ["groupId" => "[0-9]+", "messageId" => "[0-9]+"], name: 'likeGroupMessage', auth: false)]
+    #[Post('/group/:groupId/:messageId/like', variables: ["groupId" => "[0-9]+", "messageId" => "[0-9]+"], name: 'likeGroupMessage', auth: true)]
     #[OA\Post(path: "/group/{groupId}/{messageId}/like", summary: "likeGroupMessage", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Group message liked")]
     private function likeGroupMessage(int $groupId, int $messageId): void
     {
         $response = App::getJsonBuilder();
@@ -64,8 +66,9 @@ class GroupMessageLikeEndpoint extends AbstractEndpoint
 
     }
 
-    #[Delete('/group/:groupId/:messageId/like', variables: ["groupId" => "[0-9]+", "messageId" => "[0-9]+"], name: 'unlikeGroupMessage', auth: false)]
+    #[Delete('/group/:groupId/:messageId/like', variables: ["groupId" => "[0-9]+", "messageId" => "[0-9]+"], name: 'unlikeGroupMessage', auth: true)]
     #[OA\Delete(path: "/group/{groupId}/{messageId}/like", summary: "unlikeGroupMessage", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Group message unliked")]
     private function unlikeGroupMessage(int $groupId, int $messageId): void
     {
         $response = App::getJsonBuilder();

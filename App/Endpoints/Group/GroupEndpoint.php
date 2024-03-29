@@ -17,8 +17,9 @@ use OpenAPI\Attributes as OA;
 class GroupEndpoint extends AbstractEndpoint
 {
 
-    #[Get('/group', name: 'getAllGroups', auth: false)]
+    #[Get('/group', name: 'getAllGroups', auth: true)]
     #[OA\Get(path: "/group", summary: "getAllGroups", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "All groups retrieved")]
     private function getAllGroups(): void
     {
 
@@ -36,8 +37,9 @@ class GroupEndpoint extends AbstractEndpoint
         $response->getResult();
     }
 
-    #[Get('/group/:id', variables: ["id" => "[0-9]+"], name: 'getGroupById', auth: false)]
+    #[Get('/group/:id', variables: ["id" => "[0-9]+"], name: 'getGroupById', auth: true)]
     #[OA\Get(path: "/group/{id}", summary: "getGroupById", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Group retrieved")]
     private function getGroupById(int $id): void
     {
         $response = App::getJsonBuilder();
@@ -59,8 +61,9 @@ class GroupEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/group', name: 'createGroup', auth: false)]
+    #[Post('/group', name: 'createGroup', auth: true)]
     #[OA\Post(path: "/group", summary: "createGroup", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Group created")]
     private function createGroup(): void
     {
         $response = App::getJsonBuilder();
@@ -84,8 +87,9 @@ class GroupEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Put('/group/:id', variables: ["id" => "[0-9]+"], name: 'updateGroup', auth: false)]
+    #[Put('/group/:id', variables: ["id" => "[0-9]+"], name: 'updateGroup', auth: true)]
     #[OA\Put(path: "/group/{id}", summary: "updateGroup", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Group created")]
     private function updateGroup(int $id): void
     {
         global $_REQ;
@@ -113,8 +117,9 @@ class GroupEndpoint extends AbstractEndpoint
 
     }
 
-    #[Delete('/group/:id', variables: ["id" => "[0-9]+"], name: 'deleteGroup', auth: false)]
+    #[Delete('/group/:id', variables: ["id" => "[0-9]+"], name: 'deleteGroup', auth: true)]
     #[OA\Delete(path: "/group/{id}", summary: "deleteGroup", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Group deleted")]
     private function deleteGroup(int $id): void {
 
         $response = App::getJsonBuilder();

@@ -17,8 +17,9 @@ use OpenAPI\Attributes as OA;
 class GroupMemberEndpoint extends AbstractEndpoint
 {
 
-    #[Get('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'getAllGroupMember', auth: false)]
+    #[Get('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'getAllGroupMember', auth: true)]
     #[OA\Get(path: "/group/{id}/member", summary: "getAllGroupMember", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "All group members retrieved")]
     private function getAllGroupMember(int $id): void
     {
         $response = App::getJsonBuilder();
@@ -42,8 +43,9 @@ class GroupMemberEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'addMemberInGroup', auth: false)]
+    #[Post('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'addMemberInGroup', auth: true)]
     #[OA\Post(path: "/group/{id}/member", summary: "addMemberInGroup", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Member added")]
     private function addMemberInGroup(int $id): void
     {
         $response = App::getJsonBuilder();
@@ -69,8 +71,9 @@ class GroupMemberEndpoint extends AbstractEndpoint
 
     }
 
-    #[Delete('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'removeMemberInGroup', auth: false)]
+    #[Delete('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'removeMemberInGroup', auth: true)]
     #[OA\Delete(path: "/group/{id}/member", summary: "removeMemberInGroup", tags: ["Group"])]
+    #[OA\Response(response: 200, description: "Member removed")]
     private function removeMemberInGroup(int $id): void {
 
         global $_REQ;

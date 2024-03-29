@@ -19,12 +19,16 @@ use OpenApi\Attributes as OA;
     email: "contact@descolar.fr",
 )]
 #[OA\Tag(
-    name: "Example",
-    description: "Example endpoint"
-)]
-#[OA\Tag(
     name: "Group",
     description: "Group endpoint"
+)]
+#[OA\Tag(
+    name: "Authentication",
+    description: "Authentication endpoint"
+)]
+#[OA\Tag(
+    name: "Configuration",
+    description: "Configuration endpoint"
 )]
 #[OA\OpenApi(
     security: [['JWT' => []]]
@@ -54,11 +58,5 @@ class Descolar extends AbstractEndpoint
         $openapi = Generator::scan([DIR_ROOT . '/App/Endpoints']);
         header('Content-Type: application/json');
         echo $openapi->toJson();
-    }
-
-    #[Get('/a', name: 'home', auth: false)]
-    #[OA\Get(path: "/", summary: "Home", tags: ["Example"])]
-    private function getet() {
-        echo "Hello World!";
     }
 }

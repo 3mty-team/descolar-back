@@ -22,6 +22,7 @@ class LoginEndpoint extends AbstractEndpoint
             new OA\Response(response: 404, description: 'Not Found'),
         ]
     )]
+
     private function login(): void
     {
         $username = $_POST['username'] ?? "";
