@@ -14,6 +14,15 @@ use OpenAPI\Attributes as OA;
 class RegisterEndpoint extends AbstractEndpoint
 {
     #[Post('/auth/register', name: 'login', auth: false)]
+    #[OA\Post(
+        path: '/auth/register',
+        summary: 'Register',
+        tags: ['Authentication'],
+        responses: [
+            new OA\Response(response: 200, description: 'OK'),
+            new OA\Response(response: 404, description: 'Not Found'),
+        ]
+    )]
     private function register(): void
     {
         $username = $_POST['username'] ?? "";
