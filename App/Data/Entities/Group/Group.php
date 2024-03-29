@@ -8,7 +8,7 @@ use Descolar\Data\Repository\Group\GroupRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GroupRepository::class)]
-#[ORM\Table(name: "group")]
+#[ORM\Table(name: "`group`")]
 class Group
 {
     #[ORM\Id]
@@ -18,7 +18,6 @@ class Group
 
     #[ORM\Column(name: "group_name", type: "string", length: 60)]
     private string $name;
-
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "group_admin", referencedColumnName: "user_id")]

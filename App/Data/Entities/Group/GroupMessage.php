@@ -20,7 +20,7 @@ class GroupMessage
     private int $id;
 
     #[ORM\ManyToOne(targetEntity: Group::class)]
-    #[ORM\JoinColumn(name: "group_id", referencedColumnName: "post_id")]
+    #[ORM\JoinColumn(name: "group_id", referencedColumnName: "group_id")]
     private Group $group;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -110,5 +110,10 @@ class GroupMessage
     public function setMedias(Collection $medias): void
     {
         $this->medias = $medias;
+    }
+
+    public function addMedia(Media $media): void
+    {
+        $this->medias->add($media);
     }
 }

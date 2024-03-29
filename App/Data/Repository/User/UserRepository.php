@@ -8,6 +8,16 @@ use Doctrine\ORM\EntityRepository;
 
 class UserRepository extends EntityRepository
 {
+
+    public function toReduceJson(User $user): array {
+        return [
+            'uuid' => $user->getUUID(),
+            'username' => $user->getUsername(),
+            'pfpPath' => $user->getProfilePicturePath(),
+            'isActive' => $user->isActive(),
+        ];
+    }
+
     public function toJson(User $user): array {
         return [
             'uuid' => $user->getUUID(),

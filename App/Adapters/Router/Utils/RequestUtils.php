@@ -69,7 +69,7 @@ class RequestUtils
                         'type' => $value
                     );
 
-                    file_put_contents($tmp_name, $body);
+                   file_put_contents($tmp_name, $body);
                 }
                 else {
                     $data[$name] = substr($body, 0, strlen($body) - 2);
