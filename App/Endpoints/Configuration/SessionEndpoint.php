@@ -9,11 +9,12 @@ use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
 use OpenAPI\Attributes as OA;
+use OpenApi\Attributes\Parameter;
 
 class SessionEndpoint extends AbstractEndpoint
 {
     #[Get('/config/session/:sessionUuid', name: 'Search Session by id', auth: true)]
-    #[OA\Get(path: "/config/session/{sessionUuid}", summary: "Search Session by id", tags: ["Configuration"], responses: [new OA\Response(response: 201, description: "Session started"), new OA\Response(response: 404, description: "Session not found")])]
+    #[OA\Get(path: "/config/session/{sessionUuid}", summary: "Search Session by id", tags: ["Configuration"], parameters: [new Parameter("sessionUuid", "sessionUuid", "Session UUID", required: true)], responses: [new OA\Response(response: 201, description: "Session started"), new OA\Response(response: 404, description: "Session not found")])]
     private function searchSessionByUuid(string $sessionUuid): void
     {
         $session = App::getOrmManager()->connect()->getRepository(Session::class)->getSessionByUuid($sessionUuid);

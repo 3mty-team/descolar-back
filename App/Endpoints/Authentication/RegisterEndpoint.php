@@ -10,6 +10,7 @@ use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
 use OpenAPI\Attributes as OA;
+use OpenApi\Attributes\RequestBody;
 
 class RegisterEndpoint extends AbstractEndpoint
 {
@@ -21,7 +22,7 @@ class RegisterEndpoint extends AbstractEndpoint
         responses: [
             new OA\Response(response: 200, description: 'OK'),
             new OA\Response(response: 404, description: 'Not Found'),
-        ]
+        ],
     )]
     private function register(): void
     {

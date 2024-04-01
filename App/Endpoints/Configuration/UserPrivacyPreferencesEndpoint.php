@@ -14,6 +14,7 @@ use Descolar\Data\Entities\Configuration\UserThemePreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
 use OpenAPI\Attributes as OA;
+use OpenApi\Attributes\RequestBody;
 
 class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 {
@@ -38,7 +39,7 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         responses: [
             new OA\Response(response: 201, description: 'Privacy set'),
             new OA\Response(response: 400, description: 'Missing parameters or invalid parameters'),
-        ]
+        ],
     )]
     private function createPrivacyToUser(): void
     {
@@ -62,7 +63,7 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         responses: [
             new OA\Response(response: 201, description: 'Privacy updated'),
             new OA\Response(response: 400, description: 'Missing parameters or invalid parameters'),
-        ]
+        ],
     )]
     private function updatePrivacyToUser(): void
     {

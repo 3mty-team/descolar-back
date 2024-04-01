@@ -11,15 +11,24 @@ use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Firebase\JWT\JWT;
 use OpenAPI\Attributes as OA;
+use OpenApi\Attributes\PathParameter;
 
 class Authentication extends AbstractEndpoint
 {
     #[Get('/authentication/:userUuid', name: 'Authentication', auth: false)]
     #[OA\Get(
-        path: "/authentication",
+        path: "/authentication/{userUuid}",
         summary: "Authentication",
         security: [],
         tags: ["Authentication"],
+        parameters: [
+            new PathParameter(
+                name: "userUuid",
+                description: "User UUID",
+                in: "path",
+                required: true
+            )
+        ],
         responses: [
             new OA\Response(response: 200, description: "Token generated successfully"),
             new OA\Response(response: 404, description: "User not found"),

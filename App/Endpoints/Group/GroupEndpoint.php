@@ -13,6 +13,8 @@ use Descolar\Managers\Endpoint\AbstractEndpoint;
 
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use OpenAPI\Attributes as OA;
+use OpenApi\Attributes\PathParameter;
+use OpenApi\Attributes\Response;
 
 class GroupEndpoint extends AbstractEndpoint
 {
@@ -37,7 +39,7 @@ class GroupEndpoint extends AbstractEndpoint
     }
 
     #[Get('/group/:id', variables: ["id" => "[0-9]+"], name: 'getGroupById', auth: true)]
-    #[OA\Get(path: "/group/{id}", summary: "getGroupById", tags: ["Group"], responses: [new OA\Response(response: 200, description: "Group retrieved")])]
+    #[OA\Get(path: "/group/{id}", summary: "getGroupById", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group retrieved")])]
     private function getGroupById(int $id): void
     {
         $response = App::getJsonBuilder();
@@ -60,7 +62,7 @@ class GroupEndpoint extends AbstractEndpoint
     }
 
     #[Post('/group', name: 'createGroup', auth: true)]
-    #[OA\Post(path: "/group", summary: "createGroup", tags: ["Group"], responses: [new OA\Response(response: 200, description: "Group created")])]
+    #[OA\Post(path: "/group", summary: "createGroup", tags: ["Group"], responses: [new Response(response: 200, description: "Group created")])]
     private function createGroup(): void
     {
         $response = App::getJsonBuilder();
@@ -85,7 +87,7 @@ class GroupEndpoint extends AbstractEndpoint
     }
 
     #[Put('/group/:id', variables: ["id" => "[0-9]+"], name: 'updateGroup', auth: true)]
-    #[OA\Put(path: "/group/{id}", summary: "updateGroup", tags: ["Group"], responses: [new OA\Response(response: 200, description: "Group created")])]
+    #[OA\Put(path: "/group/{id}", summary: "updateGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group created")])]
     private function updateGroup(int $id): void
     {
         global $_REQ;
@@ -114,8 +116,9 @@ class GroupEndpoint extends AbstractEndpoint
     }
 
     #[Delete('/group/:id', variables: ["id" => "[0-9]+"], name: 'deleteGroup', auth: true)]
-    #[OA\Delete(path: "/group/{id}", summary: "deleteGroup", tags: ["Group"], responses: [new OA\Response(response: 200, description: "Group deleted")])]
-    private function deleteGroup(int $id): void {
+    #[OA\Delete(path: "/group/{id}", summary: "deleteGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group deleted")])]
+    private function deleteGroup(int $id): void
+    {
 
         $response = App::getJsonBuilder();
 

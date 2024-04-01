@@ -18,9 +18,9 @@ class LoginEndpoint extends AbstractEndpoint
         summary: 'Login',
         tags: ['Configuration'],
         responses: [
-            new OA\Response(response: 200, description: 'OK'),
-            new OA\Response(response: 404, description: 'Not Found'),
-        ]
+            new OA\Response(response: 200, description: 'Login success'),
+            new OA\Response(response: 404, description: 'Login failed'),
+        ],
     )]
 
     private function login(): void
