@@ -103,7 +103,7 @@ class Post
         return $this->isPinned;
     }
 
-    public function setIsPinned(bool $isPinned): void
+    public function setPinned(bool $isPinned): void
     {
         $this->isPinned = $isPinned;
     }
@@ -131,5 +131,10 @@ class Post
     public function getMedias(): Collection
     {
         return $this->medias;
+    }
+
+    public function addMedia(Media $media): void
+    {
+        $this->medias->add($media);
     }
 }
