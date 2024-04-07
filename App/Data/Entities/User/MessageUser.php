@@ -135,4 +135,9 @@ class MessageUser
     {
         $this->medias = $medias;
     }
+
+    public function addMedia(Media $media): void
+    {
+        $this->medias->add($media);
+    }
 }

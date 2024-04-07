@@ -3,6 +3,7 @@
 namespace Descolar\Data\Repository\Post;
 
 use DateTime;
+use DateTimeZone;
 use Descolar\App;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\Post\Post;
@@ -36,7 +37,7 @@ class PostRepository extends EntityRepository
 
     }
 
-    public function findAllInRandByUser(string $userUUID, int $range, ?int $timestamp): array
+    public function findAllInRangeByUser(string $userUUID, int $range, ?int $timestamp): array
     {
 
         if ($range < 1) {
@@ -199,7 +200,7 @@ class PostRepository extends EntityRepository
     public function toJsonRange(int $range, ?string $userUUID, ?int $timestamp): array
     {
 
-        $posts = ($userUUID) ? $this->findAllInRandByUser($userUUID, $range, $timestamp) : $this->findAllInRange($range, $timestamp);
+        $posts = ($userUUID) ? $this->findAllInRangeByUser($userUUID, $range, $timestamp) : $this->findAllInRange($range, $timestamp);
 
         $postList = [];
         foreach ($posts as $post) {
