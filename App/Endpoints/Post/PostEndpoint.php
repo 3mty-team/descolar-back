@@ -6,6 +6,7 @@ use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Delete;
 
+use Descolar\Adapters\Router\RouteParam;
 use Descolar\App;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
@@ -41,13 +42,13 @@ class PostEndpoint extends AbstractEndpoint
 
     }
 
-    #[Get('/post/message/:range', variables: ["range" => "[0-9]+"], name: 'getAllPostInRange', auth: true)]
+    #[Get('/post/message/:range', variables: ["range" => RouteParam::NUMBER], name: 'getAllPostInRange', auth: true)]
     private function getAllPostInRange(int $range): void
     {
         $this->_getAllPosts($range, null, null);
     }
 
-    #[Get('/post/message/:range/:timestamp', variables: ["range" => "[0-9]+", "timestamp" => "[0-9]+"], name: 'getAllPostInRangeWithTimestamp', auth: true)]
+    #[Get('/post/message/:range/:timestamp', variables: ["range" => RouteParam::NUMBER, "timestamp" => RouteParam::NUMBER], name: 'getAllPostInRangeWithTimestamp', auth: true)]
     #[OA\Get(path: "/group/message/{range}/{timestamp}", summary: "getAllPostInRangeWithTimestamp", tags: ["Post"], parameters: [new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
     private function getAllPostInRangeWithTimestamp(int $range, int $timestamp): void
@@ -55,13 +56,13 @@ class PostEndpoint extends AbstractEndpoint
         $this->_getAllPosts($range, timestamp: $timestamp);
     }
 
-    #[Get('/post/message/:userUUID/:range', variables: ["userUUID" => ".?*", "range" => "[0-9]+"], name: 'getAllPostInRangeWithUserUUID', auth: true)]
+    #[Get('/post/message/:userUUID/:range', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER], name: 'getAllPostInRangeWithUserUUID', auth: true)]
     private function getAllPostInRangeWithUserUUID(string $userUUID, int $range): void
     {
         $this->_getAllPosts($range, userUUID: $userUUID);
     }
 
-    #[Get('/post/message/:userUUID/:range/:timestamp', variables: ["userUUID" => ".?*", "range" => "[0-9]+", "timestamp" => "[0-9]+"], name: 'getAllPostInRangeWithUserUUIDAndTimestamp', auth: true)]
+    #[Get('/post/message/:userUUID/:range/:timestamp', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::NUMBER], name: 'getAllPostInRangeWithUserUUIDAndTimestamp', auth: true)]
     #[OA\Get(path: "/group/message/{range}/{timestamp}", summary: "getAllPostInRangeWithUserUUIDAndTimestamp", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
     private function getAllPostInRangeWithUserUUIDAndTimestamp(string $userUUID, int $range, $timestamp): void
@@ -69,7 +70,7 @@ class PostEndpoint extends AbstractEndpoint
         $this->_getAllPosts($range, $userUUID, $timestamp);
     }
 
-    #[Get('/post/:postId', variables: ["postId" => "[0-9]+"], name: 'getPostById', auth: true)]
+    #[Get('/post/:postId', variables: ["postId" => RouteParam::NUMBER], name: 'getPostById', auth: true)]
     #[OA\Get(path: "/post/{postId}", summary: "getPostById", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "Post ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Post retrieved")])]
     private function getPostById(int $postId): void
@@ -161,7 +162,7 @@ class PostEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete('/post/:postId', variables: ["postId" => "[0-9]+"], name: 'deletePost', auth: true)]
+    #[Delete('/post/:postId', variables: ["postId" => RouteParam::NUMBER], name: 'deletePost', auth: true)]
     #[OA\Delete(path: "/post/{postId}", summary: "deletePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "Post ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Post deleted")])]
     private function deletePost(int $postId): void

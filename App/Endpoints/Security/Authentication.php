@@ -5,6 +5,7 @@ namespace Descolar\Endpoints\Security;
 use DateTimeImmutable;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
+use Descolar\Adapters\Router\RouteParam;
 use Descolar\App;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Env\EnvReader;
@@ -15,7 +16,7 @@ use OpenApi\Attributes\PathParameter;
 
 class Authentication extends AbstractEndpoint
 {
-    #[Get('/authentication/:userUuid', name: 'Authentication', auth: false)]
+    #[Get('/authentication/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'Authentication', auth: false)]
     #[OA\Get(
         path: "/authentication/{userUuid}",
         summary: "Authentication",

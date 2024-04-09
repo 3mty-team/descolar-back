@@ -6,6 +6,7 @@ use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 
 use Descolar\Adapters\Router\Annotations\Put;
+use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostHidden;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
@@ -19,7 +20,7 @@ use OpenApi\Attributes\PathParameter;
 class PostLikeEndpoint extends AbstractEndpoint
 {
 
-    #[Get("post/:userUUID/like", variables: ["userUUID" => ".?*"], name: "likedPost", auth: true)]
+    #[Get("post/:userUUID/like", variables: ["userUUID" => RouteParam::UUID], name: "likedPost", auth: true)]
     #[OA\Get(path: "/post/{userUUID}/like", summary: "likedPost", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true)] ,responses: [new OA\Response(response: 200, description: "Post liked")])]
     private function likedPost(string $userUUID): void
     {
@@ -41,7 +42,7 @@ class PostLikeEndpoint extends AbstractEndpoint
 
     }
 
-    #[Put("post/:postId/like", variables: ["postId" => "[0-9]+"] , name: "likePost", auth: true)]
+    #[Put("post/:postId/like", variables: ["postId" => RouteParam::NUMBER] , name: "likePost", auth: true)]
     #[OA\Put(path: "/post/{postId}/like", summary: "likePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post liked")])]
     private function likePost(int $postId): void
     {
@@ -66,7 +67,7 @@ class PostLikeEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete("post/:postId/like", variables: ["postId" => "[0-9]+"] , name: "unlikePost", auth: true)]
+    #[Delete("post/:postId/like", variables: ["postId" => RouteParam::NUMBER] , name: "unlikePost", auth: true)]
     #[OA\Delete(path: "/post/{postId}/like", summary: "unlikePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post unliked")])]
     private function unlikePost(int $postId): void
     {

@@ -5,6 +5,7 @@ namespace Descolar\Endpoints\Group;
 use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
+use Descolar\Adapters\Router\RouteParam;
 use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\App;
 use Descolar\Data\Entities\Group\GroupMember;
@@ -18,7 +19,7 @@ use OpenApi\Attributes\PathParameter;
 class GroupMemberEndpoint extends AbstractEndpoint
 {
 
-    #[Get('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'getAllGroupMember', auth: true)]
+    #[Get('/group/:id/member', variables: ["id" => RouteParam::NUMBER], name: 'getAllGroupMember', auth: true)]
     #[OA\Get(path: "/group/{id}/member", summary: "getAllGroupMember", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)],
         responses: [new OA\Response(response: 200, description: "All group members retrieved")]
     )]
@@ -45,7 +46,7 @@ class GroupMemberEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'addMemberInGroup', auth: true)]
+    #[Post('/group/:id/member', variables: ["id" => RouteParam::NUMBER], name: 'addMemberInGroup', auth: true)]
     #[OA\Post(path: "/group/{id}/member", summary: "addMemberInGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member added")])]
     private function addMemberInGroup(int $id): void
     {
@@ -72,7 +73,7 @@ class GroupMemberEndpoint extends AbstractEndpoint
 
     }
 
-    #[Delete('/group/:id/member', variables: ["id" => "[0-9]+"], name: 'removeMemberInGroup', auth: true)]
+    #[Delete('/group/:id/member', variables: ["id" => RouteParam::NUMBER], name: 'removeMemberInGroup', auth: true)]
     #[OA\Delete(path: "/group/{id}/member", summary: "removeMemberInGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member removed")])]
     private function removeMemberInGroup(int $id): void
     {

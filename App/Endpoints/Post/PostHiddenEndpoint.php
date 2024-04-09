@@ -5,6 +5,7 @@ namespace Descolar\Endpoints\Post;
 use Descolar\Adapters\Router\Annotations\Get;
 
 use Descolar\Adapters\Router\Annotations\Put;
+use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Post\PostHidden;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 
@@ -39,7 +40,7 @@ class PostHiddenEndpoint extends AbstractEndpoint
 
     }
 
-    #[Put("post/:postId/hide", variables: ["postId" => "[0-9]+"] , name: "hidePost", auth: true)]
+    #[Put("post/:postId/hide", variables: ["postId" => RouteParam::NUMBER] , name: "hidePost", auth: true)]
     #[OA\Put(path: "/post/{postId}/hide", summary: "hidePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post hidden")])]
     private function hidePost(string $postId): void
     {

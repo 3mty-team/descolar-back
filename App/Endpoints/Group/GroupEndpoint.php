@@ -6,6 +6,7 @@ use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Put;
+use Descolar\Adapters\Router\RouteParam;
 use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\App;
 use Descolar\Data\Entities\Group\Group;
@@ -38,7 +39,7 @@ class GroupEndpoint extends AbstractEndpoint
         $response->getResult();
     }
 
-    #[Get('/group/:id', variables: ["id" => "[0-9]+"], name: 'getGroupById', auth: true)]
+    #[Get('/group/:id', variables: ["id" => RouteParam::NUMBER], name: 'getGroupById', auth: true)]
     #[OA\Get(path: "/group/{id}", summary: "getGroupById", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group retrieved")])]
     private function getGroupById(int $id): void
     {
@@ -86,7 +87,7 @@ class GroupEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Put('/group/:id', variables: ["id" => "[0-9]+"], name: 'updateGroup', auth: true)]
+    #[Put('/group/:id', variables: ["id" => RouteParam::NUMBER], name: 'updateGroup', auth: true)]
     #[OA\Put(path: "/group/{id}", summary: "updateGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group created")])]
     private function updateGroup(int $id): void
     {
@@ -115,7 +116,7 @@ class GroupEndpoint extends AbstractEndpoint
 
     }
 
-    #[Delete('/group/:id', variables: ["id" => "[0-9]+"], name: 'deleteGroup', auth: true)]
+    #[Delete('/group/:id', variables: ["id" => RouteParam::NUMBER], name: 'deleteGroup', auth: true)]
     #[OA\Delete(path: "/group/{id}", summary: "deleteGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group deleted")])]
     private function deleteGroup(int $id): void
     {

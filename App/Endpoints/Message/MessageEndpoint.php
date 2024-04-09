@@ -4,6 +4,7 @@ namespace Descolar\Endpoints\Message;
 
 use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Post;
+use Descolar\Adapters\Router\RouteParam;
 use Descolar\App;
 use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
@@ -41,13 +42,13 @@ class MessageEndpoint extends AbstractEndpoint
 
     }
 
-    #[Get('/post/message/:userUUID/:range', variables: ["userUUID" => ".?*", "range" => "[0-9]+"], name: 'getAllMessageUserInRange', auth: true)]
+    #[Get('/post/message/:userUUID/:range', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER], name: 'getAllMessageUserInRange', auth: true)]
     private function getAllMessageUserInRange(int $range): void
     {
         $this->_getAllMessages($range, null, null);
     }
 
-    #[Get('/post/message/:userUUID/:range/:timestamp', variables: ["userUUID" => ".?*", "range" => "[0-9]+", "timestamp" => "[0-9]+"], name: 'getAllMessageUserInRangeWithTimestamp', auth: true)]
+    #[Get('/post/message/:userUUID/:range/:timestamp', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::TIMESTAMP], name: 'getAllMessageUserInRangeWithTimestamp', auth: true)]
     #[OA\Get(path: "/group/message/{userUUID}/{range}/{timestamp}", summary: "getAllMessageUserInRangeWithTimestamp", tags: ["Message"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
     private function getAllMessageUserInRangeWithTimestamp(int $range, int $timestamp): void
@@ -87,7 +88,7 @@ class MessageEndpoint extends AbstractEndpoint
 
     }
 
-    #[Post('/post/message/:messageId/like', name: 'likeMessage', auth: true)]
+    #[Post('/post/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'likeMessage', auth: true)]
     #[OA\Post(path: "/group/message/{messageId}/like", summary: "likeMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Message liked")])]
     private function likeMessage(int $messageId): void
@@ -113,7 +114,7 @@ class MessageEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete('/post/message/:messageId/like', name: 'unlikeMessage', auth: true)]
+    #[Delete('/post/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'unlikeMessage', auth: true)]
     #[OA\Delete(path: "/group/message/{messageId}/like", summary: "unlikeMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Message unliked")])]
     private function unlikeMessage(int $messageId): void
@@ -139,7 +140,7 @@ class MessageEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete('/post/message/:messageId/delete', variables: ["messageId" => "[0-9]+"], name: 'deleteMessage', auth: true)]
+    #[Delete('/post/message/:messageId/delete', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteMessage', auth: true)]
     #[OA\Delete(path: "/group/message/{messageId}/delete", summary: "deleteMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Message deleted")])]
     private function deleteMessage(int $messageId): void

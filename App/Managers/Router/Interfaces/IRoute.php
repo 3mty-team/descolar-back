@@ -48,10 +48,10 @@ interface IRoute
      * add a param to the route
      *
      * @param string $param The param to add
-     * @param string $regex The regex to define the param
+     * @param mixed $regex The regex to define the param
      * @return self The route with the new param
      */
-    public function with(string $param, string $regex): self;
+    public function with(string $param, mixed $regex): self;
 
     /**
      * check if the url match the route

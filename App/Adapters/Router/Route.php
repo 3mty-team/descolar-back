@@ -69,9 +69,13 @@ class Route implements IRoute
         return $this->route;
     }
 
-    #[Override] public function with(string $param, string $regex): self
+    /**
+     * @inheritDoc
+     * @param RouteParam $regex The regex to define the param
+     */
+    #[Override] public function with(string $param, mixed $regex): self
     {
-        $this->getParams()[$param] = str_replace('(', '(?:', $regex);
+        $this->getParams()[$param] = str_replace('(', '(?:', $regex->value);
         return $this;
     }
 
