@@ -11,12 +11,10 @@ use Descolar\Adapters\Env\EnvManager;
 use Descolar\Adapters\Error\ErrorManager;
 use Descolar\Adapters\Event\EventReader;
 use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
+use Descolar\Adapters\Mail\MailBuilder;
 use Descolar\Adapters\Orm\OrmManager;
 use Descolar\Adapters\Router\RouterRetriever;
 use Descolar\App;
-use Descolar\Managers\Orm\OrmConnector;
-use Doctrine\ORM\Tools\Console\ConsoleRunner;
-use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
 
 /**
@@ -38,6 +36,7 @@ App::useOrm(OrmManager::class);
 App::useRouter(RouterRetriever::class);
 App::useEvent(EventReader::class);
 App::useJsonBuilder(JsonBuilderManager::class);
+App::useMail(MailBuilder::class);
 
 /**
  * Run the application

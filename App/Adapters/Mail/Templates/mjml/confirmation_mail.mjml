@@ -1,0 +1,52 @@
+<mjml>
+    <mj-head>
+        <mj-font name="roboto" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" />
+    </mj-head>
+    <mj-body background-color="#ECEFF1"> <!-- Couleur de fond gris bleuté -->
+            <!-- Logo -->
+            <mj-section>
+                <mj-column>
+                    <mj-image src="https://media.discordapp.net/attachments/1172975877273964654/1228887062824882236/image.png?ex=662dad43&is=661b3843&hm=08ede679f727a2a8617bd5dc2146e76212c3d125de11920e01497fce0f802242&=&format=webp&quality=lossless&width=412&height=412" alt="Logo Descolar" align="center" width="75px" />
+                </mj-column>
+            </mj-section>
+
+            <!-- Section principale du mail -->
+            <mj-section background-color="#FEFEFE"> <!-- Couleur secondaire -->
+                <mj-column>
+                    <!-- Titre -->
+                    <mj-text align="center" font-size="28px">
+                        Confirmez votre adresse mail
+                    </mj-text>
+                    <mj-divider border-color="#8B1538" />
+
+                    <!-- Texte -->
+                    <mj-text align="justify" font-size="16px">
+                        Appuyez sur le bouton pour confirmer votre adresse mail. <br><br>Si vous n'avez pas créé un compte sur Descolar, veuillez supprimer ce mail et nous contacter par mail.
+                    </mj-text>
+
+                    <!-- Bouton de confirmation -->
+                    <mj-button background-color="#8B1538" color="#FEFEFE" font-size="20px" border-radius="5px" href="CONFIRMATION_LINK">
+                        Confirmer mon mail
+                    </mj-button>
+
+                    <!-- Texte alternatif pour copier-coller le lien -->
+                    <mj-text align="justifty" font-size="14px">
+                        Si le bouton ne fait pas effet, copiez et collez le lien ci-dessous sur votre navigateur favori : <br> CONFIRMATION_LINK
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+
+        <!-- Pied de page -->
+        <mj-section background-color="#ECEFF1"> <!-- Couleur de fond gris bleuté -->
+            <mj-column>
+                <mj-text align="center" font-size="11px">
+                    Ce mail a été envoyé en raison d'une demande de la création d'un compte sur cette adresse mail. Si cette action vous semble suspecte, veuillez nous contacter par mail.
+                </mj-text>
+                <!-- Adresse e-mail de contact -->
+                <mj-text align="center" font-size="11px">
+                    Adresse mail Descolar: <a href="mailto:contact@descolar.fr">contact@descolar.fr</a>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>

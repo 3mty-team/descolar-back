@@ -8,6 +8,7 @@ use Descolar\Managers\Router\Router;
 use Descolar\Managers\App\Traits\{EnvAdapter,
     ErrorHandlerAdapter,
     JsonBuilderAdapter,
+    MailAdapter,
     OrmAdapter,
     RouterAdapter,
     EventAdapter};
@@ -26,6 +27,7 @@ class App
     use EventAdapter;
     use EnvAdapter;
     use OrmAdapter;
+    use MailAdapter;
 
     public static function isDev(): bool
     {
