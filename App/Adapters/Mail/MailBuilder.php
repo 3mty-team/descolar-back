@@ -50,9 +50,9 @@ class MailBuilder implements IMailBuilder
                 throw new SMTPException('ENV SMTP configuration is missing');
             }
 
-            $this->getInstance()->SMTPDebug = SMTP::DEBUG_SERVER;
             $this->getInstance()->isSMTP();
             $this->getInstance()->Host = App::getEnvManager()->get('SMTP_HOST');
+            $this->getInstance()->CharSet = "UTF-8";
             $this->getInstance()->SMTPAuth = true;
             $this->getInstance()->Username = App::getEnvManager()->get('SMTP_USERNAME') ?? "";
             $this->getInstance()->Password = App::getEnvManager()->get('SMTP_PASSWORD') ?? "";
@@ -95,8 +95,6 @@ class MailBuilder implements IMailBuilder
      */
     #[Override] public function send(): bool
     {
-         $v = $this->getInstance()->send();
-         var_dump($this->getInstance()->ErrorInfo);
-         return $v;
+        return $this->getInstance()->send();
     }
 }

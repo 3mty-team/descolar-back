@@ -34,8 +34,8 @@ class User
     #[ORM\Column(name: "user_mail", type: "string", length: 255, unique: true)]
     private string $mail;
 
-    #[ORM\Column(name: "user_account_verify", type: "string", length: 255)]
-    private string $token;
+    #[ORM\Column(name: "user_account_verify", type: "string", length: 255, nullable: true)]
+    private ?string $token;
 
     #[ORM\Column(name: "user_dateofbirth", type: "date", nullable: true)]
     private ?DateTimeInterface $date;
@@ -115,7 +115,7 @@ class User
         return $this->token;
     }
 
-    public function setToken(string $token): void
+    public function setToken(?string $token): void
     {
         $this->token = $token;
     }

@@ -17,7 +17,7 @@ class UserRepository extends EntityRepository
     /**
      * @throws Exception
      */
-    public function createUser(String $username, String $password, String $firstname, String $lastname, String $mail, String $formation_id, String $dateofbirth): User
+    public function createUser(String $username, String $password, String $firstname, String $lastname, String $mail, String $formation_id, String $dateofbirth, string $token): User
     {
         try {
             $date = new DateTime($dateofbirth);
@@ -30,6 +30,7 @@ class UserRepository extends EntityRepository
         } catch (Exception $e) {
             throw new EndpointException("Formation not found", 400);
         }
+
         $user = new User();
         try {
             $user = new User();
@@ -42,6 +43,7 @@ class UserRepository extends EntityRepository
             $user->setDate($date);
             $user->setBiography(null);
             $user->setIsActive(true);
+            $user->setToken($token);
             $this->getEntityManager()->persist($user);
             $this->getEntityManager()->flush();
         } catch (Exception $e) {
@@ -53,6 +55,19 @@ class UserRepository extends EntityRepository
         } catch (Exception $e) {
             throw new EndpointException("Login creation failed: " . $e->getMessage(), 400);
         }
+
+        return $user;
+    }
+
+    public function verifyToken(String $token): ?User {
+        $user = $this->findOneBy(['token' => $token]);
+        if($user === null) {
+            throw new EndpointException("Token not found", 404);
+        }
+
+        $user->setToken(null);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
 
         return $user;
     }
