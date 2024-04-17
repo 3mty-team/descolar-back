@@ -27,7 +27,7 @@ class PostEndpoint extends AbstractEndpoint
 
         try {
 
-            $group = App::getOrmManager()->connect()->getRepository(Post::class)->toJsonRange($range, $userUUID, $timestamp);
+            $group = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJsonRange($range, $userUUID, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
