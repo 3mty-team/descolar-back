@@ -6,6 +6,8 @@ use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Delete;
 
+use Descolar\Data\Entities\Post\Post as PostEntity;
+
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\App;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
@@ -80,8 +82,8 @@ class PostEndpoint extends AbstractEndpoint
 
         try {
 
-            $post = App::getOrmManager()->connect()->getRepository(Post::class)->find($postId);
-            $groupData = App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post);
+            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->find($postId);
+            $groupData = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -113,8 +115,8 @@ class PostEndpoint extends AbstractEndpoint
             $medias = @json_decode($_POST['medias'] ?? null);
 
             /** @var Post $post */
-            $post = App::getOrmManager()->connect()->getRepository(Post::class)->create($content, $location, $date, $medias);
-            $postData = App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post);
+            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->create($content, $location, $date, $medias);
+            $postData = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
@@ -145,8 +147,8 @@ class PostEndpoint extends AbstractEndpoint
             $medias = @json_decode($_POST['medias'] ?? null);
 
             /** @var Post $post */
-            $post = App::getOrmManager()->connect()->getRepository(Post::class)->repost($postId, $content, $location, $date, $medias);
-            $postData = App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post);
+            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->repost($postId, $content, $location, $date, $medias);
+            $postData = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
@@ -170,7 +172,7 @@ class PostEndpoint extends AbstractEndpoint
         $response = App::getJsonBuilder();
 
         try {
-            $post = App::getOrmManager()->connect()->getRepository(Post::class)->delete($postId);
+            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->delete($postId);
 
             $response->addData("id", $post);
             $response->setCode(200);
