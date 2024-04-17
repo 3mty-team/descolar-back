@@ -6,6 +6,7 @@ use DateTimeInterface;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Post\PostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -47,6 +48,11 @@ class Post
     #[ORM\InverseJoinColumn(name: 'media_id', referencedColumnName: 'media_id')]
     #[ORM\ManyToMany(targetEntity: Media::class)]
     private Collection $medias;
+
+    public function __construct()
+    {
+        $this->medias = new ArrayCollection();
+    }
 
     public function getId(): int
     {
