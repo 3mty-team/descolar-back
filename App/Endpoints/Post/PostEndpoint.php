@@ -44,7 +44,7 @@ class PostEndpoint extends AbstractEndpoint
 
     }
 
-    #[Get('/post/message/:range', variables: ["range" => RouteParam::NUMBER], name: 'getAllPostInRange', auth: false)]
+    #[Get('/post/message/:range', variables: ["range" => RouteParam::NUMBER], name: 'getAllPostInRange', auth: true)]
     private function getAllPostInRange(int $range): void
     {
         $this->_getAllPosts($range, null, null);
