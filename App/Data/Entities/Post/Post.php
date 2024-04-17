@@ -32,8 +32,8 @@ class Post
     #[ORM\Column(name: "post_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeInterface $date;
 
-    #[ORM\Column(name: "post_ispinned", type: "boolean", options: ["default" => 1])]
-    private bool $isPinned;
+    #[ORM\Column(name: "post_ispinned", type: "boolean", options: ["default" => 0])]
+    private bool $isPinned = false;
 
     #[ORM\ManyToOne(targetEntity: Post::class, fetch: "EAGER")]
     #[ORM\JoinColumn(name: "repost_id", referencedColumnName: "post_id")]
