@@ -27,7 +27,7 @@ class PostEndpoint extends AbstractEndpoint
 
         try {
 
-            $group = App::getOrmManager()->connect()->getRepository(Post::class)->toJsonRange($range, $userUUID, $timestamp);
+            $group = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJsonRange($range, $userUUID, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
@@ -44,7 +44,7 @@ class PostEndpoint extends AbstractEndpoint
 
     }
 
-    #[Get('/post/message/:range', variables: ["range" => RouteParam::NUMBER], name: 'getAllPostInRange', auth: true)]
+    #[Get('/post/message/:range', variables: ["range" => RouteParam::NUMBER], name: 'getAllPostInRange', auth: false)]
     private function getAllPostInRange(int $range): void
     {
         $this->_getAllPosts($range, null, null);
