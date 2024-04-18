@@ -7,6 +7,7 @@ use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostHidden;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class PostHiddenRepository extends EntityRepository
@@ -19,7 +20,7 @@ class PostHiddenRepository extends EntityRepository
             throw new EndpointException('User not logged', 403);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
         }
@@ -35,7 +36,7 @@ class PostHiddenRepository extends EntityRepository
 
         $postToReturn = [];
         foreach ($posts as $post) {
-            $postToReturn[] = App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post->getPost());
+            $postToReturn[] = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post->getPost());
         }
 
         return $postToReturn;
@@ -48,7 +49,7 @@ class PostHiddenRepository extends EntityRepository
             throw new EndpointException('Post not found', 404);
         }
 
-        $post = App::getOrmManager()->connect()->getRepository(Post::class)->findOneBy(['postId' => $postId]);
+        $post = OrmConnector::getInstance()->getRepository(Post::class)->findOneBy(['postId' => $postId]);
         if ($post === null) {
             throw new EndpointException('Post not found', 404);
         }
@@ -57,7 +58,7 @@ class PostHiddenRepository extends EntityRepository
             throw new EndpointException('User not logged', 403);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->findOneBy(['uuid' => App::getUserUuid()]);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => App::getUserUuid()]);
         if ($user === null) {
             throw new EndpointException('User not found', 404);
         }
@@ -73,10 +74,10 @@ class PostHiddenRepository extends EntityRepository
         $postHidden->setUser($user);
         $postHidden->setIsActive(true);
 
-        App::getOrmManager()->connect()->persist($postHidden);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($postHidden);
+        OrmConnector::getInstance()->flush();
 
-        return App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post);
+        return OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
     }
 
 }
