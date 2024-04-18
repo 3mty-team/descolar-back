@@ -51,7 +51,7 @@ class PostEndpoint extends AbstractEndpoint
     }
 
     #[Get('/post/message/:range/:timestamp', variables: ["range" => RouteParam::NUMBER, "timestamp" => RouteParam::NUMBER], name: 'getAllPostInRangeWithTimestamp', auth: true)]
-    #[OA\Get(path: "/group/message/{range}/{timestamp}", summary: "getAllPostInRangeWithTimestamp", tags: ["Post"], parameters: [new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
+    #[OA\Get(path: "/post/message/{range}/{timestamp}", summary: "getAllPostInRangeWithTimestamp", tags: ["Post"], parameters: [new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
     private function getAllPostInRangeWithTimestamp(int $range, int $timestamp): void
     {
@@ -65,7 +65,7 @@ class PostEndpoint extends AbstractEndpoint
     }
 
     #[Get('/post/message/:userUUID/:range/:timestamp', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::NUMBER], name: 'getAllPostInRangeWithUserUUIDAndTimestamp', auth: true)]
-    #[OA\Get(path: "/group/message/{userUUID}/{range}/{timestamp}", summary: "getAllPostInRangeWithUserUUIDAndTimestamp", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
+    #[OA\Get(path: "/post/message/{userUUID}/{range}/{timestamp}", summary: "getAllPostInRangeWithUserUUIDAndTimestamp", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
     private function getAllPostInRangeWithUserUUIDAndTimestamp(string $userUUID, int $range, $timestamp): void
     {
