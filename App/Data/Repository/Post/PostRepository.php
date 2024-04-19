@@ -9,10 +9,24 @@ use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class PostRepository extends EntityRepository
 {
+
+    public function countReposts(Post $post): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('COUNT(p)')
+            ->where('p.repostedPost = :post')
+            ->andWhere('p.user != :postUser')
+            ->andWhere('p.isActive = 1')
+            ->setParameter('post', $post)
+            ->setParameter('postUser', $post->getUser())
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
     public function findAllInRange(int $range, ?int $timestamp): array
     {
@@ -44,7 +58,7 @@ class PostRepository extends EntityRepository
             throw new EndpointException('Range must be greater than 0', 400);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
         if ($user === null) {
             throw new EndpointException('User not found', 404);
         }
@@ -78,14 +92,14 @@ class PostRepository extends EntityRepository
             throw new EndpointException('User not logged', 403);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
         }
 
 
         foreach ($medias as $media) {
-            $media = App::getOrmManager()->connect()->getRepository(Media::class)->find($media);
+            $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
             if ($media === null) {
                 throw new EndpointException('Media not found', 404);
             }
@@ -98,15 +112,15 @@ class PostRepository extends EntityRepository
         $post->setDate(new DateTime("@$date"));
         $post->setIsActive(true);
         foreach ($medias as $media) {
-            $post->addMedia(App::getOrmManager()->connect()->getRepository(Media::class)->find($media));
+            $post->addMedia(OrmConnector::getInstance()->getRepository(Media::class)->find($media));
         }
 
         if($retweetedPost) {
             $post->setRepostedPost($retweetedPost);
         }
 
-        App::getOrmManager()->connect()->persist($post);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($post);
+        OrmConnector::getInstance()->flush();
 
         return $post;
     }
@@ -134,7 +148,7 @@ class PostRepository extends EntityRepository
         }
 
         $post->setIsActive(false);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->flush();
 
         return $postId;
     }
@@ -151,7 +165,7 @@ class PostRepository extends EntityRepository
             throw new EndpointException('User not logged', 403);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->find(App::getUserUuid());
+        $user = OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid());
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
         }
@@ -161,7 +175,7 @@ class PostRepository extends EntityRepository
         }
 
         $post->setPinned($setToPin);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->flush();
 
         return $post;
     }
@@ -172,7 +186,7 @@ class PostRepository extends EntityRepository
             throw new EndpointException('User not logged', 403);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
         }
@@ -186,7 +200,7 @@ class PostRepository extends EntityRepository
 
         if(($post = $this->getPinnedPost($userUUID)) !== null) {
             $post->setPinned(false);
-            App::getOrmManager()->connect()->flush();
+            OrmConnector::getInstance()->flush();
         }
 
         return $this->buildPin($postId, true);
@@ -207,7 +221,7 @@ class PostRepository extends EntityRepository
             /** @var Post $post */
             $postList[] = [
                 'id' => $post->getId(),
-                'user' => App::getOrmManager()->connect()->getRepository(User::class)->toReduceJson($post->getUser()),
+                'user' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($post->getUser()),
                 'content' => $post->getContent(),
                 'date' => $post->getDate(),
                 'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
@@ -222,10 +236,13 @@ class PostRepository extends EntityRepository
     {
         return [
             'id' => $post->getId(),
-            'user' => App::getOrmManager()->connect()->getRepository(User::class)->toReduceJson($post->getUser()),
+            'user' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($post->getUser()),
             'content' => $post->getContent(),
             'date' => $post->getDate(),
             'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
+            'likes' => OrmConnector::getInstance()->getRepository(PostLikeRepository::class)->countLikes($post),
+            'reposts' => $this->countReposts($post),
+            'comments' => 0, //NOT IMPLEMENTED
             'isActive' => $post->isActive(),
         ];
     }
