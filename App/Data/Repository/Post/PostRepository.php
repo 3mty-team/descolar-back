@@ -7,6 +7,7 @@ use DateTimeZone;
 use Descolar\App;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\Post\Post;
+use Descolar\Data\Entities\Post\PostLike;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
@@ -240,7 +241,7 @@ class PostRepository extends EntityRepository
             'content' => $post->getContent(),
             'date' => $post->getDate(),
             'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
-            'likes' => OrmConnector::getInstance()->getRepository(PostLikeRepository::class)->countLikes($post),
+            'likes' => OrmConnector::getInstance()->getRepository(PostLike::class)->countLikes($post),
             'reposts' => $this->countReposts($post),
             'comments' => 0, //NOT IMPLEMENTED
             'isActive' => $post->isActive(),
