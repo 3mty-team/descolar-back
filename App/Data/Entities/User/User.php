@@ -50,6 +50,15 @@ class User
     #[ORM\Column(name: "user_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
 
+    public function __construct()
+    {
+        $this->formation = null;
+        $this->pfpPath = null;
+        $this->date = null;
+        $this->biography = null;
+        $this->isActive = true;
+    }
+
     public function getUUID(): string
     {
         return $this->uuid;
