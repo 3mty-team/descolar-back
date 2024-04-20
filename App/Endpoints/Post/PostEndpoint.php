@@ -84,13 +84,12 @@ class PostEndpoint extends AbstractEndpoint
         try {
 
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->find($postId);
-            $groupData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
+            $postData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
-            foreach ($groupData as $key => $value) {
+            foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
 
-            $response->addData('post', $post->toJson());
             $response->setCode(200);
             $response->getResult();
 
