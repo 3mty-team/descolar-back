@@ -6,15 +6,11 @@ use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\Utils\RequestUtils;
-use Descolar\App;
-use Descolar\Data\Entities\Configuration\Session;
-use Descolar\Data\Entities\Configuration\Theme;
 use Descolar\Data\Entities\Configuration\UserPrivacyPreferences;
-use Descolar\Data\Entities\Configuration\UserThemePreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
-use OpenApi\Attributes\RequestBody;
 
 class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 {
@@ -22,7 +18,7 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/config/privacy", summary: "Retrieve all Themes", tags: ["Configuration"], responses: [new OA\Response(response: 200, description: "All themes retrieved")])]
     private function getPrivacy(): void
     {
-        $userPrivacyPreferences = App::getOrmManager()->connect()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
+        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
 
         JsonBuilder::build()
             ->setCode(200)
@@ -46,7 +42,7 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         $feedVisibility = $_POST['feed_visibility'] ?? "";
         $searchVisibility = $_POST['search_visibility'] ?? "";
 
-        $userPrivacyPreferences = App::getOrmManager()->connect()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
+        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
 
         JsonBuilder::build()
             ->setCode(201)
@@ -73,7 +69,7 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         $feedVisibility = $_REQ['feed_visibility'] ?? "";
         $searchVisibility = $_REQ['search_visibility'] ?? "";
 
-        $userPrivacyPreferences = App::getOrmManager()->connect()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
+        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
 
         JsonBuilder::build()
             ->setCode(201)

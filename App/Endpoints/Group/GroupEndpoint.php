@@ -8,11 +8,12 @@ use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Adapters\Router\Utils\RequestUtils;
-use Descolar\App;
 use Descolar\Data\Entities\Group\Group;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 use OpenApi\Attributes\Response;
@@ -26,14 +27,14 @@ class GroupEndpoint extends AbstractEndpoint
     {
 
         /** @var Group[] $groups */
-        $groups = App::getOrmManager()->connect()->getRepository(Group::class)->findAll();
+        $groups = OrmConnector::getInstance()->getRepository(Group::class)->findAll();
 
         $data = [];
         foreach ($groups as $group) {
-            $data[] = App::getOrmManager()->connect()->getRepository(Group::class)->toJson($group);
+            $data[] = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
         }
 
-        $response = App::getJsonBuilder()->setCode(200);
+        $response = JsonBuilder::build()()->setCode(200);
         $response->addData('groups', $data);
 
         $response->getResult();
@@ -43,11 +44,11 @@ class GroupEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/group/{id}", summary: "getGroupById", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group retrieved")])]
     private function getGroupById(int $id): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
-            $group = App::getOrmManager()->connect()->getRepository(Group::class)->findById($id);
-            $groupData = App::getOrmManager()->connect()->getRepository(Group::class)->toJson($group);
+            $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($id);
+            $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -66,13 +67,13 @@ class GroupEndpoint extends AbstractEndpoint
     #[OA\Post(path: "/group", summary: "createGroup", tags: ["Group"], responses: [new Response(response: 200, description: "Group created")])]
     private function createGroup(): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build()();
         $name = $_POST['name'];
         $admin = $_POST['admin'];
 
         try {
-            $group = App::getOrmManager()->connect()->getRepository(Group::class)->create($name, $admin);
-            $groupData = App::getOrmManager()->connect()->getRepository(Group::class)->toJson($group);
+            $group = OrmConnector::getInstance()->getRepository(Group::class)->create($name, $admin);
+            $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -93,13 +94,13 @@ class GroupEndpoint extends AbstractEndpoint
     {
         global $_REQ;
         RequestUtils::cleanBody();
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build()();
         $name = $_REQ['name'];
         $admin = $_REQ['admin'];
 
         try {
-            $group = App::getOrmManager()->connect()->getRepository(Group::class)->editGroup($id, $name, $admin);
-            $groupData = App::getOrmManager()->connect()->getRepository(Group::class)->toJson($group);
+            $group = OrmConnector::getInstance()->getRepository(Group::class)->editGroup($id, $name, $admin);
+            $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -121,11 +122,11 @@ class GroupEndpoint extends AbstractEndpoint
     private function deleteGroup(int $id): void
     {
 
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build()();
 
         try {
 
-            $group = App::getOrmManager()->connect()->getRepository(Group::class)->deleteGroup($id);
+            $group = OrmConnector::getInstance()->getRepository(Group::class)->deleteGroup($id);
 
             $response->addData('id', $group);
             $response->setCode(200);

@@ -8,11 +8,12 @@ use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Adapters\Router\Utils\RequestUtils;
-use Descolar\App;
 use Descolar\Data\Entities\Group\GroupMessage;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -22,11 +23,11 @@ class GroupMessageEndpoint extends AbstractEndpoint
     private function _getAllMessage(int $groupId, int $range, ?int $timestamp): void
     {
 
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $group = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->toJsonRange($groupId, $range, $timestamp);
+            $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->toJsonRange($groupId, $range, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
@@ -63,7 +64,7 @@ class GroupMessageEndpoint extends AbstractEndpoint
     #[OA\Post(path: "/group/{groupId}/message", summary: "createGroupMessage", tags: ["Group"], parameters: [new PathParameter("groupId", "groupId", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group message created")])]
     private function createGroupMessage(int $groupId): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
@@ -72,8 +73,8 @@ class GroupMessageEndpoint extends AbstractEndpoint
             $medias = @json_decode($_POST['medias'] ?? null);
 
             /** @var GroupMessage $group */
-            $group = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->create($groupId, $content, $date, $medias);
-            $groupData = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->toJson($group);
+            $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->create($groupId, $content, $date, $medias);
+            $groupData = OrmConnector::getInstance()->getRepository(GroupMessage::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -96,7 +97,7 @@ class GroupMessageEndpoint extends AbstractEndpoint
     {
         global $_REQ;
         RequestUtils::cleanBody();
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
@@ -104,8 +105,8 @@ class GroupMessageEndpoint extends AbstractEndpoint
             $medias = json_decode($_REQ['medias'] ?? '[]');
 
             /** @var GroupMessage $group */
-            $group = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->update($groupId, $messageId, $content, $medias);
-            $groupData = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->toJson($group);
+            $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->update($groupId, $messageId, $content, $medias);
+            $groupData = OrmConnector::getInstance()->getRepository(GroupMessage::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -126,11 +127,11 @@ class GroupMessageEndpoint extends AbstractEndpoint
     #[OA\Delete(path: "/group/{groupId}/{messageId}/message", summary: "deleteGroupMessage", tags: ["Group"], parameters: [new PathParameter("groupId", "groupId", "Group ID", required: true), new PathParameter("messageId", "messageId", "Message ID", required: true)], responses: [new OA\Response(response: 200, description: "Group message deleted")])]
     private function deleteGroupMessage(int $groupId, $messageId): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $group = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->delete($groupId, $messageId);
+            $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->delete($groupId, $messageId);
 
             $response->addData("id", $group);
             $response->setCode(200);

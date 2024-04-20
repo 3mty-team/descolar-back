@@ -3,9 +3,9 @@
 namespace Descolar\Endpoints;
 
 use Descolar\Adapters\Router\Annotations\Get;
-use Descolar\App;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 
+use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Mail\MailManager;
 use OpenApi\Generator;
 use OpenApi\Attributes as OA;
@@ -63,7 +63,7 @@ class Descolar extends AbstractEndpoint
     private function home(): void
     {
         try {
-            App::getJsonBuilder()->addData('test', 'test')->getResult();
+            JsonBuilder::build()->addData('test', 'test')->getResult();
 
             MailManager::build()
                 ->setFrom('contact@mehdi-ali.me')
