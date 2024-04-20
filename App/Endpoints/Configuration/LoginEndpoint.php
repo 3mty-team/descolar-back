@@ -3,11 +3,12 @@
 namespace Descolar\Endpoints\Configuration;
 
 use Descolar\Adapters\Router\Annotations\Post;
-use Descolar\App;
 use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
+use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 
 class LoginEndpoint extends AbstractEndpoint
@@ -22,35 +23,28 @@ class LoginEndpoint extends AbstractEndpoint
             new OA\Response(response: 404, description: 'Login failed'),
         ],
     )]
-
     private function login(): void
     {
-        $username = $_POST['username'] ?? "";
-        $password = $_POST['password'] ?? "";
+        $response = JsonBuilder::build();
 
-        if($username != null && $username != '' && $password != null && $password != '') {
-            /*
-             * @var User $user
-             */
-            $user = App::getOrmManager()->connect()->getRepository(Login::class)->getLoginInformation($username, $password);
-            if ($user == null) {
-                JsonBuilder::build()
-                    ->setCode(404)
-                    ->addData('message', 'Login failed')
-                    ->getResult();
-                return;
+        try {
+            $username = $_POST['username'] ?? "";
+            $password = $_POST['password'] ?? "";
+
+            $user = OrmConnector::getInstance()->getRepository(Login::class)->getLoginInformation($username, $password);
+            $userData = OrmConnector::getInstance()->getRepository(User::class)->toJson($user);
+
+            foreach ($userData as $key => $value) {
+                $response->addData($key, $value);
             }
-            JsonBuilder::build()
-                ->setCode(200)
-                ->addData('message', 'Login success')
-                ->addData('user', App::getOrmManager()->connect()->getRepository(User::class)->toJson($user))
-                ->getResult();
-        }
-        else {
-            JsonBuilder::build()
-                ->setCode(404)
-                ->addData('message', 'Username or Password is not valid')
-                ->getResult();
+
+            $response->setCode(200);
+            $response->getResult();
+
+        } catch (EndpointException $e) {
+            $response->setCode($e->getCode());
+            $response->addData('message', $e->getMessage());
+            $response->getResult();
         }
     }
 }
