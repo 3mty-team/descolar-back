@@ -23,7 +23,7 @@ class User
     private string $username;
 
     #[ORM\Column(name: "user_profilepicturepath", type: "string", length: 200, nullable: true)]
-    private ?string $pfpPath;
+    private ?string $pfpPath = null;
 
     #[ORM\Column(name: "user_firstname", type: "string", length: 100)]
     private string $firstname;
@@ -35,17 +35,17 @@ class User
     private string $mail;
 
     #[ORM\Column(name: "user_account_verify", type: "string", length: 255, nullable: true)]
-    private ?string $token;
+    private ?string $token = null;
 
     #[ORM\Column(name: "user_dateofbirth", type: "date", nullable: true)]
     private ?DateTimeInterface $date;
 
     #[ORM\Column(name: "user_biography", type: "string", length: 100, nullable: true)]
-    private ?string $biography;
+    private ?string $biography = null;
 
     #[ORM\ManyToOne(targetEntity: Formation::class, fetch: "EAGER")]
     #[ORM\JoinColumn(name: "user_formation", referencedColumnName: "formation_id")]
-    private ?Formation $formation;
+    private ?Formation $formation = null;
 
     #[ORM\Column(name: "user_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
@@ -119,7 +119,7 @@ class User
         $this->mail = $mail;
     }
 
-    public function getToken(): string
+    public function getToken(): ?string
     {
         return $this->token;
     }
