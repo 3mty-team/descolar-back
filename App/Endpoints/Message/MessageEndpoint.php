@@ -5,13 +5,14 @@ namespace Descolar\Endpoints\Message;
 use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
-use Descolar\App;
 use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 
 use Descolar\Adapters\Router\Annotations\Get;
 
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -21,11 +22,11 @@ class MessageEndpoint extends AbstractEndpoint
 
     private function _getAllMessages(int $range, ?string $userUUID = null, ?int $timestamp = null): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $group = App::getOrmManager()->connect()->getRepository(MessageUser::class)->toJsonRange($range, $userUUID, $timestamp);
+            $group = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJsonRange($range, $userUUID, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
@@ -61,7 +62,7 @@ class MessageEndpoint extends AbstractEndpoint
     private function createMessage(): void
     {
 
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
@@ -70,8 +71,8 @@ class MessageEndpoint extends AbstractEndpoint
             $date = $_POST['date'] ?? 0;
             $medias = @json_decode($_POST['medias'] ?? null);
 
-            $message = App::getOrmManager()->connect()->getRepository(MessageUser::class)->create($receiver, $content, $date, $medias);
-            $messageData = App::getOrmManager()->connect()->getRepository(MessageUser::class)->toJson($message);
+            $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->create($receiver, $content, $date, $medias);
+            $messageData = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJson($message);
 
             foreach ($messageData as $key => $value) {
                 $response->addData($key, $value);
@@ -93,12 +94,12 @@ class MessageEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Message liked")])]
     private function likeMessage(int $messageId): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $message = App::getOrmManager()->connect()->getRepository(MessageUser::class)->like($messageId);
-            $messageData = App::getOrmManager()->connect()->getRepository(MessageUser::class)->toJson($message);
+            $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->like($messageId);
+            $messageData = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJson($message);
 
             foreach ($messageData as $key => $value) {
                 $response->addData($key, $value);
@@ -119,12 +120,12 @@ class MessageEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Message unliked")])]
     private function unlikeMessage(int $messageId): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $message = App::getOrmManager()->connect()->getRepository(MessageUser::class)->unlike($messageId);
-            $messageData = App::getOrmManager()->connect()->getRepository(MessageUser::class)->toJson($message);
+            $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->unlike($messageId);
+            $messageData = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJson($message);
 
             foreach ($messageData as $key => $value) {
                 $response->addData($key, $value);
@@ -145,10 +146,10 @@ class MessageEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Message deleted")])]
     private function deleteMessage(int $messageId): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
-            $message = App::getOrmManager()->connect()->getRepository(MessageUser::class)->delete($messageId);
+            $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->delete($messageId);
 
             $response->addData("id", $message);
             $response->setCode(200);

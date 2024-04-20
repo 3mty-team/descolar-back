@@ -6,6 +6,7 @@ use DateTime;
 use Descolar\App;
 use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Data\Entities\User\User;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class SessionRepository extends EntityRepository
@@ -15,7 +16,7 @@ class SessionRepository extends EntityRepository
         /*
          * @var User $user
          */
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
 
         if ($user === null) {
             return null;

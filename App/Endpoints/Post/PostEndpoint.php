@@ -9,10 +9,11 @@ use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Data\Entities\Post\Post as PostEntity;
 
 use Descolar\Adapters\Router\RouteParam;
-use Descolar\App;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 
+use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -23,11 +24,11 @@ class PostEndpoint extends AbstractEndpoint
     private function _getAllPosts(int $range, ?string $userUUID = null, ?int $timestamp = null): void
     {
 
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $group = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJsonRange($range, $userUUID, $timestamp);
+            $group = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJsonRange($range, $userUUID, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
@@ -78,12 +79,12 @@ class PostEndpoint extends AbstractEndpoint
     private function getPostById(int $postId): void
     {
 
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->find($postId);
-            $groupData = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->find($postId);
+            $groupData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -105,7 +106,7 @@ class PostEndpoint extends AbstractEndpoint
     #[OA\Post(path: "/post", summary: "createPost", tags: ["Post"], responses: [new OA\Response(response: 200, description: "Post created")])]
     private function createPost() : void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
@@ -115,8 +116,8 @@ class PostEndpoint extends AbstractEndpoint
             $medias = @json_decode($_POST['medias'] ?? null);
 
             /** @var Post $post */
-            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->create($content, $location, $date, $medias);
-            $postData = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->create($content, $location, $date, $medias);
+            $postData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
@@ -136,7 +137,7 @@ class PostEndpoint extends AbstractEndpoint
     #[OA\Post(path: "/repost", summary: "repostPost", tags: ["Post"], responses: [new OA\Response(response: 200, description: "Post reposted")])]
     private function repostPost(): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
@@ -147,8 +148,8 @@ class PostEndpoint extends AbstractEndpoint
             $medias = @json_decode($_POST['medias'] ?? null);
 
             /** @var Post $post */
-            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->repost($postId, $content, $location, $date, $medias);
-            $postData = App::getOrmManager()->connect()->getRepository(PostEntity::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->repost($postId, $content, $location, $date, $medias);
+            $postData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
@@ -169,10 +170,10 @@ class PostEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Post deleted")])]
     private function deletePost(int $postId): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
-            $post = App::getOrmManager()->connect()->getRepository(PostEntity::class)->delete($postId);
+            $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->delete($postId);
 
             $response->addData("id", $post);
             $response->setCode(200);

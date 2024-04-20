@@ -3,7 +3,6 @@
 namespace Descolar\Data\Repository\User;
 
 use DateTime;
-use Descolar\App;
 use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\Institution\Formation;
 use Descolar\Data\Entities\User\User;

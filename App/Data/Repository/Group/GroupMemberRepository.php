@@ -3,11 +3,11 @@
 namespace Descolar\Data\Repository\Group;
 
 use DateTime;
-use Descolar\App;
 use Descolar\Data\Entities\Group\Group;
 use Descolar\Data\Entities\Group\GroupMember;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class GroupMemberRepository extends EntityRepository
@@ -33,12 +33,12 @@ class GroupMemberRepository extends EntityRepository
             throw new EndpointException('Missing parameters "userId" or "date"', 400);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
         if($user === null) {
             throw new EndpointException('User not found', 404);
         }
 
-        $group = App::getOrmManager()->connect()->getRepository(Group::class)->find($groupId);
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->find($groupId);
         if($group === null) {
             throw new EndpointException('Group not found', 404);
         }
@@ -51,8 +51,8 @@ class GroupMemberRepository extends EntityRepository
 
             $gm->setIsActive(true);
             $gm->setJoinDate(new DateTime($date));
-            App::getOrmManager()->connect()->persist($gm);
-            App::getOrmManager()->connect()->flush();
+            OrmConnector::getInstance()->persist($gm);
+            OrmConnector::getInstance()->flush();
             return $gm;
 
         }
@@ -63,8 +63,8 @@ class GroupMemberRepository extends EntityRepository
         $groupMember->setJoinDate(new DateTime($date));
         $groupMember->setIsActive(true);
 
-        App::getOrmManager()->connect()->persist($groupMember);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($groupMember);
+        OrmConnector::getInstance()->flush();
 
         return $groupMember;
     }
@@ -82,25 +82,25 @@ class GroupMemberRepository extends EntityRepository
 
         $groupMember->setIsActive(false);
 
-        App::getOrmManager()->connect()->persist($groupMember);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($groupMember);
+        OrmConnector::getInstance()->flush();
 
         return $groupMember;
     }
 
     public function toJson(?int $groupId): array
     {
-        $group = App::getOrmManager()->connect()->getRepository(Group::class)->findById($groupId);
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($groupId);
 
         $groupMembers = $this->getUsersByGroup($group);
         $userData = [];
         foreach ($groupMembers as $groupMember) {
             /** @var GroupMember $groupMember */
-            $userData[] = App::getOrmManager()->connect()->getRepository(User::class)->toReduceJson($groupMember->getUser());
+            $userData[] = OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($groupMember->getUser());
         }
 
         return [
-            'group' => App::getOrmManager()->connect()->getRepository(Group::class)->toJson($group),
+            'group' => OrmConnector::getInstance()->getRepository(Group::class)->toJson($group),
             'users' => $userData
         ];
     }

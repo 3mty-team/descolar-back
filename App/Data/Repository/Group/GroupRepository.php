@@ -3,10 +3,10 @@
 namespace Descolar\Data\Repository\Group;
 
 use DateTime;
-use Descolar\App;
 use Descolar\Data\Entities\Group\Group;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class GroupRepository extends EntityRepository
@@ -38,7 +38,7 @@ class GroupRepository extends EntityRepository
             throw new EndpointException('Missing parameters "name" or "admin"', 400);
         }
 
-        $admin = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
+        $admin = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
 
         if ($admin === null) {
             throw new EndpointException('User not found', 404);
@@ -50,8 +50,8 @@ class GroupRepository extends EntityRepository
         $group->setCreationDate(new DateTime());
         $group->setIsActive(true);
 
-        App::getOrmManager()->connect()->persist($group);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($group);
+        OrmConnector::getInstance()->flush();
 
         return $group;
     }
@@ -63,7 +63,7 @@ class GroupRepository extends EntityRepository
         }
 
         $group = $this->find($id);
-        $admin = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
+        $admin = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
 
         if($group === null || $admin === null) {
             throw new EndpointException('Group or User not found', 404);
@@ -77,7 +77,7 @@ class GroupRepository extends EntityRepository
             $group->setAdmin($admin);
         }
 
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->flush();
 
         return $group;
     }
@@ -96,7 +96,7 @@ class GroupRepository extends EntityRepository
 
         $group->setIsActive(false);
 
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->flush();
 
         return $id;
     }
@@ -105,7 +105,7 @@ class GroupRepository extends EntityRepository
         return [
             'id' => $group->getId(),
             'name' => $group->getName(),
-            'admin' => App::getOrmManager()->connect()->getRepository(User::class)->toJson($group->getAdmin()),
+            'admin' => OrmConnector::getInstance()->getRepository(User::class)->toJson($group->getAdmin()),
             'creationDate' => $group->getCreationDate()->format('d-m-Y H:i:s'),
             'isActive' => $group->isActive()
         ];

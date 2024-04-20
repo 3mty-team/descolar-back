@@ -8,8 +8,8 @@ use Descolar\Data\Entities\Group\GroupMessage;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 
 class GroupMessageRepository extends EntityRepository
@@ -37,7 +37,7 @@ class GroupMessageRepository extends EntityRepository
             throw new EndpointException('Range must be greater than 0', 400);
         }
 
-        $group = App::getOrmManager()->connect()->getRepository(Group::class)->find($groupId);
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->find($groupId);
         if ($group === null) {
             throw new EndpointException('Group not found', 404);
         }
@@ -71,18 +71,18 @@ class GroupMessageRepository extends EntityRepository
             throw new EndpointException('User not logged', 403);
         }
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->find($userUUID);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
         }
 
-        $group = App::getOrmManager()->connect()->getRepository(Group::class)->find($groupId);
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->find($groupId);
         if ($group === null) {
             throw new EndpointException('Group not found', 404);
         }
 
         foreach ($medias as $media) {
-            $media = App::getOrmManager()->connect()->getRepository(Media::class)->find($media);
+            $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
             if ($media === null) {
                 throw new EndpointException('Media not found', 404);
             }
@@ -90,16 +90,16 @@ class GroupMessageRepository extends EntityRepository
 
         $groupMessage = new GroupMessage();
         $groupMessage->setGroup($group);
-        $groupMessage->setUser(App::getOrmManager()->connect()->getRepository(User::class)->find(App::getUserUuid()));
+        $groupMessage->setUser(OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid()));
         $groupMessage->setContent($content);
         $groupMessage->setDate(new \DateTime("@$date"));
         $groupMessage->setIsActive(true);
         foreach ($medias as $media) {
-            $groupMessage->addMedia(App::getOrmManager()->connect()->getRepository(Media::class)->find($media));
+            $groupMessage->addMedia(OrmConnector::getInstance()->getRepository(Media::class)->find($media));
         }
 
-        App::getOrmManager()->connect()->persist($groupMessage);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($groupMessage);
+        OrmConnector::getInstance()->flush();
 
         return $groupMessage;
     }
@@ -118,7 +118,7 @@ class GroupMessageRepository extends EntityRepository
 
         if ($medias !== null) {
             foreach ($medias as $media) {
-                $media = App::getOrmManager()->connect()->getRepository(Media::class)->find($media);
+                $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
                 if ($media === null) {
                     throw new EndpointException('Media not found', 404);
                 }
@@ -126,8 +126,8 @@ class GroupMessageRepository extends EntityRepository
             $groupMessage->setMedias(new ArrayCollection($medias));
         }
 
-        App::getOrmManager()->connect()->persist($groupMessage);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($groupMessage);
+        OrmConnector::getInstance()->flush();
 
         return $groupMessage;
     }
@@ -138,8 +138,8 @@ class GroupMessageRepository extends EntityRepository
 
         $groupMessage->setIsActive(false);
 
-        App::getOrmManager()->connect()->persist($groupMessage);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($groupMessage);
+        OrmConnector::getInstance()->flush();
 
         return $groupMessage->getId();
     }
@@ -148,14 +148,14 @@ class GroupMessageRepository extends EntityRepository
     {
         $groupMessages = $this->findAllInRange($groupId, $range, $timestamp);
 
-        $group = App::getOrmManager()->connect()->getRepository(Group::class)->findById($groupId);
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($groupId);
 
         $messages = [];
         foreach ($groupMessages as $groupMessage) {
             /** @var GroupMessage $groupMessage */
             $messages[] = [
                 'id' => $groupMessage->getId(),
-                'user' => App::getOrmManager()->connect()->getRepository(User::class)->toReduceJson($groupMessage->getUser()),
+                'user' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($groupMessage->getUser()),
                 'content' => $groupMessage->getContent(),
                 'date' => $groupMessage->getDate()->format('d-m-Y H:i:s'),
                 'isActive' => $groupMessage->isActive(),
@@ -164,7 +164,7 @@ class GroupMessageRepository extends EntityRepository
         }
 
         return [
-            'group' => App::getOrmManager()->connect()->getRepository(Group::class)->toJson($group),
+            'group' => OrmConnector::getInstance()->getRepository(Group::class)->toJson($group),
             'messages' => $messages
         ];
     }
@@ -175,8 +175,8 @@ class GroupMessageRepository extends EntityRepository
 
         return [
             'id' => $groupMessage->getId(),
-            'group' => App::getOrmManager()->connect()->getRepository(Group::class)->toJson($groupMessage->getGroup()),
-            'user' => App::getOrmManager()->connect()->getRepository(User::class)->toReduceJson($groupMessage->getUser()),
+            'group' => OrmConnector::getInstance()->getRepository(Group::class)->toJson($groupMessage->getGroup()),
+            'user' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($groupMessage->getUser()),
             'content' => $groupMessage->getContent(),
             'date' => $groupMessage->getDate()->format('d-m-Y H:i:s'),
             'isActive' => $groupMessage->isActive(),

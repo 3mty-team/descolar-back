@@ -6,8 +6,8 @@ use Descolar\App;
 use Descolar\Data\Entities\Configuration\UserPrivacyPreferences;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class UserPrivacyPreferencesRepository extends EntityRepository
 {
@@ -15,19 +15,19 @@ class UserPrivacyPreferencesRepository extends EntityRepository
     {
         $userPrivacyPreferences = $this->findOneBy(['user' => App::getUserUuid()]);
 
-        return $this->UserPrivacyPreferenceToJson($userPrivacyPreferences);
+        return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
 
     public function createUserPrivacyPreference(String $sFeedVisibility, String $sSearchVisibility): array
     {
-        if ($this->ConvertToBool($sFeedVisibility) === null || $this->ConvertToBool($sSearchVisibility) === null) {
+        if ($this->convertToBool($sFeedVisibility) === null || $this->convertToBool($sSearchVisibility) === null) {
             throw new EndpointException('Invalid parameters', 400);
         }
 
-        $feedVisibility = $this->ConvertToBool($sFeedVisibility);
-        $searchVisibility = $this->ConvertToBool($sSearchVisibility);
+        $feedVisibility = $this->convertToBool($sFeedVisibility);
+        $searchVisibility = $this->convertToBool($sSearchVisibility);
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
         if ($user === null) {
             throw new EndpointException('User not found', 404);
         }
@@ -45,7 +45,7 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         $this->getEntityManager()->persist($userPrivacyPreferences);
         $this->getEntityManager()->flush();
 
-        return $this->UserPrivacyPreferenceToJson($userPrivacyPreferences);
+        return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
 
     public function updateUserPrivacyPreference(?String $sFeedVisibility, ?String $sSearchVisibility): array
@@ -56,31 +56,29 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         }
 
         if (!is_null($sFeedVisibility)) {
-            if ($this->ConvertToBool($sFeedVisibility) === null) {
+            if ($this->convertToBool($sFeedVisibility) === null) {
                 throw new EndpointException('Invalid parameters', 400);
             }
-            $feedVisibility = $this->ConvertToBool($sFeedVisibility);
+            $feedVisibility = $this->convertToBool($sFeedVisibility);
             $userPrivacyPreferences->setFeedVisibility($feedVisibility);
         }
 
         if (!is_null($sSearchVisibility)) {
-            if ($this->ConvertToBool($sSearchVisibility) === null) {
+            if ($this->convertToBool($sSearchVisibility) === null) {
                 throw new EndpointException('Invalid parameters', 400);
             }
-            $searchVisibility = $this->ConvertToBool($sSearchVisibility);
+            $searchVisibility = $this->convertToBool($sSearchVisibility);
             $userPrivacyPreferences->setSearchVisibility($searchVisibility);
         }
 
         $this->getEntityManager()->persist($userPrivacyPreferences);
         $this->getEntityManager()->flush();
 
-        $this->UserPrivacyPreferenceToJson($userPrivacyPreferences);
-
-        return $this->UserPrivacyPreferenceToJson($userPrivacyPreferences);
+        return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
 
 
-    private function ConvertToBool(String $value): ?bool
+    private function convertToBool(String $value): ?bool
     {
         if ($value === 'true' || $value === '1') {
             return true;
@@ -90,7 +88,7 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         return null;
     }
 
-    public function UserPrivacyPreferenceToJson($privacyPreferences): array
+    public function userPrivacyPreferenceToJson($privacyPreferences): array
     {
         return [
             'feed_visibility' => $privacyPreferences->isFeedVisibility(),

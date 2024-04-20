@@ -5,10 +5,10 @@ namespace Descolar\Endpoints\Configuration;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
-use Descolar\App;
 use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\Parameter;
 
@@ -18,7 +18,7 @@ class SessionEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/config/session/{sessionUuid}", summary: "Search Session by id", tags: ["Configuration"], parameters: [new Parameter("sessionUuid", "sessionUuid", "Session UUID", required: true)], responses: [new OA\Response(response: 201, description: "Session started"), new OA\Response(response: 404, description: "Session not found")])]
     private function searchSessionByUuid(string $sessionUuid): void
     {
-        $session = App::getOrmManager()->connect()->getRepository(Session::class)->getSessionByUuid($sessionUuid);
+        $session = OrmConnector::getInstance()->getRepository(Session::class)->getSessionByUuid($sessionUuid);
 
         if ($session === null) {
             JsonBuilder::build()
@@ -31,7 +31,7 @@ class SessionEndpoint extends AbstractEndpoint
         JsonBuilder::build()
             ->setCode(201)
             ->addData('message', 'Session started')
-            ->addData('session', App::getOrmManager()->connect()->getRepository(Session::class)->toJson($session))
+            ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session))
             ->getResult();
     }
 
@@ -59,12 +59,12 @@ class SessionEndpoint extends AbstractEndpoint
             return;
         }
 
-        $session = App::getOrmManager()->connect()->getRepository(Session::class)->createSessionn($date, $localisation, $userAgent);
+        $session = OrmConnector::getInstance()->getRepository(Session::class)->createSessionn($date, $localisation, $userAgent);
 
         JsonBuilder::build()
             ->setCode(201)
             ->addData('message', 'Session started')
-            ->addData('session', App::getOrmManager()->connect()->getRepository(Session::class)->toJson($session))
+            ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session))
             ->getResult();
     }
 }

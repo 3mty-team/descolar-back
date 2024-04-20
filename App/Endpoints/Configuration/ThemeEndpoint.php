@@ -6,14 +6,12 @@ use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\Utils\RequestUtils;
-use Descolar\App;
-use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Data\Entities\Configuration\Theme;
 use Descolar\Data\Entities\Configuration\UserThemePreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
-use OpenApi\Attributes\RequestBody;
 
 class ThemeEndpoint extends AbstractEndpoint
 {
@@ -21,7 +19,7 @@ class ThemeEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/config/themes", summary: "Retrieve all Themes", tags: ["Configuration"], responses: [new OA\Response(response: 200, description: "All themes retrieved")])]
     private function getAllThemes(): void
     {
-        $themes = App::getOrmManager()->connect()->getRepository(Theme::class)->getAllThemesToJson();
+        $themes = OrmConnector::getInstance()->getRepository(Theme::class)->getAllThemesToJson();
 
         JsonBuilder::build()
             ->setCode(200)
@@ -34,7 +32,7 @@ class ThemeEndpoint extends AbstractEndpoint
     #[OA\Get(path: '/config/theme', summary: 'Retrieve Theme preference', tags: ['Configuration'], responses: [new OA\Response(response: 200, description: 'Theme preference retrieved')])]
     private function getThemePreference(): void
     {
-        $theme = App::getOrmManager()->connect()->getRepository(UserThemePreferences::class)->getThemePreferenceToJson();
+        $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->getThemePreferenceToJson();
 
         JsonBuilder::build()
             ->setCode(200)
@@ -73,13 +71,13 @@ class ThemeEndpoint extends AbstractEndpoint
             return;
         }
 
-        $theme = App::getOrmManager()->connect()->getRepository(UserThemePreferences::class)->createThemePreference($themeId);
+        $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->createThemePreference($themeId);
 
 
         JsonBuilder::build()
             ->setCode(201)
             ->addData('message', 'Theme set')
-            ->addData('theme', App::getOrmManager()->connect()->getRepository(Theme::class)->toJson($theme))
+            ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme))
             ->getResult();
     }
 
@@ -108,13 +106,13 @@ class ThemeEndpoint extends AbstractEndpoint
             return;
         }
 
-        $theme = App::getOrmManager()->connect()->getRepository(UserThemePreferences::class)->updateThemePreference($themeId);
+        $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->updateThemePreference($themeId);
 
 
         JsonBuilder::build()
             ->setCode(201)
             ->addData('message', 'Theme set')
-            ->addData('theme', App::getOrmManager()->connect()->getRepository(Theme::class)->toJson($theme))
+            ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme))
             ->getResult();
     }
 }

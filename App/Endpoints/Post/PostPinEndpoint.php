@@ -11,9 +11,10 @@ use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostHidden;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 
-use Descolar\App;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 
+use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -24,12 +25,12 @@ class PostPinEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/post/{userUUID}/pin", summary: "pinnedPost", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true)], responses: [new OA\Response(response: 200, description: "Post pinned")])]
     private function pinnedPost(string $userUUID): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $post = App::getOrmManager()->connect()->getRepository(PostHidden::class)->getPinnedPost($userUUID);
-            $postJson = App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->getPinnedPost($userUUID);
+            $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);
@@ -50,12 +51,12 @@ class PostPinEndpoint extends AbstractEndpoint
     #[OA\Put(path: "/post/{postId}/pin", summary: "pinPost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)], responses: [new OA\Response(response: 200, description: "Post pinned")])]
     private function pinPost(int $postId): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $post = App::getOrmManager()->connect()->getRepository(PostHidden::class)->pin($postId);
-            $postJson = App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->pin($postId);
+            $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);
@@ -75,12 +76,12 @@ class PostPinEndpoint extends AbstractEndpoint
     #[OA\Delete(path: "/post/{userUUID}/pin", summary: "unpinPost", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true)], responses: [new OA\Response(response: 200, description: "Post unpinned")])]
     private function unpinPost(string $userUUID): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build();
 
         try {
 
-            $post = App::getOrmManager()->connect()->getRepository(PostHidden::class)->unpin($userUUID);
-            $postJson = App::getOrmManager()->connect()->getRepository(Post::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->unpin($userUUID);
+            $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);

@@ -9,6 +9,7 @@ use Descolar\Data\Entities\Group\GroupMessage;
 use Descolar\Data\Entities\Group\GroupMessageLike;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class GroupMessageLikeRepository extends EntityRepository
@@ -33,9 +34,9 @@ class GroupMessageLikeRepository extends EntityRepository
 
     public function like(int $groupId, int $messageId): GroupMessageLike
     {
-        $groupMessage = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
+        $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->find(App::getUserUuid());
+        $user = OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid());
 
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
@@ -44,8 +45,8 @@ class GroupMessageLikeRepository extends EntityRepository
         $groupMessageLike = $this->getGroupMessageLike($groupMessage, $user);
         if ($groupMessageLike !== null && !$groupMessageLike->isActive()) {
             $groupMessageLike->setIsActive(true);
-            App::getOrmManager()->connect()->persist($groupMessageLike);
-            App::getOrmManager()->connect()->flush();
+            OrmConnector::getInstance()->persist($groupMessageLike);
+            OrmConnector::getInstance()->flush();
             return $groupMessageLike;
         }
 
@@ -55,17 +56,17 @@ class GroupMessageLikeRepository extends EntityRepository
         $groupMessageLike->setLikeDate(new DateTime());
         $groupMessageLike->setIsActive(true);
 
-        App::getOrmManager()->connect()->persist($groupMessageLike);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($groupMessageLike);
+        OrmConnector::getInstance()->flush();
 
         return $groupMessageLike;
     }
 
     public function unlike(int $groupId, int $messageId): int
     {
-        $groupMessage = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
+        $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
 
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->find(App::getUserUuid());
+        $user = OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid());
 
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
@@ -78,8 +79,8 @@ class GroupMessageLikeRepository extends EntityRepository
         }
 
         $groupMessageLike->setIsActive(false);
-        App::getOrmManager()->connect()->persist($groupMessageLike);
-        App::getOrmManager()->connect()->flush();
+        OrmConnector::getInstance()->persist($groupMessageLike);
+        OrmConnector::getInstance()->flush();
 
         return $groupMessageLike->getGroupMessage()->getId();
     }
@@ -87,17 +88,17 @@ class GroupMessageLikeRepository extends EntityRepository
     public function toJson(int $groupId, int $messageId)
     {
 
-        $groupMessage = App::getOrmManager()->connect()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
+        $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
         $groupLikes = $this->getUsersLikeByMessageId($groupMessage);
 
         $users = [];
         foreach ($groupLikes as $groupLike) {
             /** @var GroupMessageLike $groupMessage */
-            $users[] = App::getOrmManager()->connect()->getRepository(User::class)->toReduceJson($groupLike->getUser());
+            $users[] = OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($groupLike->getUser());
         }
 
         return [
-            "group" => App::getOrmManager()->connect()->getRepository(Group::class)->toJson($groupMessage->getGroupMessage()->getGroup()),
+            "group" => OrmConnector::getInstance()->getRepository(Group::class)->toJson($groupMessage->getGroupMessage()->getGroup()),
             "likes" => $users,
         ];
 

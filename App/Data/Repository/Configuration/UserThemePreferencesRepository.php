@@ -7,6 +7,7 @@ use Descolar\Data\Entities\Configuration\Theme;
 use Descolar\Data\Entities\Configuration\UserThemePreferences;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class UserThemePreferencesRepository extends EntityRepository
@@ -19,11 +20,11 @@ class UserThemePreferencesRepository extends EntityRepository
             throw new EndpointException('User theme preference does not exist', 404);
         }
 
-        return App::getOrmManager()->connect()->getRepository(Theme::class)->toJson($theme);
+        return OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme);
     }
     public function createThemePreference($themeId): ?Theme
     {
-        $user = App::getOrmManager()->connect()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
         if ($user === null) {
             throw new EndpointException('User not found', 404);
         }
@@ -33,7 +34,7 @@ class UserThemePreferencesRepository extends EntityRepository
             throw new EndpointException('User theme preference already exists', 400);
         }
 
-        $theme = App::getOrmManager()->connect()->getRepository(Theme::class)->findOneBy(["id" => $themeId]);
+        $theme = OrmConnector::getInstance()->getRepository(Theme::class)->findOneBy(["id" => $themeId]);
         if ($theme === null) {
             throw new EndpointException('Theme not found', 404);
         }
@@ -55,7 +56,7 @@ class UserThemePreferencesRepository extends EntityRepository
             throw new EndpointException('User theme preference does not exist', 404);
         }
 
-        $theme = App::getOrmManager()->connect()->getRepository(Theme::class)->findOneBy(["id" => $themeId]);
+        $theme = OrmConnector::getInstance()->getRepository(Theme::class)->findOneBy(["id" => $themeId]);
         if ($theme === null) {
             throw new EndpointException('Theme not found', 404);
         }

@@ -9,7 +9,6 @@ use Descolar\Managers\Mail\Interfaces\IMailBuilder;
 use Override;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 
 class MailBuilder implements IMailBuilder
 {

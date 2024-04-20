@@ -13,6 +13,8 @@ use Descolar\Managers\Endpoint\AbstractEndpoint;
 
 
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -25,18 +27,18 @@ class GroupMemberEndpoint extends AbstractEndpoint
     )]
     private function getAllGroupMember(int $id): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build()();
 
         try {
             $userUUID = $_POST['userUUID'];
             $date = $_POST['date'];
 
-            $groupMemberData = App::getOrmManager()->connect()->getRepository(GroupMember::class)->toJson($id);
+            $groupMemberData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($id);
             foreach ($groupMemberData as $key => $value) {
                 $response->addData($key, $value);
             }
 
-            $response = App::getJsonBuilder()->setCode(200);
+            $response = JsonBuilder::build()()->setCode(200);
             $response->getResult();
 
         } catch (EndpointException $e) {
@@ -50,15 +52,15 @@ class GroupMemberEndpoint extends AbstractEndpoint
     #[OA\Post(path: "/group/{id}/member", summary: "addMemberInGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member added")])]
     private function addMemberInGroup(int $id): void
     {
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build()();
 
         try {
 
             $userUUID = $_POST['user_uuid'] ?? "";
             $date = $_POST['date'] ?? "";
 
-            $group = App::getOrmManager()->connect()->getRepository(GroupMember::class)->addMemberInGroup($id, $userUUID, $date);
-            $groupData = App::getOrmManager()->connect()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());
+            $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberInGroup($id, $userUUID, $date);
+            $groupData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
             }
@@ -80,14 +82,14 @@ class GroupMemberEndpoint extends AbstractEndpoint
 
         global $_REQ;
         RequestUtils::cleanBody();
-        $response = App::getJsonBuilder();
+        $response = JsonBuilder::build()();
 
         try {
 
             $userUUID = $_REQ['user_uuid'] ?? App::getUserUuid();
 
-            $group = App::getOrmManager()->connect()->getRepository(GroupMember::class)->removeMemberInGroup($id, $userUUID);
-            $groupData = App::getOrmManager()->connect()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());
+            $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->removeMemberInGroup($id, $userUUID);
+            $groupData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
             }
