@@ -8,6 +8,7 @@ use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\Institution\Formation;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 
@@ -17,51 +18,51 @@ class UserRepository extends EntityRepository
     /**
      * @throws Exception
      */
-    public function createUser(String $username, String $password, String $firstname, String $lastname, String $mail, String $formation_id, String $dateofbirth, string $token): User
+    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $token): User
     {
+        if ($this->findOneBy(['username' => $username]) !== null) {
+            throw new EndpointException("Username already exists", 403);
+        }
+
+        if ($this->findOneBy(['mail' => $mail]) !== null) {
+            throw new EndpointException("Mail already exists", 403);
+        }
+
         try {
             $date = new DateTime($dateofbirth);
         } catch (Exception $e) {
-            throw new EndpointException("Invalid date of birth", 400);
+            throw new EndpointException("Invalid date of birth", 403);
         }
 
         try {
-            $formation = App::getOrmManager()->connect()->getRepository(Formation::class)->find($formation_id);
+            $formation = OrmConnector::getInstance()->getRepository(Formation::class)->find($formation_id);
         } catch (Exception $e) {
-            throw new EndpointException("Formation not found", 400);
+            throw new EndpointException("Formation not found", 404);
         }
 
         $user = new User();
-        try {
-            $user = new User();
-            $user->setUsername($username);
-            $user->setProfilePicturePath(null);
-            $user->setFirstname($firstname);
-            $user->setLastname($lastname);
-            $user->setMail($mail);
-            $user->setFormation($formation);
-            $user->setDate($date);
-            $user->setBiography(null);
-            $user->setIsActive(true);
-            $user->setToken($token);
-            $this->getEntityManager()->persist($user);
-            $this->getEntityManager()->flush();
-        } catch (Exception $e) {
-            throw new EndpointException("User creation failed: " . $e->getMessage(), 400);
-        }
+        $user->setUsername($username);
+        $user->setProfilePicturePath(null);
+        $user->setFirstname($firstname);
+        $user->setLastname($lastname);
+        $user->setMail($mail);
+        $user->setFormation($formation);
+        $user->setDate($date);
+        $user->setBiography(null);
+        $user->setIsActive(true);
+        $user->setToken($token);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
 
-        try {
-            App::getOrmManager()->connect()->getRepository(Login::class)->createLogin($user, $password);
-        } catch (Exception $e) {
-            throw new EndpointException("Login creation failed: " . $e->getMessage(), 400);
-        }
+        OrmConnector::getInstance()->getRepository(Login::class)->createLogin($user, $password);
 
         return $user;
     }
 
-    public function verifyToken(String $token): ?User {
+    public function verifyToken(string $token): ?User
+    {
         $user = $this->findOneBy(['token' => $token]);
-        if($user === null) {
+        if ($user === null) {
             throw new EndpointException("Token not found", 404);
         }
 
@@ -72,7 +73,8 @@ class UserRepository extends EntityRepository
         return $user;
     }
 
-    public function toReduceJson(User $user): array {
+    public function toReduceJson(User $user): array
+    {
         return [
             'uuid' => $user->getUUID(),
             'username' => $user->getUsername(),
@@ -81,7 +83,8 @@ class UserRepository extends EntityRepository
         ];
     }
 
-    public function toJson(User $user): array {
+    public function toJson(User $user): array
+    {
         return [
             'uuid' => $user->getUUID(),
             'username' => $user->getUsername(),
