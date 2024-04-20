@@ -19,7 +19,7 @@ class PostRepository extends EntityRepository
     public function countReposts(Post $post): int
     {
         return $this->createQueryBuilder('p')
-            ->select('COUNT(p)')
+            ->select('COUNT(p.id)')
             ->where('p.repostedPost = :post')
             ->andWhere('p.user != :postUser')
             ->andWhere('p.isActive = 1')
