@@ -17,7 +17,7 @@ class PostLikeRepository extends EntityRepository
     public function countLikes(Post $post): int
     {
         return $this->createQueryBuilder('pl')
-            ->select('COUNT(pl.post_id)')
+            ->select('COUNT(pl.post.id)')
             ->where('pl.post = :post')
             ->andWhere('pl.isActive = 1')
             ->setParameter('post', $post)
