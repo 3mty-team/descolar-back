@@ -10,6 +10,25 @@ use Doctrine\ORM\EntityRepository;
 
 class DeactivationUserRepository extends EntityRepository
 {
+
+    public function checkDeactivation(User $user): bool {
+        $deactivationUser = $this->findOneBy(["user" => $user]);
+        if ($deactivationUser === null) {
+            return false;
+        }
+
+        return $deactivationUser->getIsActive();
+    }
+
+    public function checkFinalDeactivation(User $user): bool {
+        $deactivationUser = $this->findOneBy(["user" => $user]);
+        if ($deactivationUser === null) {
+            return false;
+        }
+
+        return $deactivationUser->getIsFinal();
+    }
+
     public function disable(): int {
         $user = UserRepository::getLoggedUser();
 

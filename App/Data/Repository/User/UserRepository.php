@@ -16,6 +16,20 @@ use Exception;
 class UserRepository extends EntityRepository
 {
 
+    private function isGreatUser(?User $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        if(OrmConnector::getInstance()->getRepository(DeactivationUser::class)->checkDeactivation($user) || OrmConnector::getInstance()->getRepository(DeactivationUser::class)->checkFinalDeactivation($user)) {
+            return false;
+        }
+
+        return $user->isActive();
+    }
+
+
     public static function getLoggedUser(): ?User {
         $UUID = App::getUserUuid();
 
@@ -30,6 +44,10 @@ class UserRepository extends EntityRepository
     {
         $user = $this->find($uuid);
         if ($user === null) {
+            throw new EndpointException("User not found", 404);
+        }
+
+        if(!$this->isGreatUser($user)) {
             throw new EndpointException("User not found", 404);
         }
 
