@@ -178,7 +178,7 @@ class FollowUserEndpoint extends AbstractEndpoint
             )],
         responses: [
             new OA\Response(response: 200, description: 'User followed'),
-            new OA\Response(response: 403, description: 'User not logged'),
+            new OA\Response(response: 403, description: 'User not logged, already followed or following himself'),
             new OA\Response(response: 404, description: 'User not found'),
         ]
     )]
@@ -217,7 +217,7 @@ class FollowUserEndpoint extends AbstractEndpoint
             )],
         responses: [
             new OA\Response(response: 200, description: 'User unfollowed'),
-            new OA\Response(response: 403, description: 'User not logged'),
+            new OA\Response(response: 403, description: 'User not logged, not followed or following himself'),
             new OA\Response(response: 404, description: 'User not found'),
         ]
     )]
