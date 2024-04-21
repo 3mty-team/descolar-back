@@ -14,7 +14,7 @@ use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 
-class BlockEndpoint extends AbstractEndpoint
+class BlockUserEndpoint extends AbstractEndpoint
 {
 
     #[Get('/user/blocks', name: 'blockList', auth: true)]
@@ -39,7 +39,7 @@ class BlockEndpoint extends AbstractEndpoint
                 $users[] = OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($value);
             }
 
-            $response->addData('blockList', $users);
+            $response->addData('users', $users);
             $response->setCode(200);
             $response->getResult();
 
@@ -52,7 +52,7 @@ class BlockEndpoint extends AbstractEndpoint
 
     #[Get('user/block/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'isBlockedBy', auth: true)]
     #[OA\Get(
-        path: '/user/block/{userUUID}',
+        path: '/user/{userUUID}/block',
         summary: 'Check if user is blocked by logged user',
         tags: ['User'],
         parameters: [
@@ -85,9 +85,9 @@ class BlockEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/user/block/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'blockUser', auth: true)]
+    #[Post('/user/:userUUID/block', variables: ["userUUID" => RouteParam::UUID], name: 'blockUser', auth: true)]
     #[OA\Post(
-        path: '/user/block/{userUUID}',
+        path: '/user/{userUUID}/block',
         summary: 'Block user',
         tags: ['User'],
         parameters: [
@@ -129,9 +129,9 @@ class BlockEndpoint extends AbstractEndpoint
 
     }
 
-    #[Delete('/user/block/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'unblockUser', auth: true)]
+    #[Delete('/user/:userUUID/block', variables: ["userUUID" => RouteParam::UUID], name: 'unblockUser', auth: true)]
     #[OA\Delete(
-        path: '/user/block/{userUUID}',
+        path: '/user/{userUUID}/block',
         summary: 'Unblock user',
         tags: ['User'],
         parameters: [
