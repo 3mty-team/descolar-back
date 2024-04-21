@@ -34,7 +34,7 @@ class LoginEndpoint extends AbstractEndpoint
             $password = $_POST['password'] ?? "";
 
             $user = OrmConnector::getInstance()->getRepository(Login::class)->getLoginInformation($username, $password);
-            OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user->getUUID());
+            OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user);
 
             $userData = OrmConnector::getInstance()->getRepository(User::class)->toJson($user);
             foreach ($userData as $key => $value) {
