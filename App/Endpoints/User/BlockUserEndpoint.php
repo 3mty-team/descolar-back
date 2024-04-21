@@ -50,7 +50,7 @@ class BlockUserEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Get('user/block/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'isBlockedBy', auth: true)]
+    #[Get('user/:userUUID/block', variables: ["userUUID" => RouteParam::UUID], name: 'isBlockedBy', auth: true)]
     #[OA\Get(
         path: '/user/{userUUID}/block',
         summary: 'Check if user is blocked by logged user',
