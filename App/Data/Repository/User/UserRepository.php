@@ -5,6 +5,7 @@ namespace Descolar\Data\Repository\User;
 use DateTime;
 use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\Institution\Formation;
+use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
@@ -56,6 +57,18 @@ class UserRepository extends EntityRepository
         OrmConnector::getInstance()->getRepository(Login::class)->createLogin($user, $password);
 
         return $user;
+    }
+
+    public function findByUsername(string $username, string $user_uuid): array
+    {
+        OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->addToSearchHistory($username, $user_uuid);
+
+        return $this->createQueryBuilder('u')
+            ->select('u')
+            ->where("u.isActive = 1")
+            ->andWhere("u.username LIKE '%$username%'")
+            ->getQuery()
+            ->getResult();
     }
 
     public function verifyToken(string $token): ?User

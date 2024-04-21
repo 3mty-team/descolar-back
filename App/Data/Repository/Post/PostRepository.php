@@ -8,6 +8,7 @@ use Descolar\App;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostLike;
+use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
@@ -80,6 +81,18 @@ class PostRepository extends EntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findByContent(string $content, string $user_uuid): array
+    {
+        OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->addToSearchHistory($content, $user_uuid);
+
+        return $this->createQueryBuilder('p')
+            ->select('p')
+            ->where("p.isActive = 1")
+            ->andWhere("p.content LIKE '%$content%'")
+            ->getQuery()
+            ->getResult();
     }
 
     private function buildPost(?Post $retweetedPost, ?string $content, ?string $location, int $date, ?array $medias): Post
