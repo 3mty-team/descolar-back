@@ -9,6 +9,7 @@ use Descolar\Managers\App\Traits\{EnvAdapter,
     ErrorHandlerAdapter,
     JsonBuilderAdapter,
     MailAdapter,
+    MediaAdapter,
     OrmAdapter,
     RouterAdapter,
     EventAdapter};
@@ -28,6 +29,7 @@ class App
     use EnvAdapter;
     use OrmAdapter;
     use MailAdapter;
+    use MediaAdapter;
 
     public static function isDev(): bool
     {
