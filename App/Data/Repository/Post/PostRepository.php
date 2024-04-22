@@ -45,7 +45,7 @@ class PostRepository extends EntityRepository
 
         if ($timestamp) {
             $date = new DateTime("@$timestamp", new DateTimeZone('Europe/Paris'));
-            $qb->andWhere('p.date > :timestamp')
+            $qb->andWhere('p.date < :timestamp')
                 ->setParameter('timestamp', $date);
         }
 
@@ -75,7 +75,7 @@ class PostRepository extends EntityRepository
 
         if ($timestamp) {
             $date = new DateTime("@$timestamp");
-            $qb->andWhere('p.date > :timestamp')
+            $qb->andWhere('p.date < :timestamp')
                 ->setParameter('timestamp', $date);
 
         }
