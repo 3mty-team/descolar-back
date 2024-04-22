@@ -239,6 +239,9 @@ class PostRepository extends EntityRepository
                 'content' => $post->getContent(),
                 'date' => $post->getDate(),
                 'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
+                'likes' => OrmConnector::getInstance()->getRepository(PostLike::class)->countLikes($post),
+                'reposts' => $this->countReposts($post),
+                'comments' => 0, //NOT IMPLEMENTED
                 'isActive' => $post->isActive(),
             ];
         }

@@ -23,10 +23,10 @@ class DeactivationUser
     private ?DateTimeInterface $date;
 
     #[ORM\Column(name: "userdeactivation_isfinal", type: "boolean", options: ["default" => 0])]
-    private bool $isFinal;
+    private bool $isFinal = false;
 
     #[ORM\Column(name: "userdeactivation_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    private bool $isActive = true;
 
     public function getId(): int
     {
