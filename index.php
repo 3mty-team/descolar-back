@@ -12,6 +12,7 @@ use Descolar\Adapters\Error\ErrorManager;
 use Descolar\Adapters\Event\EventReader;
 use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
 use Descolar\Adapters\Mail\MailBuilder;
+use Descolar\Adapters\Media\MediaAdapter;
 use Descolar\Adapters\Orm\OrmManager;
 use Descolar\Adapters\Router\RouterRetriever;
 use Descolar\App;
@@ -37,6 +38,7 @@ App::useRouter(RouterRetriever::class);
 App::useEvent(EventReader::class);
 App::useJsonBuilder(JsonBuilderManager::class);
 App::useMail(MailBuilder::class);
+App::useMedia(MediaAdapter::class);
 
 /**
  * Run the application
