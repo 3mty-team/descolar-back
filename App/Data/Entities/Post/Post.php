@@ -114,7 +114,7 @@ class Post
         $this->isPinned = $isPinned;
     }
 
-    public function getRepostedPost(): Post
+    public function getRepostedPost(): ?Post
     {
         return $this->repostedPost;
     }
