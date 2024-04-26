@@ -29,7 +29,7 @@ class UserReport
     private ?ReportCategory $reportCategory = null;
 
     #[ORM\Column(name: "userreport_comment", type: "string", length: 100, nullable: true)]
-    private ?string $comment = "";
+    private ?string $comment = null;
 
     #[ORM\Column(name: "userreport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTimeInterface $date;
