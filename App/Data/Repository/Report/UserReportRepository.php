@@ -16,17 +16,7 @@ class UserReportRepository extends EntityRepository
 {
     public function findAll(): array
     {
-        try{
-            $this->createQueryBuilder('ur')
-                ->select('ur')
-                ->where('ur.isActive = 1')
-                ->getQuery()
-                ->getResult();
-        }catch (\Exception $e){
-            throw new EndpointException($e);
-        }
-
-        return $this->createQueryBuilder('ur')
+	 return $this->createQueryBuilder('ur')
             ->select('ur')
             ->where('ur.isActive = 1')
             ->getQuery()
