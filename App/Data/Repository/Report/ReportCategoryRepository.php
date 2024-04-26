@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityRepository;
 
 class ReportCategoryRepository extends EntityRepository
 {
-    public function findById(int $id): ?ReportCategory
+    public function findById(int $id): ReportCategory
     {
         $reportCategory = $this->find($id);
 
