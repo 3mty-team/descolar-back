@@ -31,10 +31,10 @@ class MessageReport
     private ReportCategory $reportCategory;
 
     #[ORM\Column(name: "messagereport_comment", type: "string", length: 100, nullable: true)]
-    private string $comment;
+    private ?string $comment = null;
 
     #[ORM\Column(name: "messagereport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
-    private ?DateTimeInterface $date;
+    private DateTimeInterface $date;
 
     #[ORM\Column(name: "messagereport_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
@@ -89,12 +89,12 @@ class MessageReport
         $this->comment = $comment;
     }
 
-    public function getDate(): ?DateTimeInterface
+    public function getDate(): DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate(?DateTimeInterface $date): void
+    public function setDate(DateTimeInterface $date): void
     {
         $this->date = $date;
     }

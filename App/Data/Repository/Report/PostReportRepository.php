@@ -63,7 +63,7 @@ class PostReportRepository extends EntityRepository
         $postReport = $this->find($postReportId);
 
         if ($postReport === null) {
-            throw new EndpointException('User report not found', 404);
+            throw new EndpointException('Post report not found', 404);
         }
 
         $postReport->setIsActive(false);
