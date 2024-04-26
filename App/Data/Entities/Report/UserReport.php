@@ -97,7 +97,7 @@ class UserReport
         $this->date = $date;
     }
 
-    public function isActive(): ?bool
+    public function isActive(): bool
     {
         return $this->isActive;
     }
