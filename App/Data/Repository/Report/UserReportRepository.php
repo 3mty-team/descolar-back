@@ -16,6 +16,16 @@ class UserReportRepository extends EntityRepository
 {
     public function findAll(): array
     {
+        try{
+            $this->createQueryBuilder('ur')
+                ->select('ur')
+                ->where('ur.isActive = 1')
+                ->getQuery()
+                ->getResult();
+        }catch (\Exception $e){
+            throw new EndpointException($e);
+        }
+
         return $this->createQueryBuilder('ur')
             ->select('ur')
             ->where('ur.isActive = 1')
@@ -44,10 +54,7 @@ class UserReportRepository extends EntityRepository
             throw new EndpointException('Reported user or reporter user not found', 404);
         }
 
-        $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findOneBy(['id' => $reportCategoryId]);
-        if ($reportCategory === null) {
-            throw new EndpointException('Report category not found', 404);
-        }
+        $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findById($reportCategoryId);
 
         $userReport = new UserReport();
         $userReport->setReported($reported);
@@ -84,6 +91,7 @@ class UserReportRepository extends EntityRepository
         return [
             'id' => $userReport->getId(),
             'userReported' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($userReport->getReported()),
+            'userReporter' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($userReport->getReporter()),
             'reportCategory' => $userReport->getReportCategory()->getName(),
             'comment' => $userReport->getComment(),
             'date' => $userReport->getDate(),

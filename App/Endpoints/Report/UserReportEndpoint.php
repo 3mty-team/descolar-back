@@ -24,8 +24,15 @@ class UserReportEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "All user reports retrieved")])]
     private function getAllUserReports(): void
     {
-        /** @var UserReport[] $userReports */
-        $userReports = OrmConnector::getInstance()->getRepository(UserReport::class)->findAll();
+        $response = JsonBuilder::build();
+
+        try {
+            $userReports = OrmConnector::getInstance()->getRepository(UserReport::class)->findAll();
+        } catch (EndpointException $e) {
+            $response->setCode($e->getCode());
+            $response->addData('message', $e->getMessage());
+            $response->getResult();
+        }
 
         $data = [];
         foreach ($userReports as $report) {
@@ -34,7 +41,6 @@ class UserReportEndpoint extends AbstractEndpoint
 
         $response = JsonBuilder::build()->setCode(200);
         $response->addData('user_reports', $data);
-
         $response->getResult();
     }
 
