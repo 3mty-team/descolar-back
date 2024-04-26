@@ -121,12 +121,43 @@ class UserEndpoint extends AbstractEndpoint
             new OA\Response(response: 403, description: "User not logged")
         ]
     )]
-    private function disableUser() {
+    private function disableUser(): void
+    {
 
         $response = JsonBuilder::build();
 
         try {
             $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disable();
+
+            $response->addData('id', $userId);
+            $response->setCode(200);
+            $response->getResult();
+
+        } catch (EndpointException $e) {
+            $response->setCode($e->getCode());
+            $response->addData('message', $e->getMessage());
+            $response->getResult();
+        }
+
+    }
+
+    #[Put('user/disableForever', name: 'disableUserForever', auth: true)]
+    #[OA\Put(
+        path: "/user/disableForever",
+        summary: "Disable user forever",
+        tags: ["User"],
+        responses: [
+            new OA\Response(response: 200, description: "User disabled"),
+            new OA\Response(response: 403, description: "User not logged")
+        ]
+    )]
+    private function disableUserForever(): void
+    {
+
+        $response = JsonBuilder::build();
+
+        try {
+            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever();
 
             $response->addData('id', $userId);
             $response->setCode(200);
@@ -150,7 +181,8 @@ class UserEndpoint extends AbstractEndpoint
             new OA\Response(response: 403, description: "User not logged"),
         ]
     )]
-    private function deleteUser() {
+    private function deleteUser(): void
+    {
 
         $response = JsonBuilder::build();
 

@@ -48,7 +48,7 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->getId();
     }
 
-    public function disableForever(int $userUUID): int
+    public function disableForever(): int
     {
         $user = UserRepository::getLoggedUser();
 
