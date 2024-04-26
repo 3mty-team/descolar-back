@@ -28,20 +28,20 @@ class UserReportEndpoint extends AbstractEndpoint
 
         try {
             $userReports = OrmConnector::getInstance()->getRepository(UserReport::class)->findAll();
+        
+        	$data = [];
+            foreach ($userReports as $report) {
+                $data[] = OrmConnector::getInstance()->getRepository(UserReport::class)->toJson($report);
+            }
+    
+            $response->setCode(200);
+            $response->addData('user_reports', $data);
+            $response->getResult();
         } catch (EndpointException $e) {
             $response->setCode($e->getCode());
             $response->addData('message', $e->getMessage());
             $response->getResult();
         }
-
-        $data = [];
-        foreach ($userReports as $report) {
-            $data[] = OrmConnector::getInstance()->getRepository(UserReport::class)->toJson($report);
-        }
-
-        $response = JsonBuilder::build()->setCode(200);
-        $response->addData('user_reports', $data);
-        $response->getResult();
     }
 
     #[Post('/report/user/create', name: 'createUserReport', auth: true)]
