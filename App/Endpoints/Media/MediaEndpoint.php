@@ -86,10 +86,10 @@ class MediaEndpoint extends AbstractEndpoint
         $response = JsonBuilder::build();
 
         try {
-            $media = OrmConnector::getInstance()->getRepository(Media::class)->delete($mediaId);
+            $mediaId = OrmConnector::getInstance()->getRepository(Media::class)->delete($mediaId);
 
             $response->setCode(200);
-            $response->addData('id', $media->getId());
+            $response->addData('id', $mediaId);
             $response->getResult();
         } catch (EndpointException $e) {
             $response->setCode($e->getCode());
