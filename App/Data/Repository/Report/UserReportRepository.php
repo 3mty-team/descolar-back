@@ -76,7 +76,7 @@ class UserReportRepository extends EntityRepository
             throw new EndpointException('User report not found', 404);
         }
 
-        $userReport->setIsActive(0);
+        $userReport->setIsActive(false);
 
         OrmConnector::getInstance()->flush();
 
