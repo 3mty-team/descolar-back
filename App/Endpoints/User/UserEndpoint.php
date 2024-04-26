@@ -141,9 +141,9 @@ class UserEndpoint extends AbstractEndpoint
 
     }
 
-    #[Put('user/disableForever', name: 'disableUserForever', auth: true)]
+    #[Put('user/disable/forever', name: 'disableUserForever', auth: true)]
     #[OA\Put(
-        path: "/user/disableForever",
+        path: "/user/disable/forever",
         summary: "Disable user forever",
         tags: ["User"],
         responses: [
