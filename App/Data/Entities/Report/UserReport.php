@@ -67,7 +67,7 @@ class UserReport
         $this->reporter = $reporter;
     }
 
-    public function getReportCategory(): ?ReportCategory
+    public function getReportCategory(): ReportCategory
     {
         return $this->reportCategory;
     }
