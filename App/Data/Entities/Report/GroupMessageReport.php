@@ -30,10 +30,10 @@ class GroupMessageReport
     private ReportCategory $reportCategory;
 
     #[ORM\Column(name: "groupmessagereport_comment", type: "string", length: 100, nullable: true)]
-    private string $comment;
+    private ?string $comment = null;
 
     #[ORM\Column(name: "groupmessagereport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
-    private ?DateTimeInterface $date;
+    private DateTimeInterface $date;
 
     #[ORM\Column(name: "groupmessagereport_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
@@ -78,7 +78,7 @@ class GroupMessageReport
         $this->reportCategory = $reportCategory;
     }
 
-    public function getComment(): string
+    public function getComment(): ?string
     {
         return $this->comment;
     }
@@ -93,7 +93,7 @@ class GroupMessageReport
         return $this->date;
     }
 
-    public function setDate(?DateTimeInterface $date): void
+    public function setDate(DateTimeInterface $date): void
     {
         $this->date = $date;
     }

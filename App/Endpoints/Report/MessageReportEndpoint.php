@@ -7,7 +7,6 @@ use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Report\MessageReport;
-use Descolar\Data\Entities\Report\PostReport;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
