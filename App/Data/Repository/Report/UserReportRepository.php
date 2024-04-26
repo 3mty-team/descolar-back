@@ -48,11 +48,8 @@ class UserReportRepository extends EntityRepository
             throw new EndpointException('User not logged', 403);
         }
 
-        $reported = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $reportedUUID]);
-        $reporter = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $reporterUUID]);
-        if ($reported === null || $reporter === null) {
-            throw new EndpointException('Reported user or reporter user not found', 404);
-        }
+        $reported = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($reportedUUID);
+        $reporter = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($reporterUUID);
 
         $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findById($reportCategoryId);
 
