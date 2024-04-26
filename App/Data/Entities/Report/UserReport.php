@@ -35,7 +35,7 @@ class UserReport
     private ?DateTimeInterface $date;
 
     #[ORM\Column(name: "userreport_isactive", type: "boolean", options: ["default" => 1])]
-    private ?bool $isActive = true;
+    private bool $isActive = true;
 
     public function getId(): int
     {
