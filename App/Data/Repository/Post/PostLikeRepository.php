@@ -88,7 +88,7 @@ class PostLikeRepository extends EntityRepository
         $postLike = new PostLike();
         $postLike->setPost($post);
         $postLike->setUser($user);
-        $postLike->setIsActive(1);
+        $postLike->setIsActive(true);
         $postLike->setDate(new DateTime());
 
         OrmConnector::getInstance()->persist($postLike);
@@ -106,7 +106,7 @@ class PostLikeRepository extends EntityRepository
             throw new EndpointException('Post not liked', 400);
         }
 
-        $postLike->setIsActive(0);
+        $postLike->setIsActive(false);
 
         OrmConnector::getInstance()->persist($postLike);
         OrmConnector::getInstance()->flush();
