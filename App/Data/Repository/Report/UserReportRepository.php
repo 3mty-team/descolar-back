@@ -36,7 +36,7 @@ class UserReportRepository extends EntityRepository
     /**
      * @throws \Exception
      */
-    public function create(string $reportedUUID, int $reportCategoryId, string $comment, int $date): UserReport
+    public function create(string $reportedUUID, int $reportCategoryId, ?string $comment, int $date): UserReport
     {
 
         if (empty($reportedUUID) || empty($reportCategoryId)) {
