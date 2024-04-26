@@ -48,6 +48,26 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->getId();
     }
 
+    public function disableForever(int $userUUID): int
+    {
+        $user = UserRepository::getLoggedUser();
+
+        if ($user === null) {
+            throw new EndpointException("User not logged", 403);
+        }
+
+        $deactivationUser = new DeactivationUser();
+        $deactivationUser->setUser($user);
+        $deactivationUser->setDate(new \DateTime("now", new DateTimeZone('Europe/Paris')));
+        $deactivationUser->setIsFinal(true);
+        $deactivationUser->setIsActive(true);
+
+        $this->getEntityManager()->persist($deactivationUser);
+        $this->getEntityManager()->flush();
+
+        return $deactivationUser->getId();
+    }
+
     public function disableDeactivation(User $user): void {
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {

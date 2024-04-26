@@ -18,24 +18,24 @@ class UserReport
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_reported_id", referencedColumnName: "user_id")]
-    private User $reported; # A, the person being reported
+    private ?User $reported = null; # A, the person being reported
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "user_reporting_id", referencedColumnName: "user_id")]
-    private User $reporter; # B, the person reporting A
+    #[ORM\JoinColumn(name: "user_reporter_id", referencedColumnName: "user_id")]
+    private ?User $reporter = null; # B, the person reporting A
 
     #[ORM\ManyToOne(targetEntity: ReportCategory::class)]
     #[ORM\JoinColumn(name: "reportcategory_id", referencedColumnName: "reportcategory_id")]
-    private ReportCategory $reportCategory;
+    private ?ReportCategory $reportCategory = null;
 
     #[ORM\Column(name: "userreport_comment", type: "string", length: 100, nullable: true)]
-    private string $comment;
+    private ?string $comment = "";
 
     #[ORM\Column(name: "userreport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTimeInterface $date;
 
     #[ORM\Column(name: "userreport_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    private ?bool $isActive = true;
 
     public function getId(): int
     {
@@ -47,7 +47,7 @@ class UserReport
         $this->id = $id;
     }
 
-    public function getReported(): User
+    public function getReported(): ?User
     {
         return $this->reported;
     }
@@ -57,7 +57,7 @@ class UserReport
         $this->reported = $reported;
     }
 
-    public function getReporter(): User
+    public function getReporter(): ?User
     {
         return $this->reporter;
     }
@@ -67,7 +67,7 @@ class UserReport
         $this->reporter = $reporter;
     }
 
-    public function getReportCategory(): ReportCategory
+    public function getReportCategory(): ?ReportCategory
     {
         return $this->reportCategory;
     }
@@ -77,7 +77,7 @@ class UserReport
         $this->reportCategory = $reportCategory;
     }
 
-    public function getComment(): string
+    public function getComment(): ?string
     {
         return $this->comment;
     }
@@ -97,7 +97,7 @@ class UserReport
         $this->date = $date;
     }
 
-    public function isActive(): bool
+    public function isActive(): ?bool
     {
         return $this->isActive;
     }
