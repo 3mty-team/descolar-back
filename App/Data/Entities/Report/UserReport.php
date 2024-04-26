@@ -18,15 +18,15 @@ class UserReport
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_reported_id", referencedColumnName: "user_id")]
-    private ?User $reported = null; # A, the person being reported
+    private User $reported; # A, the person being reported
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_reporter_id", referencedColumnName: "user_id")]
-    private ?User $reporter = null; # B, the person reporting A
+    private User $reporter; # B, the person reporting A
 
     #[ORM\ManyToOne(targetEntity: ReportCategory::class)]
     #[ORM\JoinColumn(name: "reportcategory_id", referencedColumnName: "reportcategory_id")]
-    private ?ReportCategory $reportCategory = null;
+    private ReportCategory $reportCategory;
 
     #[ORM\Column(name: "userreport_comment", type: "string", length: 100, nullable: true)]
     private ?string $comment = null;
