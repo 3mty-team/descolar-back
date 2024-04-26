@@ -57,7 +57,7 @@ class UserReport
         $this->reported = $reported;
     }
 
-    public function getReporter(): ?User
+    public function getReporter(): User
     {
         return $this->reporter;
     }
