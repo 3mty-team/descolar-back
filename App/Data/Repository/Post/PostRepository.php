@@ -53,7 +53,7 @@ class PostRepository extends EntityRepository
 
     }
 
-    public function findById(int $id): Post|int
+    public function findById(int $id): Post
     {
         $post = $this->find($id);
 
