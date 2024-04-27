@@ -53,6 +53,17 @@ class PostRepository extends EntityRepository
 
     }
 
+    public function findById(int $id): Post
+    {
+        $post = $this->find($id);
+
+        if ($post === null) {
+            throw new EndpointException("Post not found", 404);
+        }
+
+        return $post;
+    }
+
     public function findAllInRangeByUser(string $userUUID, int $range, ?int $timestamp): array
     {
 
