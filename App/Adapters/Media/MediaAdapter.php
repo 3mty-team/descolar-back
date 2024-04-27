@@ -10,6 +10,8 @@ use Descolar\Managers\Media\Interfaces\IMedia;
 use Descolar\Managers\Media\Interfaces\IMediaManager;
 use Descolar\Managers\Media\Interfaces\IMediaType;
 
+use Descolar\Data\Entities\Media\Media as MediaEntity;
+
 class MediaAdapter implements IMediaManager
 {
 
@@ -101,6 +103,21 @@ class MediaAdapter implements IMediaManager
         }
     }
 
+    #[\Override] public function disableMedia(IMedia $media): void
+    {
+        if(!file_exists($media->getUrl())) {
+            throw new UploadMediaException("File not found: {$media->getName()}");
+        }
+
+        $extension = pathinfo($media->getUrl(), PATHINFO_EXTENSION);
+
+        $result = rename($media->getUrl(), $this->getMediaPath() . $media->getName() . ".{$extension}_disabled");
+
+        if(!$result) {
+            throw new UploadMediaException("Error on file disable: {$media->getName()}");
+        }
+    }
+
     #[\Override] public function getMedias(): array
     {
         $medias = [];
@@ -121,5 +138,18 @@ class MediaAdapter implements IMediaManager
         }
 
         return $medias;
+    }
+
+    #[\Override] public function generateMedia(MediaEntity $media): IMedia
+    {
+        $mediaExtensionType = match ($media->getMediaType()->value) {
+            'image' => new Image(),
+            'video' => new Video(),
+            default => throw new ExtensionNotSupportedException("Extension not supported: {$media->getMediaType()}")
+        };
+
+        $mediaName = pathinfo($media->getPath(), PATHINFO_FILENAME);
+
+        return new Media($mediaName, $mediaExtensionType, $media->getPath(), [0, 0], 0);
     }
 }
