@@ -9,6 +9,7 @@ use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Report\PostReport;
 use Descolar\Data\Entities\Report\ReportCategory;
 use Descolar\Data\Entities\User\User;
+use Descolar\Data\Repository\User\UserRepository;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
@@ -34,14 +35,13 @@ class PostReportRepository extends EntityRepository
             throw new EndpointException('Missing parameters "postId" or "reportCategory"', 400);
         }
 
-        $post = OrmConnector::getInstance()->getRepository(Post::class)->find($postId);
+        $post = OrmConnector::getInstance()->getRepository(Post::class)->findById($postId);
 
-        $reporterUUID = App::getUserUuid();
-        if ($reporterUUID === null) {
+        $reporter = UserRepository::getLoggedUser();
+        if ($reporter === null) {
             throw new EndpointException('User not logged', 403);
         }
 
-        $reporter = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($reporterUUID);
         $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findById($reportCategoryId);
 
         $postReport = new PostReport();

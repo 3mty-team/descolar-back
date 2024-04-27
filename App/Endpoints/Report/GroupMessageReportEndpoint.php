@@ -58,8 +58,8 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
         $response = JsonBuilder::build();
 
         try {
-            $groupMessageId = $_POST['group_message_id'];
-            $reportCategoryId = $_POST['report_category_id'];
+            $groupMessageId = $_POST['group_message_id'] ?? 0;
+            $reportCategoryId = $_POST['report_category_id'] ?? 0;
             $comment = $_POST['comment'] ?? '';
             $date = $_POST['date'];
 
