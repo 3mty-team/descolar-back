@@ -36,9 +36,6 @@ class MessageReportRepository extends EntityRepository
         }
 
         $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->findById($messageId);
-        if ($message === null){
-            throw new EndpointException('Message not found', 400);
-        }
 
         $reporter = UserRepository::getLoggedUser();
         if ($reporter === null) {
