@@ -9,6 +9,7 @@ use Descolar\Data\Entities\Group\GroupMessage;
 use Descolar\Data\Entities\Report\GroupMessageReport;
 use Descolar\Data\Entities\Report\ReportCategory;
 use Descolar\Data\Entities\User\User;
+use Descolar\Data\Repository\User\UserRepository;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
@@ -39,12 +40,11 @@ class GroupMessageReportRepository extends EntityRepository
             throw new EndpointException('Message not found', 400);
         }
 
-        $reporterUUID = App::getUserUuid();
-        if ($reporterUUID === null) {
+        $reporter = UserRepository::getLoggedUser();
+        if ($reporter === null) {
             throw new EndpointException('User not logged', 403);
         }
 
-        $reporter = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($reporterUUID);
         $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findById($reportCategoryId);
 
         $groupMessageReport = new GroupMessageReport();
