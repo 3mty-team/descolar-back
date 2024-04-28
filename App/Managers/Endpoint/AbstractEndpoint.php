@@ -12,7 +12,7 @@ abstract class AbstractEndpoint implements IEndpoint
 {
 
     /**
-     * @var array<string, AbstractEndpoint> The instances of the endpoints, can be any AbstractEndpoint child.
+     * @var array<string, AbstractEndpoint> The instances of the endpoints can be any AbstractEndpoint child.
      */
     protected static array $_instances = [];
 
