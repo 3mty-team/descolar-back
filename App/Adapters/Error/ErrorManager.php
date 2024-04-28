@@ -4,6 +4,7 @@ namespace Descolar\Adapters\Error;
 
 use Descolar\App;
 use Descolar\Managers\Error\Interfaces\IErrorManager;
+use Error;
 use Exception;
 use Override;
 use Whoops\Exception\Inspector;
@@ -36,7 +37,7 @@ class ErrorManager implements IErrorManager
 
         $whoops->pushHandler($handler);
 
-        $whoops->pushHandler(fn(Exception $exception, Inspector $inspector, Run $run) => $run->sendHttpCode($exception->getCode()));
+        $whoops->pushHandler(fn(Error $exception, Inspector $inspector, Run $run) => $run->sendHttpCode($exception->getCode()));
 
         $whoops->register();
     }

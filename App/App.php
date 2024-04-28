@@ -52,6 +52,17 @@ class App
     }
 
     /**
+     * Set the user uuid
+     *
+     * @param string $userUuid The user uuid
+     * @return void
+     */
+    public static function setUserUuid(String $userUuid): void
+    {
+        $_SESSION['userUuid'] = $userUuid;
+    }
+
+    /**
      * Get the user uuid
      *
      * @return string|null The user uuid
