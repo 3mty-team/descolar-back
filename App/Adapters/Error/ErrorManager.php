@@ -2,31 +2,29 @@
 
 namespace Descolar\Adapters\Error;
 
-use Descolar\Adapters\Error\Handlers\CustomHandler;
 use Descolar\App;
 use Descolar\Managers\Error\Interfaces\IErrorManager;
 use Exception;
 use Override;
+use Whoops\Exception\Inspector;
+use Whoops\Handler\Handler;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
-use Whoops\Inspector\InspectorFactory;
 use Whoops\Run;
 
 class ErrorManager implements IErrorManager
 {
 
-    private function selectHandler(): CustomHandler
+    private function selectHandler(): Handler
     {
-        $inspector = (new InspectorFactory())->create(new Exception());
         if (App::getEnvManager()->get('env') === 'DEV') {
-            $handler = new CustomHandler(new PrettyPageHandler);
-            $handler->getHandler()->setPageTitle("Descolar Error");
-            $handler->getHandler()->setEditor("idea");
+            $handler = new PrettyPageHandler;
+            $handler->setPageTitle("Descolar Error");
+            $handler->setEditor("idea");
         } else {
-            $handler = new CustomHandler(new JsonResponseHandler);
+            $handler = new JsonResponseHandler;
         }
 
-        $handler->setInspector($inspector);
         return $handler;
     }
 
@@ -36,11 +34,11 @@ class ErrorManager implements IErrorManager
 
         $handler = $this->selectHandler();
 
-        $whoops->pushHandler($handler->getHandler());
+        $whoops->pushHandler($handler);
 
-        $whoops->sendHttpCode($handler->getException()->getCode());
+        $whoops->pushHandler(fn(Exception $exception, Inspector $inspector, Run $run) => $run->sendHttpCode($exception->getCode()));
+
         $whoops->register();
-
     }
 
 }
