@@ -6,6 +6,7 @@ use DateTimeZone;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class DeactivationUserRepository extends EntityRepository
@@ -29,17 +30,13 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->getIsFinal();
     }
 
-    public function disable(): int {
-        $user = UserRepository::getLoggedUser();
-
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
+    private function manageDisable(bool $forever = false) {
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $deactivationUser = new DeactivationUser();
         $deactivationUser->setUser($user);
         $deactivationUser->setDate(new \DateTime("now", new DateTimeZone('Europe/Paris')));
-        $deactivationUser->setIsFinal(false);
+        $deactivationUser->setIsFinal($forever);
         $deactivationUser->setIsActive(true);
 
         $this->getEntityManager()->persist($deactivationUser);
@@ -48,24 +45,13 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->getId();
     }
 
+    public function disable(): int {
+        return $this->manageDisable();
+    }
+
     public function disableForever(): int
     {
-        $user = UserRepository::getLoggedUser();
-
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
-
-        $deactivationUser = new DeactivationUser();
-        $deactivationUser->setUser($user);
-        $deactivationUser->setDate(new \DateTime("now", new DateTimeZone('Europe/Paris')));
-        $deactivationUser->setIsFinal(true);
-        $deactivationUser->setIsActive(true);
-
-        $this->getEntityManager()->persist($deactivationUser);
-        $this->getEntityManager()->flush();
-
-        return $deactivationUser->getId();
+        return $this->manageDisable(true);
     }
 
     public function disableDeactivation(User $user): void {

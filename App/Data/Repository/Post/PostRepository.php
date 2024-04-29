@@ -78,9 +78,9 @@ class PostRepository extends EntityRepository
 
         $qb = $this->createQueryBuilder('p')
             ->select('p')
-            ->where('p.user = :userUUID')
+            ->where('p.user = :user')
             ->andWhere('p.isActive = 1')
-            ->setParameter('userUUID', $user->getUUID())
+            ->setParameter('user', $user)
             ->orderBy('p.date', 'DESC')
             ->setMaxResults($range);
 
@@ -113,9 +113,6 @@ class PostRepository extends EntityRepository
         }
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
 
         $medias ??= [];
         foreach ($medias as $media) {
@@ -181,9 +178,6 @@ class PostRepository extends EntityRepository
         }
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
 
         /**
          * @var Post $post

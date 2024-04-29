@@ -53,16 +53,9 @@ class FollowUserRepository extends EntityRepository
         $user = null;
 
         if($userUUID === null) {
-            $user = UserRepository::getLoggedUser();
-            if ($user === null) {
-                throw new EndpointException("User not logged", 403);
-            }
+            $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         } else {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-        }
-
-        if($user === null) {
-            throw new EndpointException("User not found", 404);
         }
 
         return $user;
@@ -116,15 +109,9 @@ class FollowUserRepository extends EntityRepository
 
     public function followUser(string $userUUID): FollowUser
     {
-        $user = UserRepository::getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $userToFollow = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-        if ($userToFollow === null) {
-            throw new EndpointException("User not found", 404);
-        }
 
         if ($user->getUUID() === $userToFollow->getUUID()) {
             throw new EndpointException("User cannot follow itself", 403);
@@ -139,15 +126,9 @@ class FollowUserRepository extends EntityRepository
 
     public function unfollowUser(string $userUUID): FollowUser
     {
-        $user = UserRepository::getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $userToUnfollow = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-        if ($userToUnfollow === null) {
-            throw new EndpointException("User not found", 404);
-        }
 
         if ($user->getUUID() === $userToUnfollow->getUUID()) {
             throw new EndpointException("User cannot unfollow itself", 403);

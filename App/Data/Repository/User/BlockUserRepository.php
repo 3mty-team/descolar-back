@@ -89,42 +89,25 @@ class BlockUserRepository extends EntityRepository
      */
     public function getBlockList(): array
     {
-        $user = UserRepository::getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         return $this->getBlocking($user);
     }
 
     public function checkBlockedStatus(string $userUUID): bool
     {
-        $user = UserRepository::getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $userToCheck = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-
-        if ($userToCheck === null) {
-            throw new EndpointException("User not found", 404);
-        }
 
         return $this->isBlocked($user, $userToCheck);
     }
 
     public function blockUser(string $userUUID): BlockUser
     {
-        $user = UserRepository::getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $userToBlock = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-
-        if ($userToBlock === null) {
-            throw new EndpointException("User not found", 404);
-        }
 
         if ($user->getUUID() === $userToBlock->getUUID()) {
             throw new EndpointException("User cannot block itself", 403);
@@ -139,15 +122,9 @@ class BlockUserRepository extends EntityRepository
 
     public function unBlockUser(string $userUUID): BlockUser
     {
-        $user = UserRepository::getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $userToUnBlock = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-        if ($userToUnBlock === null) {
-            throw new EndpointException("User not found", 404);
-        }
 
         if ($user->getUUID() === $userToUnBlock->getUUID()) {
             throw new EndpointException("User cannot unblock itself", 403);

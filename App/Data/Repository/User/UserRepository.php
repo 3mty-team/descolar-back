@@ -31,17 +31,22 @@ class UserRepository extends EntityRepository
     }
 
 
-    public static function getLoggedUser(): ?User {
+    public static function getLoggedUser(): User {
         $UUID = App::getUserUuid();
 
         if ($UUID === null) {
-            return null;
+            throw new EndpointException("User not logged", 403);
         }
 
-        return OrmConnector::getInstance()->getRepository(User::class)->find($UUID);
+        $user =  OrmConnector::getInstance()->getRepository(User::class)->find($UUID);
+        if($user === null) {
+            throw new EndpointException("User not found", 404);
+        }
+
+        return $user;
     }
 
-    public function findByUuid(string $uuid): ?User
+    public function findByUuid(string $uuid): User
     {
         $user = $this->find($uuid);
         if ($user === null) {
@@ -127,9 +132,6 @@ class UserRepository extends EntityRepository
         }
 
         $user = self::getLoggedUser();
-        if($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
 
         if($username !== "" && $username !== $user->getUsername()) {
             if($this->findOneBy(['username' => $username]) !== null) {
@@ -169,9 +171,6 @@ class UserRepository extends EntityRepository
     public function deleteUser(): string
     {
         $user = self::getLoggedUser();
-        if($user === null) {
-            throw new EndpointException("User not logged", 403);
-        }
 
         $deactivationUser = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->findOneBy(['user' => $user]);
         if($deactivationUser !== null) {

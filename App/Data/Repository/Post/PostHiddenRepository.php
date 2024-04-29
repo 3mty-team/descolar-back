@@ -16,9 +16,6 @@ class PostHiddenRepository extends EntityRepository
     public function getAllHiddenPosts(): array
     {
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
 
         $posts = $this->createQueryBuilder('ph')
             ->select('ph')
@@ -45,9 +42,6 @@ class PostHiddenRepository extends EntityRepository
         $post = OrmConnector::getInstance()->getRepository(Post::class)->findById($postId);
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
-        if ($user === null) {
-            throw new EndpointException('User not found', 404);
-        }
 
         $postHidden = $this->findOneBy(['post' => $post, 'user' => $user]);
 
