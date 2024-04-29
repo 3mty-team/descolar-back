@@ -2,8 +2,89 @@
 
 namespace Descolar\Data\Repository\Report;
 
+use DateTime;
+use DateTimeZone;
+use Descolar\App;
+use Descolar\Data\Entities\Report\MessageReport;
+use Descolar\Data\Entities\Report\ReportCategory;
+use Descolar\Data\Entities\User\MessageUser;
+use Descolar\Data\Entities\User\User;
+use Descolar\Data\Repository\User\UserRepository;
+use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class MessageReportRepository extends EntityRepository
 {
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('mr')
+            ->select('mr')
+            ->where('mr.isActive = 1')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function create(int $messageId, int $reportCategoryId, ?string $comment, int $date): MessageReport
+    {
+
+        if (empty($messageId) || empty($reportCategoryId)) {
+            throw new EndpointException('Missing parameters "messageId" or "reportCategory"', 400);
+        }
+
+        $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->findById($messageId);
+
+        $reporter = UserRepository::getLoggedUser();
+        if ($reporter === null) {
+            throw new EndpointException('User not logged', 403);
+        }
+
+        $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findById($reportCategoryId);
+
+        $messageReport = new messageReport();
+        $messageReport->setMessage($message);
+        $messageReport->setReporter($reporter);
+        $messageReport->setReportCategory($reportCategory);
+        $messageReport->setComment($comment);
+        $messageReport->setDate(new DateTime("@$date", new DateTimeZone('Europe/Paris')));
+        $messageReport->setIsActive(true);
+
+        OrmConnector::getInstance()->persist($messageReport);
+        OrmConnector::getInstance()->flush();
+
+        return $messageReport;
+    }
+
+    public function delete(int $messageReportId): int
+    {
+        $messageReport = $this->find($messageReportId);
+
+        if ($messageReport === null) {
+            throw new EndpointException('Message report not found', 404);
+        }
+
+        $messageReport->setIsActive(false);
+
+        OrmConnector::getInstance()->flush();
+
+        return $messageReportId;
+    }
+
+    public function toJson(MessageReport $messageReport): array
+    {
+        return [
+            'id' => $messageReport->getId(),
+            'messageId' => $messageReport->getMessage()->getId(),
+            'messageContent' => $messageReport->getMessage()->getContent(),
+            'userReported' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($messageReport->getMessage()->getSender()),
+            'userReporter' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($messageReport->getReporter()),
+            'reportCategory' => $messageReport->getReportCategory()->getName(),
+            'comment' => $messageReport->getComment(),
+            'date' => $messageReport->getDate(),
+            'isActive' => $messageReport->isActive()
+        ];
+    }
 }

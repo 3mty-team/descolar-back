@@ -9,19 +9,20 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "media")]
 class Media
 {
+
+    #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: "media_id", type: "integer", length: 11, unique: true)]
     private int $id;
 
-    #[ORM\Id]
     #[ORM\Column(name: "media_path", type: "string", length: 200)]
-    private string $path;
+    private string $path = "";
 
     #[ORM\Column(name: "media_type", type: "string", enumType: MediaType::class)]
     private ?MediaType $mediaType;
 
     #[ORM\Column(name: "media_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    private bool $isActive = true;
 
     public function getId(): int
     {
@@ -43,12 +44,12 @@ class Media
         $this->path = $path;
     }
 
-    public function getMediaType(): mediaType
+    public function getMediaType(): MediaType
     {
         return $this->mediaType;
     }
 
-    public function setMediaType(?mediaType $mediaType): void
+    public function setMediaType(?MediaType $mediaType): void
     {
         $this->mediaType = $mediaType;
     }

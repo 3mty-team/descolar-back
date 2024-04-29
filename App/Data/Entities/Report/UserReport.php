@@ -21,7 +21,7 @@ class UserReport
     private User $reported; # A, the person being reported
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "user_reporting_id", referencedColumnName: "user_id")]
+    #[ORM\JoinColumn(name: "user_reporter_id", referencedColumnName: "user_id")]
     private User $reporter; # B, the person reporting A
 
     #[ORM\ManyToOne(targetEntity: ReportCategory::class)]
@@ -29,13 +29,13 @@ class UserReport
     private ReportCategory $reportCategory;
 
     #[ORM\Column(name: "userreport_comment", type: "string", length: 100, nullable: true)]
-    private string $comment;
+    private ?string $comment = null;
 
     #[ORM\Column(name: "userreport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTimeInterface $date;
 
     #[ORM\Column(name: "userreport_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    private bool $isActive = true;
 
     public function getId(): int
     {
@@ -77,7 +77,7 @@ class UserReport
         $this->reportCategory = $reportCategory;
     }
 
-    public function getComment(): string
+    public function getComment(): ?string
     {
         return $this->comment;
     }

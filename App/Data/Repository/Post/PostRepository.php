@@ -53,6 +53,17 @@ class PostRepository extends EntityRepository
 
     }
 
+    public function findById(int $id): Post
+    {
+        $post = $this->find($id);
+
+        if ($post === null) {
+            throw new EndpointException("Post not found", 404);
+        }
+
+        return $post;
+    }
+
     public function findAllInRangeByUser(string $userUUID, int $range, ?int $timestamp): array
     {
 
@@ -233,17 +244,7 @@ class PostRepository extends EntityRepository
         $postList = [];
         foreach ($posts as $post) {
             /** @var Post $post */
-            $postList[] = [
-                'id' => $post->getId(),
-                'user' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($post->getUser()),
-                'content' => $post->getContent(),
-                'date' => $post->getDate(),
-                'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
-                'likes' => OrmConnector::getInstance()->getRepository(PostLike::class)->countLikes($post),
-                'reposts' => $this->countReposts($post),
-                'comments' => 0, //NOT IMPLEMENTED
-                'isActive' => $post->isActive(),
-            ];
+            $postList[] = $this->toJson($post);
         }
 
         return $postList;
@@ -254,6 +255,7 @@ class PostRepository extends EntityRepository
         return [
             'id' => $post->getId(),
             'user' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($post->getUser()),
+            'repostedPost' => ($post->getRepostedPost()) ? $this->toJson($post->getRepostedPost()) : null,
             'content' => $post->getContent(),
             'date' => $post->getDate(),
             'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),

@@ -38,4 +38,5 @@ exclude:
       - composer.lock
   - name: PhpUnusedPrivateMethodInspection
     paths:
-      - App\Endpoints
+      - App\Endpoints\*
+      - App\Endpoints\**\*

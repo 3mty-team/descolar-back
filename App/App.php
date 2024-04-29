@@ -5,14 +5,9 @@ namespace Descolar;
 use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\Error\ErrorHandler;
 use Descolar\Managers\Router\Router;
-use Descolar\Managers\App\Traits\{EnvAdapter,
-    ErrorHandlerAdapter,
-    JsonBuilderAdapter,
-    MailAdapter,
-    MediaAdapter,
-    OrmAdapter,
-    RouterAdapter,
-    EventAdapter};
+use Descolar\Managers\App\Traits as Traits;
+use Descolar\Adapters as Adapters;
+
 use ReflectionException;
 
 /**
@@ -22,15 +17,18 @@ use ReflectionException;
 class App
 {
 
-    use ErrorHandlerAdapter;
-    use RouterAdapter;
-    use JsonBuilderAdapter;
-    use EventAdapter;
-    use EnvAdapter;
-    use OrmAdapter;
-    use MailAdapter;
-    use MediaAdapter;
+    use Traits\ErrorHandlerAdapter;
+    use Traits\RouterAdapter;
+    use Traits\JsonBuilderAdapter;
+    use Traits\EventAdapter;
+    use Traits\EnvAdapter;
+    use Traits\OrmAdapter;
+    use Traits\MailAdapter;
+    use Traits\MediaAdapter;
 
+    /**
+     * @return bool True if the application is in development mode, false otherwise
+     */
     public static function isDev(): bool
     {
         return EnvReader::getInstance()->get('env') === "DEV" ?? false;
@@ -53,13 +51,41 @@ class App
         Router::getInstance()->listen();
     }
 
+    /**
+     * Set the user uuid
+     *
+     * @param string $userUuid The user uuid
+     * @return void
+     */
     public static function setUserUuid(String $userUuid): void
     {
         $_SESSION['userUuid'] = $userUuid;
     }
 
+    /**
+     * Get the user uuid
+     *
+     * @return string|null The user uuid
+     */
     public static function getUserUuid(): ?string
     {
         return  $_SESSION['userUuid'] ?? null;
+    }
+
+    /**
+     * Load all the adapters
+     * /!\ It's not a stable method, his content can change at any time /!\
+     * @return void
+     */
+    public static function loadAdapters(): void
+    {
+        self::useErrorHandler(Adapters\Error\ErrorManager::class);
+        self::useEnv(Adapters\Env\EnvManager::class);
+        self::useOrm(Adapters\Orm\OrmManager::class);
+        self::useRouter(Adapters\Router\RouterRetriever::class);
+        self::useEvent(Adapters\Event\EventReader::class);
+        self::useJsonBuilder(Adapters\JsonBuilder\JsonBuilderManager::class);
+        self::useMail(Adapters\Mail\MailBuilder::class);
+        self::useMedia(Adapters\Media\MediaAdapter::class);
     }
 }

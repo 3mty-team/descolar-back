@@ -38,7 +38,7 @@ class Post
 
     #[ORM\ManyToOne(targetEntity: Post::class, fetch: "EAGER")]
     #[ORM\JoinColumn(name: "repost_id", referencedColumnName: "post_id")]
-    private Post $repostedPost;
+    private ?Post $repostedPost = null;
 
     #[ORM\Column(name: "post_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;
@@ -114,7 +114,7 @@ class Post
         $this->isPinned = $isPinned;
     }
 
-    public function getRepostedPost(): Post
+    public function getRepostedPost(): ?Post
     {
         return $this->repostedPost;
     }

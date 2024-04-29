@@ -1,20 +1,23 @@
 <?php
 
 /**
+ * /$$$$$$$                                          /$$
+ * | $$__  $$                                        | $$
+ * | $$  \ $$  /$$$$$$   /$$$$$$$  /$$$$$$$  /$$$$$$ | $$  /$$$$$$   /$$$$$$
+ * | $$  | $$ /$$__  $$ /$$_____/ /$$_____/ /$$__  $$| $$ |____  $$ /$$__  $$
+ * | $$  | $$| $$$$$$$$|  $$$$$$ | $$      | $$  \ $$| $$  /$$$$$$$| $$  \__/
+ * | $$  | $$| $$_____/ \____  $$| $$      | $$  | $$| $$ /$$__  $$| $$
+ * | $$$$$$$/|  $$$$$$$ /$$$$$$$/|  $$$$$$$|  $$$$$$/| $$|  $$$$$$$| $$
+ * |_______/  \_______/|_______/  \_______/ \______/ |__/ \_______/|__/ .fr
+ */
+
+/**
  * This is the main file of the project, it is responsible for starting the application.
- * Please, do not change this file.
+ * Please do not change this file.
  *
  * @author Descolar Team <development@descolar.fr>
  */
 
-use Descolar\Adapters\Env\EnvManager;
-use Descolar\Adapters\Error\ErrorManager;
-use Descolar\Adapters\Event\EventReader;
-use Descolar\Adapters\JsonBuilder\JsonBuilderManager;
-use Descolar\Adapters\Mail\MailBuilder;
-use Descolar\Adapters\Media\MediaAdapter;
-use Descolar\Adapters\Orm\OrmManager;
-use Descolar\Adapters\Router\RouterRetriever;
 use Descolar\App;
 
 
@@ -24,21 +27,14 @@ use Descolar\App;
 require __DIR__ . '/vendor/autoload.php';
 
 /**
- * The root directory of the project
+ * Define constants
  */
 const DIR_ROOT = __DIR__;
 
 /**
  * Load Adapters
  */
-App::useErrorHandler(ErrorManager::class);
-App::useEnv(EnvManager::class);
-App::useOrm(OrmManager::class);
-App::useRouter(RouterRetriever::class);
-App::useEvent(EventReader::class);
-App::useJsonBuilder(JsonBuilderManager::class);
-App::useMail(MailBuilder::class);
-App::useMedia(MediaAdapter::class);
+App::loadAdapters();
 
 /**
  * Run the application

@@ -5,6 +5,7 @@ namespace Descolar\Data\Repository\User;
 use DateTime;
 use DateTimeZone;
 use Descolar\App;
+use Descolar\Data\Entities\Group\Group;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Data\Entities\User\User;
@@ -53,6 +54,17 @@ class MessageUserRepository extends EntityRepository
         }
 
         return $this->queryMessages($sender, $receiver, $range, $timestamp);
+    }
+
+    public function findById(int $id): MessageUser|int
+    {
+        $message = $this->find($id);
+
+        if ($message === null) {
+            throw new EndpointException("Message not found", 404);
+        }
+
+        return $message;
     }
 
     private function manageLikes(int $messageId, bool $needToLike): MessageUser

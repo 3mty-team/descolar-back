@@ -4,9 +4,6 @@ namespace Descolar\Endpoints;
 
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-
-use Descolar\Managers\JsonBuilder\JsonBuilder;
-use Descolar\Managers\Mail\MailManager;
 use OpenApi\Generator;
 use OpenApi\Attributes as OA;
 
@@ -57,33 +54,5 @@ class Descolar extends AbstractEndpoint
         $openapi = Generator::scan([array_filter(glob($root . '/*'), 'is_dir'), $root]);
         header('Content-Type: application/json');
         echo $openapi->toJson();
-    }
-
-    #[Get('/confirmAccountTest', name: 'home', auth: false)]
-    private function home(): void
-    {
-        try {
-            JsonBuilder::build()->addData('test', 'test')->getResult();
-
-            MailManager::build()
-                ->setFrom('contact@mehdi-ali.me')
-                ->addTo("illutech.badiiix@gmail.com")
-                ->setSMTP()
-                ->setSubject('Test')
-                ->setBody('false', static function () {
-                    $mailTemplate = file_get_contents(DIR_ROOT . '/App/Adapters/Mail/Templates/confirmation_mail.html');
-
-                    return str_replace(
-                        ['CONFIRMATION_LINK'],
-                        ['https://google.com'],
-                        $mailTemplate
-                    );
-                })
-                ->send();
-
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
-        }
-
     }
 }
