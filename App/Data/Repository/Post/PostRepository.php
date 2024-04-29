@@ -108,21 +108,16 @@ class PostRepository extends EntityRepository
 
     private function buildPost(?Post $retweetedPost, ?string $content, ?string $location, int $date, ?array $medias): Post
     {
-        if (empty($content) || empty($date) || empty($location) || $medias === null) {
-            throw new EndpointException('Missing parameters "content" or "location" or "date" or "medias"', 400);
+        if (empty($content) || empty($date) || empty($location)) {
+            throw new EndpointException('Missing parameters "content" or "location" or "date"', 400);
         }
 
-        $userUUID = App::getUserUuid();
-        if (empty($userUUID)) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
         }
 
-
+        $medias ??= [];
         foreach ($medias as $media) {
             $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
             if ($media === null) {
@@ -185,17 +180,17 @@ class PostRepository extends EntityRepository
             throw new EndpointException('Post not found', 404);
         }
 
-        $userUUID = App::getUserUuid();
-        if (empty($userUUID)) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid());
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         if ($user === null) {
             throw new EndpointException('User not logged', 403);
         }
 
-        if($post->getUser()->getId() !== $user->getId()) {
+        /**
+         * @var Post $post
+         * @var User $user
+         */
+
+        if($post->getUser()->getUUID() !== $user->getUUID()) {
             throw new EndpointException('User not allowed to pin this post', 403);
         }
 
@@ -208,18 +203,19 @@ class PostRepository extends EntityRepository
     public function getPinnedPost(string $userUUID): ?Post
     {
         if (empty($userUUID)) {
-            throw new EndpointException('User not logged', 403);
+            throw new EndpointException('User not found', 403);
         }
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
         if ($user === null) {
-            throw new EndpointException('User not logged', 403);
+            throw new EndpointException('User not found', 403);
         }
 
+        /* @var ?Post $post */
         return $this->findOneBy(['user' => $user, 'isPinned' => true]);
     }
 
-    public function pin(int $postId): Post
+    public function pin(int $postId): ?Post
     {
         $userUUID = App::getUserUuid();
 

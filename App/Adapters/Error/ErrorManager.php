@@ -36,7 +36,10 @@ class ErrorManager implements IErrorManager
 
         $whoops->pushHandler($handler);
 
-        $whoops->pushHandler(fn(Throwable $exception, Inspector $inspector, Run $run) => $run->sendHttpCode($exception->getCode()));
+        $whoops->pushHandler(function (Throwable $exception, Inspector $inspector, Run $run) {
+            $code = ($exception->getCode() >= 400 && $exception->getCode() < 600 ) ? $exception->getCode() : 400;
+            $run->sendHttpCode($code);
+        });
 
         $whoops->register();
     }
