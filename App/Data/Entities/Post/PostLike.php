@@ -16,6 +16,7 @@ class PostLike
     #[ORM\JoinColumn(name: "post_id", referencedColumnName: "post_id")]
     private Post $post;
 
+    #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
     private User $user;

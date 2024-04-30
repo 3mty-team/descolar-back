@@ -54,25 +54,9 @@ class PostLikeRepository extends EntityRepository
 
     private function manageLikes(int $postId): array
     {
-        if ($postId < 1) {
-            throw new EndpointException('Post not found', 404);
-        }
+        $post = OrmConnector::getInstance()->getRepository(Post::class)->findById($postId);
 
-        $post = OrmConnector::getInstance()->getRepository(Post::class)->findOneBy(['id' => $postId]);
-        if ($post === null) {
-            throw new EndpointException('Post not found', 404);
-        }
-
-        $userUUID = App::getUserUuid();
-
-        if ($userUUID === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
-        if ($user === null) {
-            throw new EndpointException('User not found', 404);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         return [$post, $user];
     }
@@ -90,7 +74,6 @@ class PostLikeRepository extends EntityRepository
             }
 
             $postLike->setIsActive(true);
-            OrmConnector::getInstance()->persist($postLike);
             OrmConnector::getInstance()->flush();
 
             return $postLike->getPost();
@@ -114,7 +97,7 @@ class PostLikeRepository extends EntityRepository
         [$post, $user] = $this->manageLikes($postId);
 
         $postLike = $this->findOneBy(['post' => $post, 'user' => $user]);
-        if ($postLike === null) {
+        if ($postLike === null || !$postLike->isActive()) {
             throw new EndpointException('Post not liked', 400);
         }
 
