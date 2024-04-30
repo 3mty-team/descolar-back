@@ -13,12 +13,13 @@ class DeactivationUserRepository extends EntityRepository
 {
 
     public function checkDeactivation(User $user): bool {
+        /** @var DeactivationUser $deactivationUser */
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {
             return false;
         }
 
-        return $deactivationUser->getIsActive();
+        return $deactivationUser->isActive();
     }
 
     public function checkFinalDeactivation(User $user): bool {

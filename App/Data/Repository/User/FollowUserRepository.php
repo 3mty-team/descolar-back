@@ -61,13 +61,14 @@ class FollowUserRepository extends EntityRepository
         return $user;
     }
 
-    private function editFollowStatus(User $following, User $followed, bool $setFollowed) : FollowUser
+    private function editFollowStatus(User $following, User $follower, bool $setFollowed) : FollowUser
     {
-        $follow = $this->findOneBy(["following" => $following, "followed" => $followed]);
+        $follow = $this->findOneBy(["following" => $following, "follower" => $follower]);
         if ($follow === null) {
             $followUser = new FollowUser();
             $followUser->setFollowing($following);
-            $followUser->setFollower($followed);
+            $followUser->setFollower($follower);
+            $followUser->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
             $followUser->setIsActive($setFollowed);
 
             $this->getEntityManager()->persist($followUser);
@@ -83,9 +84,9 @@ class FollowUserRepository extends EntityRepository
         return $follow;
     }
 
-    private function isFollow(User $following, User $followed): bool
+    private function isFollow(User $following, User $follower): bool
     {
-        $follow = $this->findOneBy(["following" => $following, "followed" => $followed]);
+        $follow = $this->findOneBy(["following" => $following, "follower" => $follower]);
         if ($follow !== null) {
             return $follow->isActive();
         }
@@ -107,7 +108,7 @@ class FollowUserRepository extends EntityRepository
         return $this->getFollowing($user);
     }
 
-    public function followUser(string $userUUID): FollowUser
+    public function followUser(string $userUUID): User
     {
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
@@ -118,13 +119,13 @@ class FollowUserRepository extends EntityRepository
         }
 
         if ($this->isFollow($user, $userToFollow)) {
-            throw new EndpointException("User already blocked", 403);
+            throw new EndpointException("User already followed", 403);
         }
 
-        return $this->editFollowStatus($user, $userToFollow, true);
+        return $this->editFollowStatus($user, $userToFollow, true)->getFollowing();
     }
 
-    public function unfollowUser(string $userUUID): FollowUser
+    public function unfollowUser(string $userUUID): User
     {
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
@@ -138,6 +139,6 @@ class FollowUserRepository extends EntityRepository
             throw new EndpointException("User not followed", 403);
         }
 
-        return $this->editFollowStatus($user, $userToUnfollow, false);
+        return $this->editFollowStatus($user, $userToUnfollow, false)->getFollowing();
     }
 }

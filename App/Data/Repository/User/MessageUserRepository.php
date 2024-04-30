@@ -74,15 +74,7 @@ class MessageUserRepository extends EntityRepository
             throw new EndpointException('Message not found', 404);
         }
 
-        $userUUID = App::getUserUuid();
-        if($userUUID === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
-        if($user === null) {
-            throw new EndpointException('User not logged', 404);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         switch ($user) {
             case $message->getSender():
