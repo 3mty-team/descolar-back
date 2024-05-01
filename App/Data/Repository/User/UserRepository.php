@@ -31,19 +31,14 @@ class UserRepository extends EntityRepository
     }
 
 
-    public static function getLoggedUser(): User {
+    public function getLoggedUser(): User {
         $UUID = App::getUserUuid();
 
         if ($UUID === null) {
             throw new EndpointException("User not logged", 403);
         }
 
-        $user =  OrmConnector::getInstance()->getRepository(User::class)->find($UUID);
-        if($user === null) {
-            throw new EndpointException("User not found", 404);
-        }
-
-        return $user;
+        return $this->findByUuid($UUID);
     }
 
     public function findByUuid(string $uuid): User
@@ -54,7 +49,7 @@ class UserRepository extends EntityRepository
         }
 
         if(!$this->isGreatUser($user)) {
-            throw new EndpointException("User not found", 404);
+            throw new EndpointException("User is not accessible", 404);
         }
 
         return $user;

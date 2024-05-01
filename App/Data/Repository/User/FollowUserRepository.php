@@ -13,26 +13,7 @@ class FollowUserRepository extends EntityRepository
     /**
      * @return User[] following by the user
      */
-    private function getFollowing(User $user): array
-    {
-        $query = $this->createQueryBuilder("f")
-            ->where("f.following = :user")
-            ->setParameter("user", $user)
-            ->getQuery()->getResult();
-
-        $users = [];
-        foreach ($query as $follow) {
-            /** @var FollowUser $follow */
-            $users[] = $follow->getFollowing();
-        }
-
-        return $users;
-    }
-
-    /**
-     * @return User[] followed the user
-     */
-    private function getFollowed(User $user): array
+    private function getFollowings(User $user): array
     {
         $query = $this->createQueryBuilder("f")
             ->where("f.follower = :user")
@@ -42,7 +23,30 @@ class FollowUserRepository extends EntityRepository
         $users = [];
         foreach ($query as $follow) {
             /** @var FollowUser $follow */
-            $users[] = $follow->getFollower();
+            if ($follow->isActive() && $follow->getFollowing() !== $user) {
+                $users[] = $follow->getFollowing();
+            }
+        }
+
+        return $users;
+    }
+
+    /**
+     * @return User[] followed the user
+     */
+    private function getFollowers(User $user): array
+    {
+        $query = $this->createQueryBuilder("f")
+            ->where("f.following = :user")
+            ->setParameter("user", $user)
+            ->getQuery()->getResult();
+
+        $users = [];
+        foreach ($query as $follow) {
+            /** @var FollowUser $follow */
+            if ($follow->isActive() && $follow->getFollower() !== $user) {
+                $users[] = $follow->getFollower();
+            }
         }
 
         return $users;
@@ -52,7 +56,7 @@ class FollowUserRepository extends EntityRepository
     {
         $user = null;
 
-        if($userUUID === null) {
+        if ($userUUID === null) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         } else {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
@@ -61,7 +65,7 @@ class FollowUserRepository extends EntityRepository
         return $user;
     }
 
-    private function editFollowStatus(User $following, User $follower, bool $setFollowed) : FollowUser
+    private function editFollowStatus(User $follower, User $following, bool $setFollowed): FollowUser
     {
         $follow = $this->findOneBy(["following" => $following, "follower" => $follower]);
         if ($follow === null) {
@@ -84,7 +88,7 @@ class FollowUserRepository extends EntityRepository
         return $follow;
     }
 
-    private function isFollow(User $following, User $follower): bool
+    private function isFollow(User $follower, User $following): bool
     {
         $follow = $this->findOneBy(["following" => $following, "follower" => $follower]);
         if ($follow !== null) {
@@ -98,14 +102,14 @@ class FollowUserRepository extends EntityRepository
     {
         $user = $this->getUserFromUUID($userUUID);
 
-        return $this->getFollowing($user);
+        return $this->getFollowers($user);
     }
 
     public function getFollowingList(?string $userUUID = null): array
     {
         $user = $this->getUserFromUUID($userUUID);
 
-        return $this->getFollowing($user);
+        return $this->getFollowings($user);
     }
 
     public function followUser(string $userUUID): User
