@@ -14,6 +14,19 @@ use Doctrine\ORM\EntityRepository;
 class PostCommentRepository extends EntityRepository
 {
 
+    public function countComments(Post $post): int
+    {
+
+        return $this->createQueryBuilder('pc')
+            ->select('COUNT(pc.id)')
+            ->where('pc.post = :post')
+            ->andWhere('pc.isActive = 1')
+            ->setParameter('post', $post)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+    }
+
     public function findAllInRange(int $postId, int $range, ?int $timestamp): array
     {
 

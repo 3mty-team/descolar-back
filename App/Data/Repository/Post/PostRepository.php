@@ -7,6 +7,7 @@ use DateTimeZone;
 use Descolar\App;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\Post\Post;
+use Descolar\Data\Entities\Post\PostComment;
 use Descolar\Data\Entities\Post\PostLike;
 use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
@@ -251,7 +252,7 @@ class PostRepository extends EntityRepository
             'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
             'likes' => OrmConnector::getInstance()->getRepository(PostLike::class)->countLikes($post),
             'reposts' => $this->countReposts($post),
-            'comments' => 0, //NOT IMPLEMENTED
+            'comments' => OrmConnector::getInstance()->getRepository(PostComment::class)->countComments($post), //NOT IMPLEMENTED
             'isActive' => $post->isActive(),
         ];
     }
