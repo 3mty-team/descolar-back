@@ -212,6 +212,16 @@ class UserRepository extends EntityRepository
         ];
     }
 
+    public function toJsonNames(User $user): array
+    {
+        return [
+            'uuid' => $user->getUUID(),
+            'username' => $user->getUsername(),
+            'firstName' => $user->getFirstName(),
+            'lastName' => $user->getLastName()
+        ];
+    }
+
     public function toJson(User $user): array
     {
         return [
