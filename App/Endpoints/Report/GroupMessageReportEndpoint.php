@@ -16,7 +16,7 @@ use OpenApi\Attributes\PathParameter;
 
 class GroupMessageReportEndpoint extends AbstractEndpoint
 {
-    #[Get('/report/groupmessage', name: 'getAllGroupMessageReports', auth: true)]
+    #[Get('/report/groupmessage', name: 'getAllGroupMessageReports', auth: false)]
     #[OA\Get(
         path: "/report/groupmessage",
         summary: "getAllGroupMessageReports",
@@ -44,7 +44,7 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/report/groupmessage/create', name: 'createGroupMessageReport', auth: true)]
+    #[Post('/report/groupmessage/create', name: 'createGroupMessageReport', auth: false)]
     #[OA\Post(
         path: "/report/groupmessage/create",
         summary: "createGroupMessageReport",
@@ -80,7 +80,7 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete('/report/groupmessage/:reportId/delete', variables: ["reportId" => RouteParam::NUMBER], name: 'deleteGroupMessageReport', auth: true)]
+    #[Delete('/report/groupmessage/:reportId/delete', variables: ["reportId" => RouteParam::NUMBER], name: 'deleteGroupMessageReport', auth: false)]
     #[OA\Delete(
         path: "/report/groupmessage/{reportId}/delete",
         summary: "deleteGroupMessageReport",
