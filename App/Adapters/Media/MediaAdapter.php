@@ -22,7 +22,8 @@ class MediaAdapter implements IMediaManager
     {
         $path = $this->MEDIA_PATH;
         $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
-        return $this->PRODUCTION_HOST . str_replace("/", DIRECTORY_SEPARATOR, $path);
+
+        return preg_replace('/\\\\(?=\/)/', '',$this->PRODUCTION_HOST . str_replace("/", DIRECTORY_SEPARATOR, $path));
     }
 
     private function getMediaPath(): string
