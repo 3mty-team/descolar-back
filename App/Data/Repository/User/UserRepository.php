@@ -58,7 +58,7 @@ class UserRepository extends EntityRepository
     /**
      * @throws Exception
      */
-    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $token): User
+    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $token): User
     {
         if ($this->findOneBy(['username' => $username]) !== null) {
             throw new EndpointException("Username already exists", 403);
@@ -91,6 +91,11 @@ class UserRepository extends EntityRepository
         $user->setBiography(null);
         $user->setIsActive(true);
         $user->setToken($token);
+
+        if($profilePath !== "") {
+            $user->setProfilePicturePath($profilePath);
+        }
+
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
 
