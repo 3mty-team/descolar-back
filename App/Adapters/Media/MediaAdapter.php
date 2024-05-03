@@ -15,9 +15,19 @@ use Descolar\Data\Entities\Media\Media as MediaEntity;
 class MediaAdapter implements IMediaManager
 {
 
+    private string $PRODUCTION_HOST = "https://internal-api.descolar.fr/v1";
+    private string $MEDIA_PATH = "/App/Adapters/Media/Storage/";
+
+    private function getMediaURL(): string
+    {
+        $path = $this->MEDIA_PATH;
+        $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
+        return $this->PRODUCTION_HOST . str_replace("/", DIRECTORY_SEPARATOR, $path);
+    }
+
     private function getMediaPath(): string
     {
-        $path = DIR_ROOT . "/App/Adapters/Media/Storage/";
+        $path = DIR_ROOT . $this->MEDIA_PATH;
         $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
         return str_replace("/", DIRECTORY_SEPARATOR, $path);
     }
@@ -44,15 +54,16 @@ class MediaAdapter implements IMediaManager
 
         $extension = pathinfo($media['name'], PATHINFO_EXTENSION);
         $newName = uniqid(base64_encode($media['name'])) . ".$extension";
-        $url = $this->getMediaPath() . $newName;
+        $url = $this->getMediaURL() . $newName;
 
-        $result = move_uploaded_file($media['tmp_name'], $url);
+        $movedImage = $this->getMediaPath() . $newName;
+        $result = move_uploaded_file($media['tmp_name'], $movedImage);
 
         if(!$result) {
             throw new UploadMediaException("Error on file upload: $media[name]");
         }
 
-        [$width, $height] = getimagesize($url) ?: [0, 0];
+        [$width, $height] = getimagesize($movedImage) ?: [0, 0];
 
         return new Media($media['name'], $extensionType, $url, [$width, $height], $media['weight']);
     }
