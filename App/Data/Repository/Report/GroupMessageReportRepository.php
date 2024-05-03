@@ -40,10 +40,7 @@ class GroupMessageReportRepository extends EntityRepository
             throw new EndpointException('Message not found', 400);
         }
 
-        $reporter = UserRepository::getLoggedUser();
-        if ($reporter === null) {
-            throw new EndpointException('User not logged', 403);
-        }
+        $reporter = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findById($reportCategoryId);
 

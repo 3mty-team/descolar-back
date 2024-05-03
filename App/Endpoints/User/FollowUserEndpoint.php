@@ -205,9 +205,9 @@ class FollowUserEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete('/user/:userUUID/unfollow', variables: ["userUUID" => RouteParam::UUID], name: 'unfollowUser', auth: true)]
+    #[Delete('/user/:userUUID/follow', variables: ["userUUID" => RouteParam::UUID], name: 'unfollowUser', auth: true)]
     #[OA\Delete(
-        path: '/user/{userUUID}/unfollow',
+        path: '/user/{userUUID}/follow',
         summary: 'Unfollow user by UUID',
         tags: ['User'],
         parameters: [

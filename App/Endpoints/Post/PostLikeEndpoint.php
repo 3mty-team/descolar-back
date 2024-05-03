@@ -5,10 +5,10 @@ namespace Descolar\Endpoints\Post;
 use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 
-use Descolar\Adapters\Router\Annotations\Put;
+use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
-use Descolar\Data\Entities\Post\Post;
-use Descolar\Data\Entities\Post\PostHidden;
+use Descolar\Data\Entities\Post\Post as PostEntity;
+use Descolar\Data\Entities\Post\PostLike;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
@@ -29,7 +29,7 @@ class PostLikeEndpoint extends AbstractEndpoint
 
         try {
 
-            $posts = OrmConnector::getInstance()->getRepository(PostHidden::class)->getLikedPosts($userUUID);
+            $posts = OrmConnector::getInstance()->getRepository(PostLike::class)->getLikedPosts($userUUID);
 
             $response->addData('posts', $posts);
             $response->setCode(200);
@@ -43,16 +43,16 @@ class PostLikeEndpoint extends AbstractEndpoint
 
     }
 
-    #[Put("post/:postId/like", variables: ["postId" => RouteParam::NUMBER] , name: "likePost", auth: true)]
-    #[OA\Put(path: "/post/{postId}/like", summary: "likePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post liked")])]
+    #[Post("post/:postId/like", variables: ["postId" => RouteParam::NUMBER] , name: "likePost", auth: true)]
+    #[OA\Post(path: "/post/{postId}/like", summary: "likePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post liked")])]
     private function likePost(int $postId): void
     {
         $response = JsonBuilder::build();
 
         try {
 
-            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->like($postId);
-            $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostLike::class)->like($postId);
+            $postJson = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);
@@ -76,8 +76,8 @@ class PostLikeEndpoint extends AbstractEndpoint
 
         try {
 
-            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->unlike($postId);
-            $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(PostLike::class)->unlike($postId);
+            $postJson = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);

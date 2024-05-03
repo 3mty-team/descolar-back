@@ -15,20 +15,11 @@ class PostHiddenRepository extends EntityRepository
 
     public function getAllHiddenPosts(): array
     {
-        $userUUID = App::getUserUuid();
-        if ($userUUID === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $posts = $this->createQueryBuilder('ph')
             ->select('ph')
             ->where('ph.isActive = 1')
-            ->andWhere('ph.post.isActive = 1')
             ->andWhere('ph.user = :user')
             ->setParameter('user', $user)
             ->getQuery()
@@ -36,48 +27,60 @@ class PostHiddenRepository extends EntityRepository
 
         $postToReturn = [];
         foreach ($posts as $post) {
-            $postToReturn[] = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post->getPost());
+            /** @var PostHidden $post */
+            if ($post->getPost()->isActive()) {
+                $postToReturn[] = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post->getPost());
+            }
         }
 
         return $postToReturn;
     }
 
-    public function hide(int $postId): array
+    private function manageHide(int $postId, bool $needToHide = true): PostHidden
     {
 
-        if($postId < 1) {
-            throw new EndpointException('Post not found', 404);
+        $post = OrmConnector::getInstance()->getRepository(Post::class)->findById($postId);
+
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+
+        $postHidden = $this->findOneBy(['post' => $post, 'user' => $user]);
+
+        if ($postHidden === null) {
+            $postHidden = new PostHidden();
+            $postHidden->setPost($post);
+            $postHidden->setUser($user);
+            $postHidden->setIsActive($needToHide);
+
+            OrmConnector::getInstance()->persist($postHidden);
+            OrmConnector::getInstance()->flush();
+
+            return $postHidden;
         }
 
-        $post = OrmConnector::getInstance()->getRepository(Post::class)->findOneBy(['postId' => $postId]);
-        if ($post === null) {
-            throw new EndpointException('Post not found', 404);
+        if ($postHidden->isActive() === $needToHide) {
+            $errorMessage = $needToHide ? 'Post already hidden' : 'Post already visible';
+            throw new EndpointException($errorMessage, 403);
         }
 
-        if (App::getUserUuid() === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => App::getUserUuid()]);
-        if ($user === null) {
-            throw new EndpointException('User not found', 404);
-        }
-
-        $postHidden = $this->findOneBy(['post' => $post, 'user' => App::getUserUuid()]);
-
-        if ($postHidden !== null) {
-            throw new EndpointException('Post already hidden', 403);
-        }
-
-        $postHidden = new PostHidden();
-        $postHidden->setPost($post);
-        $postHidden->setUser($user);
-        $postHidden->setIsActive(true);
-
+        $postHidden->setIsActive($needToHide);
         OrmConnector::getInstance()->persist($postHidden);
         OrmConnector::getInstance()->flush();
 
-        return OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
+        return $postHidden;
+    }
+
+    public function hide(int $postId): Post
+    {
+        $postHidden = $this->manageHide($postId);
+
+        return $postHidden->getPost();
+    }
+
+    public function unHide(int $postId): Post
+    {
+        $postHidden = $this->manageHide($postId, false);
+
+        return $postHidden->getPost();
     }
 
 }

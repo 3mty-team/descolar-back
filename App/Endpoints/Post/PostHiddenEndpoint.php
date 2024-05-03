@@ -2,12 +2,15 @@
 
 namespace Descolar\Endpoints\Post;
 
-use Descolar\Adapters\Router\Annotations\Get;
+use Descolar\Managers\Endpoint\AbstractEndpoint;
 
+use Descolar\Adapters\Router\Annotations\Delete;
+use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\RouteParam;
+
+use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostHidden;
-use Descolar\Managers\Endpoint\AbstractEndpoint;
 
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 
@@ -48,10 +51,34 @@ class PostHiddenEndpoint extends AbstractEndpoint
         $response = JsonBuilder::build();
 
         try {
-
             $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->hide($postId);
+            $postData = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
-            foreach ($post as $key => $value) {
+            foreach ($postData as $key => $value) {
+                $response->addData($key, $value);
+            }
+            $response->setCode(200);
+            $response->getResult();
+
+        } catch (EndpointException $e) {
+            $response->setCode($e->getCode());
+            $response->addData('message', $e->getMessage());
+            $response->getResult();
+        }
+
+    }
+
+    #[Delete("post/:postId/hide", variables: ["postId" => RouteParam::NUMBER] , name: "unHidePost", auth: true)]
+    #[OA\Delete(path: "/post/{postId}/hide", summary: "unHidePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post unhidden")])]
+    private function unHidePost(string $postId): void
+    {
+        $response = JsonBuilder::build();
+
+        try {
+            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->unHide($postId);
+            $postData = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
+
+            foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
             $response->setCode(200);

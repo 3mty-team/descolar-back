@@ -7,6 +7,7 @@ use DateTimeZone;
 use Descolar\App;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\Post\Post;
+use Descolar\Data\Entities\Post\PostComment;
 use Descolar\Data\Entities\Post\PostLike;
 use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
@@ -78,9 +79,9 @@ class PostRepository extends EntityRepository
 
         $qb = $this->createQueryBuilder('p')
             ->select('p')
-            ->where('p.user = :userUUID')
+            ->where('p.user = :user')
             ->andWhere('p.isActive = 1')
-            ->setParameter('userUUID', $user->getUUID())
+            ->setParameter('user', $user)
             ->orderBy('p.date', 'DESC')
             ->setMaxResults($range);
 
@@ -108,21 +109,13 @@ class PostRepository extends EntityRepository
 
     private function buildPost(?Post $retweetedPost, ?string $content, ?string $location, int $date, ?array $medias): Post
     {
-        if (empty($content) || empty($date) || empty($location) || $medias === null) {
-            throw new EndpointException('Missing parameters "content" or "location" or "date" or "medias"', 400);
+        if (empty($content) || empty($date) || empty($location)) {
+            throw new EndpointException('Missing parameters "content" or "location" or "date"', 400);
         }
 
-        $userUUID = App::getUserUuid();
-        if (empty($userUUID)) {
-            throw new EndpointException('User not logged', 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-
+        $medias ??= [];
         foreach ($medias as $media) {
             $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
             if ($media === null) {
@@ -185,17 +178,14 @@ class PostRepository extends EntityRepository
             throw new EndpointException('Post not found', 404);
         }
 
-        $userUUID = App::getUserUuid();
-        if (empty($userUUID)) {
-            throw new EndpointException('User not logged', 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid());
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
+        /**
+         * @var Post $post
+         * @var User $user
+         */
 
-        if($post->getUser()->getId() !== $user->getId()) {
+        if($post->getUser()->getUUID() !== $user->getUUID()) {
             throw new EndpointException('User not allowed to pin this post', 403);
         }
 
@@ -208,18 +198,19 @@ class PostRepository extends EntityRepository
     public function getPinnedPost(string $userUUID): ?Post
     {
         if (empty($userUUID)) {
-            throw new EndpointException('User not logged', 403);
+            throw new EndpointException('User not found', 403);
         }
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
         if ($user === null) {
-            throw new EndpointException('User not logged', 403);
+            throw new EndpointException('User not found', 403);
         }
 
+        /* @var ?Post $post */
         return $this->findOneBy(['user' => $user, 'isPinned' => true]);
     }
 
-    public function pin(int $postId): Post
+    public function pin(int $postId): ?Post
     {
         $userUUID = App::getUserUuid();
 
@@ -261,7 +252,7 @@ class PostRepository extends EntityRepository
             'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
             'likes' => OrmConnector::getInstance()->getRepository(PostLike::class)->countLikes($post),
             'reposts' => $this->countReposts($post),
-            'comments' => 0, //NOT IMPLEMENTED
+            'comments' => OrmConnector::getInstance()->getRepository(PostComment::class)->countComments($post), //NOT IMPLEMENTED
             'isActive' => $post->isActive(),
         ];
     }

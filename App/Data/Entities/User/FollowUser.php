@@ -21,7 +21,7 @@ class FollowUser
     private User $following; # B, the person being followed by A
 
     #[ORM\Column(name: "userfollow_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
-    private ?DateTimeInterface $date;
+    private DateTimeInterface $date;
 
     #[ORM\Column(name: "userfollow_isactive", type: "boolean", options: ["default" => 1])]
     private bool $isActive;

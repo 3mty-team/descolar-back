@@ -29,11 +29,14 @@ class PostPinEndpoint extends AbstractEndpoint
 
         try {
 
-            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->getPinnedPost($userUUID);
-            $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
+            $post = OrmConnector::getInstance()->getRepository(Post::class)->getPinnedPost($userUUID);
 
-            foreach ($postJson as $key => $value) {
-                $response->addData($key, $value);
+            if($post) {
+                $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
+
+                foreach ($postJson as $key => $value) {
+                    $response->addData($key, $value);
+                }
             }
 
             $response->setCode(200);
@@ -55,7 +58,7 @@ class PostPinEndpoint extends AbstractEndpoint
 
         try {
 
-            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->pin($postId);
+            $post = OrmConnector::getInstance()->getRepository(Post::class)->pin($postId);
             $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
@@ -80,7 +83,7 @@ class PostPinEndpoint extends AbstractEndpoint
 
         try {
 
-            $post = OrmConnector::getInstance()->getRepository(PostHidden::class)->unpin($userUUID);
+            $post = OrmConnector::getInstance()->getRepository(Post::class)->unpin($userUUID);
             $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
