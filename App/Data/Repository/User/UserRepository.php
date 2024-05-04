@@ -6,6 +6,7 @@ use DateTime;
 use Descolar\App;
 use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\Institution\Formation;
+use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
@@ -82,7 +83,6 @@ class UserRepository extends EntityRepository
 
         $user = new User();
         $user->setUsername($username);
-        $user->setProfilePicturePath(null);
         $user->setFirstname($firstname);
         $user->setLastname($lastname);
         $user->setMail($mail);
@@ -92,7 +92,7 @@ class UserRepository extends EntityRepository
         $user->setIsActive(true);
         $user->setToken($token);
 
-        if($profilePath !== "") {
+        if($profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
             $user->setProfilePicturePath($profilePath);
         }
 
@@ -140,7 +140,9 @@ class UserRepository extends EntityRepository
             $user->setUsername($username);
         }
 
-        //TODO profile path
+        if($profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+            $user->setProfilePicturePath($profilePath);
+        }
 
         if($firstname !== "" && $firstname !== $user->getFirstname()) {
             $user->setFirstname($firstname);
