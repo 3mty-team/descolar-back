@@ -98,6 +98,16 @@ class FollowUserRepository extends EntityRepository
         return false;
     }
 
+    public function getFollowerCount(User $user): int
+    {
+        return count($this->getFollowers($user));
+    }
+
+    public function getFollowingCount(User $user): int
+    {
+        return count($this->getFollowings($user));
+    }
+
     public function getFollowerList(?string $userUUID = null): array
     {
         $user = $this->getUserFromUUID($userUUID);

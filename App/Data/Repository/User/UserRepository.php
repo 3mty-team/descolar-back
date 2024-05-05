@@ -7,6 +7,7 @@ use Descolar\App;
 use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\Institution\Formation;
 use Descolar\Data\Entities\Media\Media;
+use Descolar\Data\Entities\User\FollowUser;
 use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
@@ -208,8 +209,12 @@ class UserRepository extends EntityRepository
     {
         return [
             'uuid' => $user->getUUID(),
+            'firstName' => $user->getFirstName(),
+            'lastName' => $user->getLastName(),
             'username' => $user->getUsername(),
             'pfpPath' => $user->getProfilePicturePath(),
+            'followers' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerCount($user),
+            'following' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowingCount($user),
             'isActive' => $user->isActive(),
         ];
     }
@@ -232,6 +237,8 @@ class UserRepository extends EntityRepository
             'pfpPath' => $user->getProfilePicturePath(),
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
+            'followers' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerCount($user),
+            'following' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowingCount($user),
             'mail' => $user->getMail(),
             'date' => $user->getDate()?->format('d-m-Y'),
             'biography' => $user->getBiography(),
