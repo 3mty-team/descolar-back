@@ -192,8 +192,6 @@ class UserEndpoint extends AbstractEndpoint
     )]
     private function disableUserForever(): void
     {
-		echo("Method actually disabled; Security Breach;");
-        die();
         $response = JsonBuilder::build();
 
         try {
