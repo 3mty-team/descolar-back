@@ -12,7 +12,8 @@ use Doctrine\ORM\EntityRepository;
 class DeactivationUserRepository extends EntityRepository
 {
 
-    public function checkDeactivation(User $user): bool {
+    public function checkDeactivation(User $user): bool
+    {
         /** @var DeactivationUser $deactivationUser */
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {
@@ -22,7 +23,8 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->isActive();
     }
 
-    public function checkFinalDeactivation(User $user): bool {
+    public function checkFinalDeactivation(User $user): bool
+    {
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {
             return false;
@@ -31,8 +33,12 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->getIsFinal();
     }
 
-    private function manageDisable(bool $forever = false) {
-        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+    private function manageDisable(?User $user = null, bool $forever = false)
+    {
+
+        if ($user === null) {
+            $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+        }
 
         $deactivationUser = new DeactivationUser();
         $deactivationUser->setUser($user);
@@ -46,22 +52,24 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->getId();
     }
 
-    public function disable(): int {
-        return $this->manageDisable();
-    }
-
-    public function disableForever(): int
+    public function disable(): int
     {
-        return $this->manageDisable(true);
+        return $this->manageDisable(null, false);
     }
 
-    public function disableDeactivation(User $user): void {
+    public function disableForever(User $user): int
+    {
+        return $this->manageDisable($user, true);
+    }
+
+    public function disableDeactivation(User $user): void
+    {
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {
             return;
         }
 
-        if($deactivationUser->getIsFinal()) {
+        if ($deactivationUser->getIsFinal()) {
             throw new EndpointException("User is permanently disabled", 403);
         }
 

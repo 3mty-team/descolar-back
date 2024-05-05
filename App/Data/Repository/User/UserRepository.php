@@ -6,6 +6,7 @@ use DateTime;
 use Descolar\App;
 use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\Institution\Formation;
+use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
@@ -58,7 +59,7 @@ class UserRepository extends EntityRepository
     /**
      * @throws Exception
      */
-    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $token): User
+    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $token): User
     {
         if ($this->findOneBy(['username' => $username]) !== null) {
             throw new EndpointException("Username already exists", 403);
@@ -82,7 +83,6 @@ class UserRepository extends EntityRepository
 
         $user = new User();
         $user->setUsername($username);
-        $user->setProfilePicturePath(null);
         $user->setFirstname($firstname);
         $user->setLastname($lastname);
         $user->setMail($mail);
@@ -91,6 +91,11 @@ class UserRepository extends EntityRepository
         $user->setBiography(null);
         $user->setIsActive(true);
         $user->setToken($token);
+
+        if($profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+            $user->setProfilePicturePath($profilePath);
+        }
+
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
 
@@ -135,7 +140,9 @@ class UserRepository extends EntityRepository
             $user->setUsername($username);
         }
 
-        //TODO profile path
+        if($profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+            $user->setProfilePicturePath($profilePath);
+        }
 
         if($firstname !== "" && $firstname !== $user->getFirstname()) {
             $user->setFirstname($firstname);
@@ -204,6 +211,16 @@ class UserRepository extends EntityRepository
             'username' => $user->getUsername(),
             'pfpPath' => $user->getProfilePicturePath(),
             'isActive' => $user->isActive(),
+        ];
+    }
+
+    public function toJsonNames(User $user): array
+    {
+        return [
+            'uuid' => $user->getUUID(),
+            'username' => $user->getUsername(),
+            'firstName' => $user->getFirstName(),
+            'lastName' => $user->getLastName()
         ];
     }
 

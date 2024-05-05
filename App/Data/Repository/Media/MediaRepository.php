@@ -37,6 +37,22 @@ class MediaRepository extends EntityRepository
         return $media;
     }
 
+    public function findByUrl(string $url): Media
+    {
+        $media = $this->createQueryBuilder('m')
+            ->where('m.path = :url')
+            ->andWhere('m.isActive = true')
+            ->setParameter('url', $url)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($media === null) {
+            throw new EndpointException("Media not found", 404);
+        }
+
+        return $media;
+    }
+
     private function createMedia(IMedia $media): Media
     {
         $mediaEntity = new Media();

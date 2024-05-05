@@ -57,8 +57,47 @@ class UserEndpoint extends AbstractEndpoint
             $response->addData('message', $e->getMessage());
             $response->getResult();
         }
+    }
 
+    #[Get('/user/:userUUID/min', variables: ["userUUID" => RouteParam::UUID], name: 'User', auth: false)]
+    #[OA\Get(
+        path: "/user/{userUUID}/min",
+        summary: "Get user username, first name and last name",
+        tags: ["User"],
+        parameters: [
+            new OA\PathParameter(
+                name: "userUUID",
+                description: "User UUID",
+                in: "path",
+                required: true
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "User found"),
+            new OA\Response(response: 404, description: "User not found"),
+        ]
+    )]
+    private function getUserNames(string $userUUID): void
+    {
 
+        $response = JsonBuilder::build();
+
+        try {
+            $user = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($userUUID);
+            $userData = OrmConnector::getInstance()->getRepository(User::class)->toJsonNames($user);
+
+            foreach ($userData as $key => $value) {
+                $response->addData($key, $value);
+            }
+
+            $response->setCode(200);
+            $response->getResult();
+
+        } catch (EndpointException $e) {
+            $response->setCode($e->getCode());
+            $response->addData('message', $e->getMessage());
+            $response->getResult();
+        }
     }
 
     #[Put("/user", name: "UpdateUser", auth: true)]
@@ -111,7 +150,7 @@ class UserEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Put('user/disable', name: 'disableUser', auth: true)]
+    #[Put('/user/disable', name: 'disableUser', auth: true)]
     #[OA\Put(
         path: "/user/disable",
         summary: "Disable user",
@@ -141,24 +180,31 @@ class UserEndpoint extends AbstractEndpoint
 
     }
 
-    #[Put('user/disable/forever', name: 'disableUserForever', auth: true)]
+    #[Put('/user/disable/forever/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'disableUserForever', auth: false)]
     #[OA\Put(
-        path: "/user/disable/forever",
+        path: "/user/disable/forever/{userUUID}",
         summary: "Disable user forever",
         tags: ["User"],
+        parameters: [
+            new OA\PathParameter(
+                name: "userUUID",
+                description: "User UUID",
+                in: "path",
+                required: true
+            )
+        ],
         responses: [
             new OA\Response(response: 200, description: "User disabled"),
             new OA\Response(response: 403, description: "User not logged")
         ]
     )]
-    private function disableUserForever(): void
+    private function disableUserForever(string $userUUID): void
     {
-		echo("Method actually disabled; Security Breach;");
-        die();
         $response = JsonBuilder::build();
 
         try {
-            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever();
+            $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
+            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever($user);
 
             $response->addData('id', $userId);
             $response->setCode(200);

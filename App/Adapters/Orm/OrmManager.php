@@ -1,4 +1,5 @@
 <?php
+
 namespace Descolar\Adapters\Orm;
 
 use Descolar\App;
@@ -23,6 +24,8 @@ use Override;
 class OrmManager implements IOrmManager
 {
     private static EntityManager $_entityManagerInstance;
+    private PhpFilesAdapter|ArrayAdapter $_queryCache;
+    private PhpFilesAdapter|ArrayAdapter $_metadataCache;
 
     /**
      * @return array ORM parameters to connect to the database
@@ -36,7 +39,7 @@ class OrmManager implements IOrmManager
         $ormPort = EnvReader::getInstance()->get('ORM_PORT');
         $ormCharset = EnvReader::getInstance()->get('ORM_CHARSET') ?? 'utf8mb4';
 
-        if(!isset($ormHost, $ormUser, $ormPassword, $ormDatabaseName, $ormPort, $ormCharset)) {
+        if (!isset($ormHost, $ormUser, $ormPassword, $ormDatabaseName, $ormPort, $ormCharset)) {
             throw new OrmDataNotDefined();
         }
 
@@ -58,7 +61,17 @@ class OrmManager implements IOrmManager
      */
     private function setQueryCache(bool $isDevMode): PhpFilesAdapter|ArrayAdapter
     {
-        return $isDevMode ? new ArrayAdapter() : new PhpFilesAdapter('doctrine_queries');
+        $this->_queryCache = $isDevMode ? new ArrayAdapter() : new PhpFilesAdapter('doctrine_query_cache');
+        return $this->_queryCache;
+    }
+
+    /**
+     * get the query cache
+     * @return PhpFilesAdapter|ArrayAdapter The query cache
+     */
+    private function getQueryCache(): PhpFilesAdapter|ArrayAdapter
+    {
+        return $this->_queryCache;
     }
 
     /**
@@ -68,7 +81,26 @@ class OrmManager implements IOrmManager
      */
     private function setMetadataCache(bool $isDevMode): PhpFilesAdapter|ArrayAdapter
     {
-        return $isDevMode ? new ArrayAdapter() : new PhpFilesAdapter('doctrine_metadata');
+        $this->_metadataCache = $isDevMode ? new ArrayAdapter() : new PhpFilesAdapter('doctrine_metadata_cache');
+        return $this->_metadataCache;
+    }
+
+    /**
+     * get the metadata cache
+     * @return PhpFilesAdapter|ArrayAdapter The metadata cache
+     */
+    private function getMetadataCache(): PhpFilesAdapter|ArrayAdapter
+    {
+        return $this->_metadataCache;
+    }
+
+    /**
+     * Refresh the cache
+     */
+    private function refreshCache(): void
+    {
+        $this->getQueryCache()->clear();
+        $this->getMetadataCache()->clear();
     }
 
     /**
@@ -82,12 +114,15 @@ class OrmManager implements IOrmManager
      */
     private function setupConfig(Configuration $config, CacheItemPoolInterface $metadataCache, MappingDriver $driverImpl, CacheItemPoolInterface $queryCache, string $proxyDir, string $proxyNamespace): void
     {
+        $this->refreshCache();
+
         $config->setMetadataCache($metadataCache);
         $config->setMetadataDriverImpl($driverImpl);
         $config->setQueryCache($queryCache);
         $config->setProxyDir($proxyDir);
         $config->setProxyNamespace($proxyNamespace);
         $config->setAutoGenerateProxyClasses(true);
+
     }
 
     /**
