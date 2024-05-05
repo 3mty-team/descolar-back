@@ -57,9 +57,9 @@ class DeactivationUserRepository extends EntityRepository
         return $this->manageDisable(null, false);
     }
 
-    public function disableForever(): int
+    public function disableForever(User $user): int
     {
-        return $this->manageDisable(null, true);
+        return $this->manageDisable($user, true);
     }
 
     public function disableDeactivation(User $user): void
