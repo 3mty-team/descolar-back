@@ -203,7 +203,8 @@ class UserEndpoint extends AbstractEndpoint
         $response = JsonBuilder::build();
 
         try {
-            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever($userUUID);
+            $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
+            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever($user);
 
             $response->addData('id', $userId);
             $response->setCode(200);
