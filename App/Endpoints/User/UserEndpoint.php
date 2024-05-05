@@ -150,7 +150,7 @@ class UserEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Put('user/disable', name: 'disableUser', auth: true)]
+    #[Put('/user/disable', name: 'disableUser', auth: true)]
     #[OA\Put(
         path: "/user/disable",
         summary: "Disable user",
@@ -180,7 +180,7 @@ class UserEndpoint extends AbstractEndpoint
 
     }
 
-    #[Put('user/disable/forever/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'disableUserForever', auth: false)]
+    #[Put('/user/disable/forever/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'disableUserForever', auth: false)]
     #[OA\Put(
         path: "/user/disable/forever/{userUUID}",
         summary: "Disable user forever",
