@@ -50,9 +50,20 @@ class DeactivationUserRepository extends EntityRepository
         return $this->manageDisable();
     }
 
-    public function disableForever(): int
+    public function disableForever(string $uuid): int
     {
-        return $this->manageDisable(true);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($uuid);
+
+        $deactivationUser = new DeactivationUser();
+        $deactivationUser->setUser($user);
+        $deactivationUser->setDate(new \DateTime("now", new DateTimeZone('Europe/Paris')));
+        $deactivationUser->setIsFinal(true);
+        $deactivationUser->setIsActive(true);
+
+        $this->getEntityManager()->persist($deactivationUser);
+        $this->getEntityManager()->flush();
+
+        return $deactivationUser->getId();
     }
 
     public function disableDeactivation(User $user): void {
