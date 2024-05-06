@@ -44,7 +44,7 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/report/groupmessage/create', name: 'createGroupMessageReport', auth: false)]
+    #[Post('/report/groupmessage/create', name: 'createGroupMessageReport', auth: true)]
     #[OA\Post(
         path: "/report/groupmessage/create",
         summary: "createGroupMessageReport",

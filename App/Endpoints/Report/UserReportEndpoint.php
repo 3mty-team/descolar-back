@@ -44,7 +44,7 @@ class UserReportEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/report/user/create', name: 'createUserReport', auth: false)]
+    #[Post('/report/user/create', name: 'createUserReport', auth: true)]
     #[OA\Post(
         path: "/report/user/create",
         summary: "createUserReport",
