@@ -44,7 +44,7 @@ class PostReportEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/report/post/create', name: 'createPostReport', auth: false)]
+    #[Post('/report/post/create', name: 'createPostReport', auth: true)]
     #[OA\Post(
         path: "/report/post/create",
         summary: "createPostReport",

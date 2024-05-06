@@ -44,7 +44,7 @@ class MessageReportEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Post('/report/message/create', name: 'createMessageReport', auth: false)]
+    #[Post('/report/message/create', name: 'createMessageReport', auth: true)]
     #[OA\Post(
         path: "/report/message/create",
         summary: "createMessageReport",
