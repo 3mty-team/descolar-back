@@ -217,7 +217,7 @@ class UserEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Put('/user/unban/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'unbanUser', auth: false)]
+    #[Put('/user/:userUUID/unban', variables: ["userUUID" => RouteParam::UUID], name: 'unbanUser', auth: false)]
     #[OA\Put(
         path: "/user/unban/{userUUID}",
         summary: "Unban user",
