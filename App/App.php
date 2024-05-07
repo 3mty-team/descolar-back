@@ -8,6 +8,7 @@ use Descolar\Managers\Router\Router;
 use Descolar\Managers\App\Traits as Traits;
 use Descolar\Adapters as Adapters;
 
+use Descolar\Managers\Websocket\WebsocketManager;
 use ReflectionException;
 
 /**
@@ -25,6 +26,7 @@ class App
     use Traits\OrmAdapter;
     use Traits\MailAdapter;
     use Traits\MediaAdapter;
+    use Traits\SocketAdapter;
 
     /**
      * @return bool True if the application is in development mode, false otherwise
@@ -49,6 +51,8 @@ class App
         self::manageRouter();
         self::manageEvent();
         Router::getInstance()->listen();
+        WebsocketManager::getInstance()->run();
+        WebsocketManager::getInstance()->add("/private");
     }
 
     /**
@@ -87,5 +91,6 @@ class App
         self::useJsonBuilder(Adapters\JsonBuilder\JsonBuilderManager::class);
         self::useMail(Adapters\Mail\MailBuilder::class);
         self::useMedia(Adapters\Media\MediaAdapter::class);
+        self::useSocket(Adapters\Websocket\MessageManager::class);
     }
 }
