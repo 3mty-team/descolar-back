@@ -209,8 +209,8 @@ class UserRepository extends EntityRepository
     {
         return [
             'uuid' => $user->getUUID(),
-            'firstName' => $user->getFirstName(),
-            'lastName' => $user->getLastName(),
+            'firstname' => $user->getFirstName(),
+            'lastname' => $user->getLastName(),
             'username' => $user->getUsername(),
             'pfpPath' => $user->getProfilePicturePath(),
             'followers' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerCount($user),
