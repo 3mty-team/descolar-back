@@ -69,7 +69,6 @@ class DeactivationUserRepository extends EntityRepository
             return "User is not deactivated.";
         }
 
-        $deactivationUser->setIsFinal(false);
         $deactivationUser->setIsActive(false);
 
         $this->getEntityManager()->persist($deactivationUser);
