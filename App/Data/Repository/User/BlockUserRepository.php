@@ -18,6 +18,7 @@ class BlockUserRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("b")
             ->where("b.blocking = :user")
+            ->andWhere("b.isActive = true")
             ->setParameter("user", $user)
             ->getQuery()->getResult();
 
@@ -36,6 +37,7 @@ class BlockUserRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("b")
             ->where("b.blocked = :user")
+            ->andWhere("b.isActive = true")
             ->setParameter("user", $user)
             ->getQuery()->getResult();
 
