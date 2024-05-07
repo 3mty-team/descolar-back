@@ -215,7 +215,43 @@ class UserEndpoint extends AbstractEndpoint
             $response->addData('message', $e->getMessage());
             $response->getResult();
         }
+    }
 
+    #[Put('/user/unban/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'unbanUser', auth: false)]
+    #[OA\Put(
+        path: "/user/unban/{userUUID}",
+        summary: "Unban user",
+        tags: ["User"],
+        parameters: [
+            new OA\PathParameter(
+                name: "userUUID",
+                description: "User UUID",
+                in: "path",
+                required: true
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "User unbanned"),
+            new OA\Response(response: 403, description: "User not logged")
+        ]
+    )]
+    private function unbanUser(string $userUUID): void
+    {
+        $response = JsonBuilder::build();
+
+        try {
+            $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
+            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user);
+
+            $response->addData('id', $userId);
+            $response->setCode(200);
+            $response->getResult();
+
+        } catch (EndpointException $e) {
+            $response->setCode($e->getCode());
+            $response->addData('message', $e->getMessage());
+            $response->getResult();
+        }
     }
 
     #[Delete('/user', name: 'deleteUser', auth: true)]

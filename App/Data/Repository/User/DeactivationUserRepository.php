@@ -62,20 +62,19 @@ class DeactivationUserRepository extends EntityRepository
         return $this->manageDisable($user, true);
     }
 
-    public function disableDeactivation(User $user): void
+    public function disableDeactivation(User $user): string
     {
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {
-            return;
+            return "User is not deactivated.";
         }
 
-        if ($deactivationUser->getIsFinal()) {
-            throw new EndpointException("User is permanently disabled", 403);
-        }
-
+        $deactivationUser->setIsFinal(false);
         $deactivationUser->setIsActive(false);
 
         $this->getEntityManager()->persist($deactivationUser);
         $this->getEntityManager()->flush();
+
+        return $user->getUUID();
     }
 }

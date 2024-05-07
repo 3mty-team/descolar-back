@@ -43,12 +43,14 @@ class MessageEndpoint extends AbstractEndpoint
 
     }
 
+    // TODO fix route and update Postman
     #[Get('/post/message/:userUUID/:range', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER], name: 'getAllMessageUserInRange', auth: true)]
     private function getAllMessageUserInRange(int $range): void
     {
         $this->_getAllMessages($range, null, null);
     }
 
+    // TODO fix route and update Postman
     #[Get('/post/message/:userUUID/:range/:timestamp', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::TIMESTAMP], name: 'getAllMessageUserInRangeWithTimestamp', auth: true)]
     #[OA\Get(path: "/group/message/{userUUID}/{range}/{timestamp}", summary: "getAllMessageUserInRangeWithTimestamp", tags: ["Message"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
@@ -57,8 +59,8 @@ class MessageEndpoint extends AbstractEndpoint
         $this->_getAllMessages($range, timestamp: $timestamp);
     }
 
-    #[Post('/post/message', name: 'createMessage', auth: true)]
-    #[OA\Post(path: "/group/message", summary: "createMessage", tags: ["Message"], responses: [new OA\Response(response: 200, description: "Message created")])]
+    #[Post('/message', name: 'createMessage', auth: true)]
+    #[OA\Post(path: "/message", summary: "createMessage", tags: ["Message"], responses: [new OA\Response(response: 200, description: "Message created")])]
     private function createMessage(): void
     {
 
@@ -89,8 +91,8 @@ class MessageEndpoint extends AbstractEndpoint
 
     }
 
-    #[Post('/post/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'likeMessage', auth: true)]
-    #[OA\Post(path: "/group/message/{messageId}/like", summary: "likeMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
+    #[Post('/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'likeMessage', auth: true)]
+    #[OA\Post(path: "/message/{messageId}/like", summary: "likeMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Message liked")])]
     private function likeMessage(int $messageId): void
     {
@@ -115,8 +117,8 @@ class MessageEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete('/post/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'unlikeMessage', auth: true)]
-    #[OA\Delete(path: "/group/message/{messageId}/like", summary: "unlikeMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
+    #[Delete('/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'unlikeMessage', auth: true)]
+    #[OA\Delete(path: "/message/{messageId}/like", summary: "unlikeMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Message unliked")])]
     private function unlikeMessage(int $messageId): void
     {
@@ -141,8 +143,8 @@ class MessageEndpoint extends AbstractEndpoint
         }
     }
 
-    #[Delete('/post/message/:messageId/delete', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteMessage', auth: true)]
-    #[OA\Delete(path: "/group/message/{messageId}/delete", summary: "deleteMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
+    #[Delete('/message/:messageId/delete', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteMessage', auth: false)]
+    #[OA\Delete(path: "/message/{messageId}/delete", summary: "deleteMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Message deleted")])]
     private function deleteMessage(int $messageId): void
     {
