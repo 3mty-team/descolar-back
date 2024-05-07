@@ -54,6 +54,7 @@ class BlockUserRepository extends EntityRepository
             $blockUser = new BlockUser();
             $blockUser->setBlocking($blocking);
             $blockUser->setBlocked($blocked);
+            $blockUser->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
             $blockUser->setIsActive($setBlocked);
 
             $this->getEntityManager()->persist($blockUser);
@@ -61,6 +62,7 @@ class BlockUserRepository extends EntityRepository
             return $blockUser;
         }
 
+        $block->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
         $block->setIsActive($setBlocked);
 
         $this->getEntityManager()->persist($block);
