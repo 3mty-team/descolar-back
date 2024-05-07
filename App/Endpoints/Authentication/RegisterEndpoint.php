@@ -78,7 +78,7 @@ class RegisterEndpoint extends AbstractEndpoint
                 ->getResult();
 
             MailManager::build()
-                ->setFrom('contact@descolar.fr')
+                ->setFrom('contact@descolar.fr', "Descolar")
                 ->addTo($user->getMail())
                 ->setSMTP()
                 ->setSubject('[Descolar] Confirmation de votre inscription')
