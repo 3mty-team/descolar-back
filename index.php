@@ -36,7 +36,17 @@ const DIR_ROOT = __DIR__;
  */
 App::loadAdapters();
 
-/**
- * Run the application
- */
-App::run();
+
+if(PHP_SAPI === 'cli') {
+    /**
+     * Run tasks
+     */
+    include_once 'App/Task/tasks.php';
+    return;
+} else {
+    /**
+     * Run the application
+     */
+    App::run();
+}
+
