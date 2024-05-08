@@ -46,7 +46,7 @@ class GroupMessageEndpoint extends AbstractEndpoint
 
     #[Get('/group/message/:groupId/:range', variables: ["groupId" => RouteParam::NUMBER, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::NUMBER], name: 'getAllGroupMessageInRange', auth: true)]
     #[OA\Get(path: "/group/message/{groupId}/{range}", summary: "getAllGroupMessageInRange", tags: ["Group"], parameters: [new PathParameter("groupId", "groupId", "Group ID", required: true), new PathParameter("range", "range", "Range", required: true)],
-        responses: [new OA\Response(response: 200, description: "All group messages retrieved")] )]
+        responses: [new OA\Response(response: 200, description: "All group messages retrieved")])]
     private function getAllGroupMessageInRange(int $groupId, int $range): void
     {
         $this->_getAllMessage($groupId, $range, null);
@@ -142,7 +142,25 @@ class GroupMessageEndpoint extends AbstractEndpoint
             $response->addData('message', $e->getMessage());
             $response->getResult();
         }
-
     }
 
+    #[Delete('/group/:messageId/message', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteGroupMessageByMessageId', auth: false)]
+    #[OA\Delete(path: "/group/{messageId}/message", summary: "deleteGroupMessage", tags: ["Group"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)], responses: [new OA\Response(response: 200, description: "Group message deleted")])]
+    private function deleteGroupMessageByMessageId(int $groupId, $messageId): void
+    {
+        $response = JsonBuilder::build();
+
+        try {
+            $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->deleteByMessageId($messageId);
+
+            $response->addData("id", $group);
+            $response->setCode(200);
+            $response->getResult();
+
+        } catch (EndpointException $e) {
+            $response->setCode($e->getCode());
+            $response->addData('message', $e->getMessage());
+            $response->getResult();
+        }
+    }
 }
