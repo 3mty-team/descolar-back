@@ -51,8 +51,6 @@ class App
         self::manageRouter();
         self::manageEvent();
         Router::getInstance()->listen();
-        WebsocketManager::getInstance()->run();
-        WebsocketManager::getInstance()->add("/private");
     }
 
     /**

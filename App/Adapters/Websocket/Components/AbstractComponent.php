@@ -2,30 +2,31 @@
 
 namespace Descolar\Adapters\Websocket\Components;
 
+use Descolar\Adapters\Websocket\MessageManager;
 use Exception;
 use Override;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 use SplObjectStorage;
+use Throwable;
 
 abstract class AbstractComponent implements MessageComponentInterface
 {
 
-    protected $clients;
+    protected SplObjectStorage $clients;
 
     public function __construct()
     {
-        $this->clients = new SplObjectStorage;
     }
 
 
-    #[Override] function onClose(ConnectionInterface $conn): void
+    #[Override] function onError(ConnectionInterface $conn, Throwable $e): void
     {
-        $this->clients->detach($conn);
-    }
+        echo MessageManager::getPrefix() . "Error...\n";
+        echo "---------------------\n";
+        echo $e->getMessage() . "\n";
+        echo "---------------------\n";
 
-    #[Override] function onError(ConnectionInterface $conn, Exception $e): void
-    {
         $conn->close();
     }
 }

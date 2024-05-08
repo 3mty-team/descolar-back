@@ -6,10 +6,15 @@ interface ISocketBuilder
 {
 
     /**
-     * Run the websocket server
-     * @param int $port The port to run the server on
+     * Create the websocket server
+     * @param int $port The port to create the server on
      */
-    function run(int $port = 8080): void;
+    function create(int $port = 8080): void;
+
+    /**
+     * Run the websocket server
+     */
+    function run(): void;
 
     /**
      * Add a route to the websocket server
