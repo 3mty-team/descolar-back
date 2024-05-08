@@ -144,6 +144,22 @@ class GroupMessageRepository extends EntityRepository
         return $groupMessage->getId();
     }
 
+    public function deleteByMessageId(int $messageId): int
+    {
+        $groupMessage = $this->find($messageId);
+
+        if ($groupMessage === null) {
+            throw new EndpointException('Message not found', 404);
+        }
+
+        $groupMessage->setIsActive(false);
+
+        OrmConnector::getInstance()->persist($groupMessage);
+        OrmConnector::getInstance()->flush();
+
+        return $groupMessage->getId();
+    }
+
     public function toJsonRange(int $groupId, int $range = 10, int $timestamp = null): array
     {
         $groupMessages = $this->findAllInRange($groupId, $range, $timestamp);
