@@ -30,7 +30,7 @@ class DeactivationUserRepository extends EntityRepository
             return false;
         }
 
-        return $deactivationUser->getIsFinal();
+        return $deactivationUser->isFinal();
     }
 
     private function manageDisable(?User $user = null, bool $forever = false)
