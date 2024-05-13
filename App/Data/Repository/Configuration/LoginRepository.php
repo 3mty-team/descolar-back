@@ -15,7 +15,7 @@ class LoginRepository extends EntityRepository
     {
         $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["username" => $username]);
         if($user == null) {
-            $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["email" => $username]);
+            $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["mail" => $username]);
         }
 
         if(!$user) {
