@@ -47,11 +47,11 @@ class UserRepository extends EntityRepository
     {
         $user = $this->find($uuid);
         if ($user === null) {
-            throw new EndpointException("User not found", 404);
+            throw new EndpointException("Compte introuvable", 404);
         }
 
         if(!$this->isGreatUser($user)) {
-            throw new EndpointException("User is not accessible", 404);
+            throw new EndpointException("Compte inaccessible", 404);
         }
 
         return $user;
@@ -63,17 +63,17 @@ class UserRepository extends EntityRepository
     public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $token): User
     {
         if ($this->findOneBy(['username' => $username]) !== null) {
-            throw new EndpointException("Username already exists", 403);
+            throw new EndpointException("Le nom d'utilisateur existe déjà", 403);
         }
 
         if ($this->findOneBy(['mail' => $mail]) !== null) {
-            throw new EndpointException("Mail already exists", 403);
+            throw new EndpointException("L'adresse mail existe déjà", 403);
         }
 
         try {
             $date = new DateTime($dateofbirth);
         } catch (Exception $e) {
-            throw new EndpointException("Invalid date of birth", 403);
+            throw new EndpointException("Date de naissance invalide", 403);
         }
 
         try {
