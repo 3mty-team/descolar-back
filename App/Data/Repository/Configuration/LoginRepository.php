@@ -42,12 +42,17 @@ class LoginRepository extends EntityRepository
          * @var Login $login
          */
         $user = $this->getUserByUsernameOrEmail($username);
+        $login = $this->findOneBy(["user" => $user?->getUUID()]);
+
+        if($user == null || $login == null) {
+            throw new EndpointException("Invalid login or password", 403);
+        }
 
         if($user->getToken() != null) {
             throw new EndpointException("Email not verified", 403);
         }
 
-        $isValid = password_verify($password, $login?->getPassword());
+        $isValid = password_verify($password, $login->getPassword());
         if (!$isValid) {
             throw new EndpointException("Invalid login or password", 403);
         }
