@@ -8,8 +8,6 @@ class RequestUtils
     public static function cleanBody(): void
     {
         //From : https://stackoverflow.com/a/18678678. Edited by Mehdi A.
-        global $_REQ;
-
         $reqData = fopen("php://input", "r");
 
         $rawData = '';

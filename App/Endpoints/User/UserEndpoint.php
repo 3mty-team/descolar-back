@@ -111,10 +111,8 @@ class UserEndpoint extends AbstractEndpoint
             new OA\Response(response: 404, description: "User not found"),
         ]
     )]
-    private function updateUser(): void
+    private function updateUser($_REQ): void
     {
-        global $_REQ;
-        RequestUtils::cleanBody();
         $response = JsonBuilder::build();
 
         $username = $_REQ['username'] ?? "";

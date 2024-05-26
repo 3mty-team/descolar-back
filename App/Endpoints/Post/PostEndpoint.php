@@ -79,25 +79,14 @@ class PostEndpoint extends AbstractEndpoint
     private function getPostById(int $postId): void
     {
 
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->find($postId);
             $postData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
 
     }
 
