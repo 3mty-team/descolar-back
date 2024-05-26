@@ -25,6 +25,9 @@ class User
     #[ORM\Column(name: "user_profilepicturepath", type: "string", length: 200, nullable: true)]
     private ?string $pfpPath = null;
 
+    #[ORM\Column(name: "user_banner_path", type: "string", length: 200, nullable: true)]
+    private ?string $bannerPath = null;
+
     #[ORM\Column(name: "user_firstname", type: "string", length: 100)]
     private string $firstname;
 
@@ -87,6 +90,16 @@ class User
     public function setProfilePicturePath(?string $pfpPath): void
     {
         $this->pfpPath = $pfpPath;
+    }
+
+    public function getBannerPath(): ?string
+    {
+        return $this->bannerPath;
+    }
+
+    public function setBannerPath(?string $bannerPath): void
+    {
+        $this->bannerPath = $bannerPath;
     }
 
     public function getFirstname(): string

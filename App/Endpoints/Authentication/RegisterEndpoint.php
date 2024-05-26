@@ -64,13 +64,14 @@ class RegisterEndpoint extends AbstractEndpoint
         $formation_id = $_POST['formation_id'] ?? "";
         $dateofbirth = $_POST['dateofbirth'] ?? "";
         $profilePath = $_POST['profile_path'] ?? "";
+        $bannerPath = $_POST['banner_path'] ?? "";
 
         try {
 
             $token = bin2hex(random_bytes(32));
 
             /** @var User $user */
-            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formation_id, $dateofbirth, $profilePath, $token);
+            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formation_id, $dateofbirth, $profilePath, $bannerPath, $token);
             JsonBuilder::build()
                 ->setCode(200)
                 ->addData('message', 'Register success')

@@ -60,7 +60,7 @@ class UserRepository extends EntityRepository
     /**
      * @throws Exception
      */
-    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $token): User
+    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $bannerPath, string $token): User
     {
         if ($this->findOneBy(['username' => $username]) !== null) {
             throw new EndpointException("Le nom d'utilisateur existe déjà", 403);
@@ -97,6 +97,10 @@ class UserRepository extends EntityRepository
             $user->setProfilePicturePath($profilePath);
         }
 
+        if($bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
+            $user->setBannerPath($bannerPath);
+        }
+
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
 
@@ -120,6 +124,7 @@ class UserRepository extends EntityRepository
     public function editUser(
         string $username,
         string $profilePath,
+        string $bannerPath,
         string $firstname,
         string $lastname,
         string $biography,
@@ -143,6 +148,10 @@ class UserRepository extends EntityRepository
 
         if($profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
             $user->setProfilePicturePath($profilePath);
+        }
+
+        if($bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
+            $user->setBannerPath($bannerPath);
         }
 
         if($firstname !== "" && $firstname !== $user->getFirstname()) {
@@ -213,6 +222,7 @@ class UserRepository extends EntityRepository
             'lastname' => $user->getLastName(),
             'username' => $user->getUsername(),
             'pfpPath' => $user->getProfilePicturePath(),
+            'bannerPath' => $user->getBannerPath(),
             'followers' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerCount($user),
             'following' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowingCount($user),
             'isActive' => $user->isActive(),
@@ -235,6 +245,7 @@ class UserRepository extends EntityRepository
             'uuid' => $user->getUUID(),
             'username' => $user->getUsername(),
             'pfpPath' => $user->getProfilePicturePath(),
+            'bannerPath' => $user->getBannerPath(),
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
             'followers' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerCount($user),

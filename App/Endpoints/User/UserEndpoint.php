@@ -119,6 +119,7 @@ class UserEndpoint extends AbstractEndpoint
 
         $username = $_REQ['username'] ?? "";
         $profilePath = $_REQ['profile_path'] ?? "";
+        $bannerPath = $_REQ['banner_path'] ?? "";
         $firstname = $_REQ['firstname'] ?? "";
         $lastname = $_REQ['lastname'] ?? "";
         $biography = $_REQ['biography'] ?? "";
@@ -129,6 +130,7 @@ class UserEndpoint extends AbstractEndpoint
             $user = OrmConnector::getInstance()->getRepository(User::class)->editUser(
                 $username,
                 $profilePath,
+                $bannerPath,
                 $firstname,
                 $lastname,
                 $biography,
