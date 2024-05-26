@@ -25,7 +25,7 @@ class User
     #[ORM\Column(name: "user_profilepicturepath", type: "string", length: 200, nullable: true)]
     private ?string $pfpPath = null;
 
-    #[ORM\Column(name: "user_banner_path", type: "string", length: 200, nullable: true)]
+    #[ORM\Column(name: "user_bannerpath", type: "string", length: 200, nullable: true)]
     private ?string $bannerPath = null;
 
     #[ORM\Column(name: "user_firstname", type: "string", length: 100)]
