@@ -26,8 +26,8 @@ class SessionEndpoint extends AbstractEndpoint
                 return;
             }
 
-            $response->addData('message', 'Session started');
-            $response->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session));
+            $response->addData('message', 'Session started')
+                ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session));
         });
     }
 
@@ -43,7 +43,7 @@ class SessionEndpoint extends AbstractEndpoint
     )]
     private function createSession(): void
     {
-        $this->reply(function ($response){
+        $this->reply(function ($response) {
             $date = $_POST['date'] ?? "";
             $localisation = $_POST['localisation'] ?? "";
             $userAgent = $_POST['user_agent'] ?? "";
@@ -54,8 +54,8 @@ class SessionEndpoint extends AbstractEndpoint
             }
 
             $session = OrmConnector::getInstance()->getRepository(Session::class)->createSessionn($date, $localisation, $userAgent);
-            $response->addData('message', 'Session created');
-            $response->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session));
+            $response->addData('message', 'Session created')
+                ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session));
         });
     }
 }

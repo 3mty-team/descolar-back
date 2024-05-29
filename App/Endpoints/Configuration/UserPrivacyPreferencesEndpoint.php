@@ -44,8 +44,8 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-            $response->addData('message', 'User privacy preference created');
-            $response->addData('privacy', $userPrivacyPreferences);
+            $response->addData('message', 'User privacy preference created')
+                ->addData('privacy', $userPrivacyPreferences);
         });
     }
 
@@ -70,8 +70,8 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-            $response->addData('message', 'User privacy preference updated');
-            $response->addData('privacy', $userPrivacyPreferences);
+            $response->addData('message', 'User privacy preference updated')
+                ->addData('privacy', $userPrivacyPreferences);
         });
     }
 }

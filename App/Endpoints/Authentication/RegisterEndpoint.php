@@ -73,8 +73,8 @@ class RegisterEndpoint extends AbstractEndpoint
             /** @var User $user */
             $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formation_id, $dateofbirth, $profilePath, $bannerPath, $token);
 
-            $response->addData('message', 'Register success');
-            $response->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user));
+            $response->addData('message', 'Register success')
+                ->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user));
 
             MailManager::build()
                 ->setFrom('contact@descolar.fr', "Descolar")

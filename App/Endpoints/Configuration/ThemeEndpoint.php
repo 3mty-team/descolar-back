@@ -51,7 +51,7 @@ class ThemeEndpoint extends AbstractEndpoint
     )]
     private function createThemeToUser(): void
     {
-        $this->reply(function ($response){
+        $this->reply(function ($response) {
             $themeId = $_POST['theme_id'] ?? "";
 
             if (empty($themeId)) {
@@ -66,8 +66,8 @@ class ThemeEndpoint extends AbstractEndpoint
 
             $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->createThemePreference($themeId);
 
-            $response->addData('message', 'Theme set');
-            $response->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
+            $response->addData('message', 'Theme set')
+                ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
         });
     }
 
@@ -75,7 +75,7 @@ class ThemeEndpoint extends AbstractEndpoint
     #[OA\Put(path: '/config/theme', summary: 'Update theme to user', tags: ['Configuration'], responses: [new OA\Response(response: 201, description: 'Theme set'), new OA\Response(response: 400, description: 'Missing parameters or invalid parameters')])]
     private function updateThemeToUser(): void
     {
-        $this->reply(function ($response){
+        $this->reply(function ($response) {
             global $_REQ;
             RequestUtils::cleanBody();
 
@@ -93,8 +93,8 @@ class ThemeEndpoint extends AbstractEndpoint
 
             $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->updateThemePreference($themeId);
 
-            $response->addData('message', 'Theme set');
-            $response->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
+            $response->addData('message', 'Theme set')
+                ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
         });
     }
 }
