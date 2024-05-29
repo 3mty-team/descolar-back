@@ -27,9 +27,7 @@ class LoginEndpoint extends AbstractEndpoint
     )]
     private function login(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $username = $_POST['username'] ?? "";
             $password = $_POST['password'] ?? "";
 
@@ -40,14 +38,6 @@ class LoginEndpoint extends AbstractEndpoint
             foreach ($userData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

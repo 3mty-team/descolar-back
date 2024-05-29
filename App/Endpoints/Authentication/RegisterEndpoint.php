@@ -66,17 +66,14 @@ class RegisterEndpoint extends AbstractEndpoint
         $profilePath = $_POST['profile_path'] ?? "";
         $bannerPath = $_POST['banner_path'] ?? "";
 
-        try {
-
+        $this->reply(function ($response) use ($bannerPath, $profilePath, $dateofbirth, $formation_id, $mail, $lastname, $firstname, $password, $username) {
             $token = bin2hex(random_bytes(32));
 
             /** @var User $user */
             $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formation_id, $dateofbirth, $profilePath, $bannerPath, $token);
-            JsonBuilder::build()
-                ->setCode(200)
-                ->addData('message', 'Register success')
-                ->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user))
-                ->getResult();
+
+            $response->addData('message', 'Register success');
+            $response->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user));
 
             MailManager::build()
                 ->setFrom('contact@descolar.fr', "Descolar")
@@ -93,12 +90,6 @@ class RegisterEndpoint extends AbstractEndpoint
                     );
                 })
                 ->send();
-
-        } catch (EndpointException $e) {
-            JsonBuilder::build()
-                ->setCode($e->getCode())
-                ->addData('message', $e->getMessage())
-                ->getResult();
-        }
+        });
     }
 }

@@ -25,67 +25,47 @@ class GroupEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/group", summary: "getAllGroups", tags: ["Group"], responses: [new OA\Response(response: 200, description: "All groups retrieved")])]
     private function getAllGroups(): void
     {
+        $this->reply(function ($response) {
+            /** @var Group[] $groups */
+            $groups = OrmConnector::getInstance()->getRepository(Group::class)->findAll();
 
-        /** @var Group[] $groups */
-        $groups = OrmConnector::getInstance()->getRepository(Group::class)->findAll();
-
-        $data = [];
-        foreach ($groups as $group) {
-            $data[] = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
-        }
-
-        $response = JsonBuilder::build()()->setCode(200);
-        $response->addData('groups', $data);
-
-        $response->getResult();
+            $data = [];
+            foreach ($groups as $group) {
+                $data[] = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
+                $response->addData('groups', $data);
+            }
+        });
     }
 
     #[Get('/group/:id', variables: ["id" => RouteParam::NUMBER], name: 'getGroupById', auth: true)]
     #[OA\Get(path: "/group/{id}", summary: "getGroupById", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group retrieved")])]
     private function getGroupById(int $id): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($id){
             $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($id);
             $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Post('/group', name: 'createGroup', auth: true)]
     #[OA\Post(path: "/group", summary: "createGroup", tags: ["Group"], responses: [new Response(response: 200, description: "Group created")])]
     private function createGroup(): void
     {
-        $response = JsonBuilder::build()();
         $name = $_POST['name'];
         $admin = $_POST['admin'];
 
-        try {
+        $this->reply(function ($response) use ($name, $admin){
             $group = OrmConnector::getInstance()->getRepository(Group::class)->create($name, $admin);
             $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Put('/group/:id', variables: ["id" => RouteParam::NUMBER], name: 'updateGroup', auth: true)]

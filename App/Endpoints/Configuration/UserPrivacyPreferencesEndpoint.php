@@ -18,13 +18,12 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/config/privacy", summary: "Retrieve all Themes", tags: ["Configuration"], responses: [new OA\Response(response: 200, description: "All themes retrieved")])]
     private function getPrivacy(): void
     {
-        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
+        $this->reply(function ($response) {
+            $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
 
-        JsonBuilder::build()
-            ->setCode(200)
-            ->addData('message', 'User privacy preference retrieved')
-            ->addData('privacy', $userPrivacyPreferences)
-            ->getResult();
+            $response->addData('message', 'User privacy preference retrieved');
+            $response->addData('privacy', $userPrivacyPreferences);
+        });
     }
 
     #[Post('/config/privacy', name: 'Create Privacy to user', auth: true)]
@@ -42,13 +41,12 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         $feedVisibility = $_POST['feed_visibility'] ?? "";
         $searchVisibility = $_POST['search_visibility'] ?? "";
 
-        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
+        $this->reply(function ($response) use ($feedVisibility, $searchVisibility) {
+            $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'User privacy preference created')
-            ->addData('theme', $userPrivacyPreferences)
-            ->getResult();
+            $response->addData('message', 'User privacy preference created');
+            $response->addData('privacy', $userPrivacyPreferences);
+        });
     }
 
     #[Put('/config/privacy', name: 'Update Privacy to user', auth: true)]
@@ -69,12 +67,11 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         $feedVisibility = $_REQ['feed_visibility'] ?? "";
         $searchVisibility = $_REQ['search_visibility'] ?? "";
 
-        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
+        $this->reply(function ($response) use ($feedVisibility, $searchVisibility) {
+            $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'User privacy preference updated')
-            ->addData('theme', $userPrivacyPreferences)
-            ->getResult();
+            $response->addData('message', 'User privacy preference updated');
+            $response->addData('privacy', $userPrivacyPreferences);
+        });
     }
 }

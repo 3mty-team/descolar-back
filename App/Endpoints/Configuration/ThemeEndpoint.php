@@ -19,26 +19,24 @@ class ThemeEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/config/themes", summary: "Retrieve all Themes", tags: ["Configuration"], responses: [new OA\Response(response: 200, description: "All themes retrieved")])]
     private function getAllThemes(): void
     {
-        $themes = OrmConnector::getInstance()->getRepository(Theme::class)->getAllThemesToJson();
+        $this->reply(function ($response) {
+            $themes = OrmConnector::getInstance()->getRepository(Theme::class)->getAllThemesToJson();
 
-        JsonBuilder::build()
-            ->setCode(200)
-            ->addData('message', 'All themes retrieved')
-            ->addData('themes', $themes)
-            ->getResult();
+            $response->addData('message', 'All themes retrieved');
+            $response->addData('themes', $themes);
+        });
     }
 
     #[Get('/config/theme', name: 'Retrieve Theme preference', auth: true)]
     #[OA\Get(path: '/config/theme', summary: 'Retrieve Theme preference', tags: ['Configuration'], responses: [new OA\Response(response: 200, description: 'Theme preference retrieved')])]
     private function getThemePreference(): void
     {
-        $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->getThemePreferenceToJson();
+        $this->reply(function ($response) {
+            $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->getThemePreferenceToJson();
 
-        JsonBuilder::build()
-            ->setCode(200)
-            ->addData('message', 'Theme preference retrieved')
-            ->addData('theme', $theme)
-            ->getResult();
+            $response->addData('message', 'Theme preference retrieved');
+            $response->addData('theme', $theme);
+        });
     }
 
     #[Post('/config/theme', name: 'Create theme to user', auth: true)]
@@ -55,30 +53,22 @@ class ThemeEndpoint extends AbstractEndpoint
     {
         $themeId = $_POST['theme_id'] ?? "";
 
-        if (empty($themeId)) {
-            JsonBuilder::build()
-                ->setCode(400)
-                ->addData('message', 'Missing parameters')
-                ->getResult();
-            return;
-        }
+        $this->reply(function ($response) use ($themeId) {
+            if (empty($themeId)) {
+                $response->addData('message', 'Missing parameters');
+                return;
+            }
 
-        if (!is_numeric($themeId)) {
-            JsonBuilder::build()
-                ->setCode(400)
-                ->addData('message', 'Invalid parameters')
-                ->getResult();
-            return;
-        }
+            if (!is_numeric($themeId)) {
+                $response->addData('message', 'Invalid parameters');
+                return;
+            }
 
-        $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->createThemePreference($themeId);
+            $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->createThemePreference($themeId);
 
-
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'Theme set')
-            ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme))
-            ->getResult();
+            $response->addData('message', 'Theme set');
+            $response->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
+        });
     }
 
     #[Put('/config/theme', name: 'Update theme to user', auth: true)]
@@ -90,29 +80,21 @@ class ThemeEndpoint extends AbstractEndpoint
 
         $themeId = $_REQ['theme_id'] ?? "";
 
-        if (empty($themeId)) {
-            JsonBuilder::build()
-                ->setCode(400)
-                ->addData('message', 'Missing parameters')
-                ->getResult();
-            return;
-        }
+        $this->reply(function ($response) use ($themeId) {
+            if (empty($themeId)) {
+                $response->addData('message', 'Missing parameters');
+                return;
+            }
 
-        if (!is_numeric($themeId)) {
-            JsonBuilder::build()
-                ->setCode(400)
-                ->addData('message', 'Invalid parameters')
-                ->getResult();
-            return;
-        }
+            if (!is_numeric($themeId)) {
+                $response->addData('message', 'Invalid parameters');
+                return;
+            }
 
-        $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->updateThemePreference($themeId);
+            $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->updateThemePreference($themeId);
 
-
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'Theme set')
-            ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme))
-            ->getResult();
+            $response->addData('message', 'Theme set');
+            $response->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
+        });
     }
 }
