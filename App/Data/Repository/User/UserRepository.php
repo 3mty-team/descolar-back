@@ -7,9 +7,9 @@ use Descolar\App;
 use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\Institution\Formation;
 use Descolar\Data\Entities\Media\Media;
+use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\FollowUser;
 use Descolar\Data\Entities\User\SearchHistoryUser;
-use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
@@ -60,8 +60,11 @@ class UserRepository extends EntityRepository
     /**
      * @throws Exception
      */
-    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $bannerPath, string $token): User
+    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $bannerPath): User
     {
+
+        $token = bin2hex(random_bytes(32));
+
         if ($this->findOneBy(['username' => $username]) !== null) {
             throw new EndpointException("Le nom d'utilisateur existe déjà", 403);
         }

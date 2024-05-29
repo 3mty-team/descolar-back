@@ -9,7 +9,6 @@ use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Data\Entities\Configuration\Theme;
 use Descolar\Data\Entities\Configuration\UserThemePreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 
@@ -22,7 +21,6 @@ class ThemeEndpoint extends AbstractEndpoint
         $this->reply(function ($response) {
             $themes = OrmConnector::getInstance()->getRepository(Theme::class)->getAllThemesToJson();
 
-            $response->addData('message', 'All themes retrieved');
             $response->addData('themes', $themes);
         });
     }
@@ -34,8 +32,9 @@ class ThemeEndpoint extends AbstractEndpoint
         $this->reply(function ($response) {
             $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->getThemePreferenceToJson();
 
-            $response->addData('message', 'Theme preference retrieved');
-            $response->addData('theme', $theme);
+            foreach ($theme as $key => $value) {
+                $response->addData($key, $value);
+            }
         });
     }
 
@@ -54,20 +53,12 @@ class ThemeEndpoint extends AbstractEndpoint
         $this->reply(function ($response) {
             $themeId = $_POST['theme_id'] ?? "";
 
-            if (empty($themeId)) {
-                $response->addData('message', 'Missing parameters');
-                return;
-            }
-
-            if (!is_numeric($themeId)) {
-                $response->addData('message', 'Invalid parameters');
-                return;
-            }
-
             $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->createThemePreference($themeId);
+            $themeData = OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme);
 
-            $response->addData('message', 'Theme set')
-                ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
+            foreach ($themeData as $key => $value) {
+                $response->addData($key, $value);
+            }
         });
     }
 

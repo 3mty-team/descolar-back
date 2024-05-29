@@ -8,13 +8,30 @@ use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Mail\MailManager;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 
 class RegisterEndpoint extends AbstractEndpoint
 {
+    private function buildMail(User $user): void
+    {
+        MailManager::build()
+            ->setFrom('contact@descolar.fr', "Descolar")
+            ->addTo($user->getMail())
+            ->setSMTP()
+            ->setSubject('[Descolar] Confirmation de votre inscription')
+            ->setBody(true, static function () use ($user) {
+                $mailTemplate = file_get_contents(DIR_ROOT . '/App/Adapters/Mail/Templates/confirmation_mail.html');
+
+                return str_replace(
+                    ['CONFIRMATION_LINK'],
+                    ["https://internal-api.descolar.fr/v1/auth/verifyAccount/{$user->getToken()}"],
+                    $mailTemplate
+                );
+            })
+            ->send();
+    }
 
     #[Get('auth/verifyAccount/:token', variables: ["token" => RouteParam::STRING], name: 'verifyAccount', auth: false)]
     #[OA\Get(
@@ -29,6 +46,10 @@ class RegisterEndpoint extends AbstractEndpoint
     )]
     private function verifyAccount(string $token): void
     {
+
+        /** Its endpoint joined in HTTP request (web browser) **/
+
+        /** @var User $user */
         $user = OrmConnector::getInstance()->getRepository(User::class)->verifyToken($token);
 
         try {
@@ -36,8 +57,7 @@ class RegisterEndpoint extends AbstractEndpoint
             $pageContent = file_get_contents(DIR_ROOT . '/App/Endpoints/Views/Auth/verify_account_success.html');
             echo $pageContent;
 
-
-        } catch (EndpointException $e) {
+        } catch (EndpointException $ignored) {
             $pageContent = file_get_contents(DIR_ROOT . '/App/Endpoints/Views/Auth/verify_account_failed.html');
             echo $pageContent;
         }
@@ -68,29 +88,12 @@ class RegisterEndpoint extends AbstractEndpoint
             $profilePath = $_POST['profile_path'] ?? "";
             $bannerPath = $_POST['banner_path'] ?? "";
 
-            $token = bin2hex(random_bytes(32));
-
             /** @var User $user */
-            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formation_id, $dateofbirth, $profilePath, $bannerPath, $token);
+            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formation_id, $dateofbirth, $profilePath, $bannerPath);
 
-            $response->addData('message', 'Register success')
-                ->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user));
+            $response->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user));
 
-            MailManager::build()
-                ->setFrom('contact@descolar.fr', "Descolar")
-                ->addTo($user->getMail())
-                ->setSMTP()
-                ->setSubject('[Descolar] Confirmation de votre inscription')
-                ->setBody(true, static function () use ($token) {
-                    $mailTemplate = file_get_contents(DIR_ROOT . '/App/Adapters/Mail/Templates/confirmation_mail.html');
-
-                    return str_replace(
-                        ['CONFIRMATION_LINK'],
-                        ["https://internal-api.descolar.fr/v1/auth/verifyAccount/$token"],
-                        $mailTemplate
-                    );
-                })
-                ->send();
+            $this->buildMail($user);
         });
     }
 }

@@ -2,27 +2,25 @@
 
 namespace Descolar\Data\Repository\Configuration;
 
-use DateTime;
-use Descolar\App;
 use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Data\Entities\User\User;
+use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
 
 class SessionRepository extends EntityRepository
 {
-    public function createSessionn($date, $localisation, $userAgent): ?Session
+    public function createSession($date, $localisation, $userAgent): ?Session
     {
+
+        if (empty($date) || empty($localisation) || empty($userAgent)) {
+            throw new EndpointException("Missing parameters", 400);
+        }
+
         /*
          * @var User $user
          */
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
-
-        if ($user === null) {
-            return null;
-        }
-
-        $date = new DateTime();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $session = new Session();
         $session->setUser($user);
@@ -37,7 +35,8 @@ class SessionRepository extends EntityRepository
         return $this->findOneBy(['date' => $date, 'localisation' => $localisation, 'userAgent' => $userAgent]);
     }
 
-    public function toJson(Session $session): array {
+    public function toJson(Session $session): array
+    {
         return [
             'id' => $session->getId(),
             'date' => $session->getDate(),
@@ -48,8 +47,13 @@ class SessionRepository extends EntityRepository
         ];
     }
 
-    public function getSessionByUuid(String $sessionUuid): ?Session
+    public function getSessionByUuid(string $sessionUuid): Session
     {
-        return $this->findOneBy(['id' => $sessionUuid]);
+        $session = $this->findOneBy(['id' => $sessionUuid]);
+        if ($session === null) {
+            throw new EndpointException("Session not found", 404);
+        }
+
+        return $session;
     }
 }

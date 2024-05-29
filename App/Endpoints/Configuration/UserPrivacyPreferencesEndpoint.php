@@ -8,7 +8,6 @@ use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Data\Entities\Configuration\UserPrivacyPreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 
@@ -21,8 +20,9 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
         $this->reply(function ($response) {
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
 
-            $response->addData('message', 'User privacy preference retrieved');
-            $response->addData('privacy', $userPrivacyPreferences);
+            foreach ($userPrivacyPreferences as $key => $value) {
+                $response->addData($key, $value);
+            }
         });
     }
 
@@ -44,8 +44,9 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-            $response->addData('message', 'User privacy preference created')
-                ->addData('privacy', $userPrivacyPreferences);
+            foreach ($userPrivacyPreferences as $key => $value) {
+                $response->addData($key, $value);
+            }
         });
     }
 
@@ -70,8 +71,9 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
 
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-            $response->addData('message', 'User privacy preference updated')
-                ->addData('privacy', $userPrivacyPreferences);
+            foreach ($userPrivacyPreferences as $key => $value) {
+                $response->addData($key, $value);
+            }
         });
     }
 }

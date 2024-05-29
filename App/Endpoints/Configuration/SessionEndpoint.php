@@ -7,7 +7,6 @@ use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\Parameter;
@@ -20,14 +19,11 @@ class SessionEndpoint extends AbstractEndpoint
     {
         $this->reply(function ($response) use ($sessionUuid) {
             $session = OrmConnector::getInstance()->getRepository(Session::class)->getSessionByUuid($sessionUuid);
+            $sessionData = OrmConnector::getInstance()->getRepository(Session::class)->toJson($session);
 
-            if ($session === null) {
-                $response->addData('message', 'Session not found');
-                return;
+            foreach ($sessionData as $key => $value) {
+                $response->addData($key, $value);
             }
-
-            $response->addData('message', 'Session started')
-                ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session));
         });
     }
 
@@ -44,18 +40,17 @@ class SessionEndpoint extends AbstractEndpoint
     private function createSession(): void
     {
         $this->reply(function ($response) {
+
             $date = $_POST['date'] ?? "";
             $localisation = $_POST['localisation'] ?? "";
             $userAgent = $_POST['user_agent'] ?? "";
 
-            if (empty($date) || empty($localisation) || empty($userAgent)) {
-                $response->addData('message', 'Missing parameters');
-                return;
-            }
+            $session = OrmConnector::getInstance()->getRepository(Session::class)->createSession($date, $localisation, $userAgent);
+            $sessionData = OrmConnector::getInstance()->getRepository(Session::class)->toJson($session);
 
-            $session = OrmConnector::getInstance()->getRepository(Session::class)->createSessionn($date, $localisation, $userAgent);
-            $response->addData('message', 'Session created')
-                ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session));
+            foreach ($sessionData as $key => $value) {
+                $response->addData($key, $value);
+            }
         });
     }
 }
