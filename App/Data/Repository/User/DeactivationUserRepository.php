@@ -8,6 +8,7 @@ use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
+use Exception;
 
 class DeactivationUserRepository extends EntityRepository
 {
@@ -33,15 +34,21 @@ class DeactivationUserRepository extends EntityRepository
         return $deactivationUser->isFinal();
     }
 
+    /**
+     * @throws Exception
+     */
     private function manageDisable(?User $user = null, bool $forever = false)
     {
-
         if ($user === null) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+            $deactivationUser = $this->findOneBy(["user" => $user]);
         }
 
-        $deactivationUser = new DeactivationUser();
-        $deactivationUser->setUser($user);
+        else{
+            $deactivationUser = new DeactivationUser();
+            $deactivationUser->setUser($user);
+        }
+
         $deactivationUser->setDate(new \DateTime("now", new DateTimeZone('Europe/Paris')));
         $deactivationUser->setIsFinal($forever);
         $deactivationUser->setIsActive(true);
