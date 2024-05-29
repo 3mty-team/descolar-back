@@ -21,10 +21,9 @@ class SearchHistoryEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/search/history", summary: "getSearchHistory", tags: ["Search"], responses: [new OA\Response(response: 200, description: "History retrieved")])]
     private function getSearchHistory(): void
     {
-        $response = JsonBuilder::build();
-        $user_uuid = App::getUserUuid();
+        $this->reply(function ($response) {
+            $user_uuid = App::getUserUuid();
 
-        try {
             /** @var SearchHistoryUser[] $searches */
             $searches = OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->getSearchHistory($user_uuid);
 
@@ -33,53 +32,31 @@ class SearchHistoryEndpoint extends AbstractEndpoint
                 $data[] = OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->toJson($search);
             }
 
-            $response->setCode(200);
             $response->addData('searches', $data);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
-
 
     #[Delete('/search/history/:id', variables: ["id" => RouteParam::NUMBER], name: 'removeSearchHistory', auth: true)]
     #[OA\Delete(path: "/search/history/{id}", summary: "removeSearchHistory", tags: ["Search"], parameters: [new PathParameter("id", "id", "Search History ID", required: true)], responses: [new OA\Response(response: 200, description: "History removed")])]
     private function removeSearchHistory(int $id): void
     {
-        $response = JsonBuilder::build();
-        $user_uuid = App::getUserUuid();
+        $this->reply(function ($response) use ($id){
+            $user_uuid = App::getUserUuid();
+            $searchHistoryId = OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->removeSearchHistoryById($user_uuid, $id);
 
-        try {
-            OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->removeSearchHistoryById($user_uuid, $id);
-
-            $response->setCode(200);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+            $response->addData('id', $searchHistoryId);
+        });
     }
 
     #[Delete('/search/history/clear', name: 'clearSearchHistory', auth: true)]
     #[OA\Delete(path: "/search/history/clear", summary: "clearSearchHistory", tags: ["Search"], responses: [new OA\Response(response: 200, description: "History cleared")])]
     private function clearSearchHistory(): void
     {
-        $response = JsonBuilder::build();
-        $user_uuid = App::getUserUuid();
-
-        try {
+        $this->reply(function ($response){
+            $user_uuid = App::getUserUuid();
             OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->clearSearchHistory($user_uuid);
 
-            $response->setCode(200);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+            $response->addData('clearSearchHistory', true);
+        });
     }
 }

@@ -67,7 +67,7 @@ class SearchHistoryUserRepository extends EntityRepository
         }
     }
 
-    public function removeSearchHistoryById(string $user_uuid, int $searchHistoryId,): void
+    public function removeSearchHistoryById(string $user_uuid, int $searchHistoryId,): int
     {
         try {
             $user = $this->getEntityManager()->getRepository(User::class)->find($user_uuid);
@@ -83,6 +83,8 @@ class SearchHistoryUserRepository extends EntityRepository
         } catch (Exception $e) {
             throw new EndpointException("Error deleting search history: " . $e->getMessage(), 500);
         }
+
+        return $searchHistoryId;
     }
 
     public function toJson(SearchHistoryUser $searchHistory): array

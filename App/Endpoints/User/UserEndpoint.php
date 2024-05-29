@@ -38,25 +38,14 @@ class UserEndpoint extends AbstractEndpoint
     )]
     private function getUser(string $userUUID): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($userUUID);
             $userData = OrmConnector::getInstance()->getRepository(User::class)->toJson($user);
 
             foreach ($userData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Get('/user/:userUUID/min', variables: ["userUUID" => RouteParam::UUID], name: 'User', auth: false)]
@@ -80,24 +69,14 @@ class UserEndpoint extends AbstractEndpoint
     private function getUserNames(string $userUUID): void
     {
 
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($userUUID);
             $userData = OrmConnector::getInstance()->getRepository(User::class)->toJsonNames($user);
 
             foreach ($userData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Put("/user", name: "UpdateUser", auth: true)]
@@ -113,18 +92,16 @@ class UserEndpoint extends AbstractEndpoint
     )]
     private function updateUser($_REQ): void
     {
-        $response = JsonBuilder::build();
+        $this->reply(function ($response) use ($_REQ) {
+            $username = $_REQ['username'] ?? "";
+            $profilePath = $_REQ['profile_path'] ?? "";
+            $bannerPath = $_REQ['banner_path'] ?? "";
+            $firstname = $_REQ['firstname'] ?? "";
+            $lastname = $_REQ['lastname'] ?? "";
+            $biography = $_REQ['biography'] ?? "";
+            $formationId = $_REQ['formation_id'] ?? 0;
+            $sendTimestamp = $_REQ['send_timestamp'] ?? 0;
 
-        $username = $_REQ['username'] ?? "";
-        $profilePath = $_REQ['profile_path'] ?? "";
-        $bannerPath = $_REQ['banner_path'] ?? "";
-        $firstname = $_REQ['firstname'] ?? "";
-        $lastname = $_REQ['lastname'] ?? "";
-        $biography = $_REQ['biography'] ?? "";
-        $formationId = $_REQ['formation_id'] ?? 0;
-        $sendTimestamp = $_REQ['send_timestamp'] ?? 0;
-
-        try {
             $user = OrmConnector::getInstance()->getRepository(User::class)->editUser(
                 $username,
                 $profilePath,
@@ -139,15 +116,7 @@ class UserEndpoint extends AbstractEndpoint
             foreach ($userData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Put('/user/disable', name: 'disableUser', auth: true)]
@@ -162,22 +131,11 @@ class UserEndpoint extends AbstractEndpoint
     )]
     private function disableUser(): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disable();
 
             $response->addData('id', $userId);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Put('/user/disable/forever/:userUUID', variables: ["userUUID" => RouteParam::UUID], name: 'disableUserForever', auth: false)]
@@ -200,21 +158,12 @@ class UserEndpoint extends AbstractEndpoint
     )]
     private function disableUserForever(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
             $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever($user);
 
             $response->addData('id', $userId);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Put('/user/:userUUID/unban', variables: ["userUUID" => RouteParam::UUID], name: 'unbanUser', auth: false)]
@@ -237,21 +186,12 @@ class UserEndpoint extends AbstractEndpoint
     )]
     private function unbanUser(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
             $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user);
 
             $response->addData('id', $userId);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/user', name: 'deleteUser', auth: true)]
@@ -266,23 +206,10 @@ class UserEndpoint extends AbstractEndpoint
     )]
     private function deleteUser(): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $UUID = OrmConnector::getInstance()->getRepository(User::class)->deleteUser();
 
             $response->addData('uuid', $UUID);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
-
-
 }

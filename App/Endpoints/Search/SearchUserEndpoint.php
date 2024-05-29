@@ -19,10 +19,9 @@ class SearchUserEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/search/user/{username}", summary: "searchUserByName", tags: ["Search"], parameters: [new PathParameter("username", "username", "User Name", required: true)], responses: [new OA\Response(response: 200, description: "Users retrieved")])]
     private function searchUserByName(string $username): void
     {
-        $response = JsonBuilder::build();
-        $user_uuid = App::getUserUuid();
+        $this->reply(function ($response) use ($username) {
+            $user_uuid = App::getUserUuid();
 
-        try {
             /** @var User[] $users */
             $users = OrmConnector::getInstance()->getRepository(User::class)->findByUsername($username, $user_uuid);
 
@@ -31,13 +30,7 @@ class SearchUserEndpoint extends AbstractEndpoint
                 $data[] = OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($user);
             }
 
-            $response->setCode(200);
             $response->addData('users', $data);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

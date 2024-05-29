@@ -18,10 +18,9 @@ class SearchPostEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/search/post", summary: "searchUserByName", tags: ["Search"], responses: [new OA\Response(response: 200, description: "Posts retrieved")])]
     private function searchPostByContent(): void
     {
-        $response = JsonBuilder::build();
-        $user_uuid = App::getUserUuid();
+        $this->reply(function ($response) {
+            $user_uuid = App::getUserUuid();
 
-        try {
             global $_REQ;
             RequestUtils::cleanBody();
             $content = $_REQ['content'] ?? "";
@@ -34,13 +33,7 @@ class SearchPostEndpoint extends AbstractEndpoint
                 $data[] = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
             }
 
-            $response->setCode(200);
             $response->addData('posts', $data);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

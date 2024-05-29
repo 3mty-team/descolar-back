@@ -29,9 +29,7 @@ class BlockUserEndpoint extends AbstractEndpoint
     )]
     private function getBlocks(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $blocks = OrmConnector::getInstance()->getRepository(BlockUser::class)->getBlockList();
             $users = [];
 
@@ -40,14 +38,7 @@ class BlockUserEndpoint extends AbstractEndpoint
             }
 
             $response->addData('users', $users);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Get('user/:userUUID/block', variables: ["userUUID" => RouteParam::UUID], name: 'isBlockedBy', auth: true)]
@@ -71,18 +62,11 @@ class BlockUserEndpoint extends AbstractEndpoint
     )]
     private function isBlockedBy(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $result = OrmConnector::getInstance()->getRepository(BlockUser::class)->checkBlockedStatus($userUUID);
+
             $response->addData('result', $result);
-            $response->setCode(200);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Post('/user/:userUUID/block', variables: ["userUUID" => RouteParam::UUID], name: 'blockUser', auth: true)]
@@ -106,27 +90,14 @@ class BlockUserEndpoint extends AbstractEndpoint
     )]
     private function blockUser(string $userUUID): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($userUUID) {
             $blockingUser = OrmConnector::getInstance()->getRepository(BlockUser::class)->blockUser($userUUID);
             $blockingUserData = OrmConnector::getInstance()->getRepository(BlockUser::class)->toJson($blockingUser);
 
             foreach ($blockingUserData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Delete('/user/:userUUID/block', variables: ["userUUID" => RouteParam::UUID], name: 'unblockUser', auth: true)]
@@ -150,26 +121,13 @@ class BlockUserEndpoint extends AbstractEndpoint
     )]
     private function unblockUser(string $userUUID): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($userUUID) {
             $blockingUser = OrmConnector::getInstance()->getRepository(BlockUser::class)->unBlockUser($userUUID);
             $blockingUserData = OrmConnector::getInstance()->getRepository(BlockUser::class)->toJson($blockingUser);
 
             foreach ($blockingUserData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
 }

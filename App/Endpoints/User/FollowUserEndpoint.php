@@ -30,9 +30,7 @@ class FollowUserEndpoint extends AbstractEndpoint
     )]
     private function getFollowers(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $followers = OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerList();
             $users = [];
 
@@ -41,14 +39,7 @@ class FollowUserEndpoint extends AbstractEndpoint
             }
 
             $response->addData('users', $users);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Get('/user/following', name: 'followingList', auth: true)]
@@ -63,9 +54,7 @@ class FollowUserEndpoint extends AbstractEndpoint
     )]
     private function getFollowing(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $followers = OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowingList();
             $users = [];
 
@@ -74,14 +63,7 @@ class FollowUserEndpoint extends AbstractEndpoint
             }
 
             $response->addData('users', $users);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Get('/user/:userUUID/followers', variables: ["userUUID" => RouteParam::UUID], name: 'followerListByUUID', auth: true)]
@@ -102,10 +84,7 @@ class FollowUserEndpoint extends AbstractEndpoint
     )]
     private function getFollowerListByUUID(string $userUUID): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $followers = OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerList($userUUID);
             $users = [];
 
@@ -114,15 +93,7 @@ class FollowUserEndpoint extends AbstractEndpoint
             }
 
             $response->addData('users', $users);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Get('/user/:userUUID/following', variables: ["userUUID" => RouteParam::UUID], name: 'followingListByUUID', auth: true)]
@@ -144,9 +115,7 @@ class FollowUserEndpoint extends AbstractEndpoint
     private function getFollowingListByUUID(string $userUUID): void
     {
 
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $followers = OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowingList($userUUID);
             $users = [];
 
@@ -155,15 +124,7 @@ class FollowUserEndpoint extends AbstractEndpoint
             }
 
             $response->addData('users', $users);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Post('/user/:userUUID/follow', variables: ["userUUID" => RouteParam::UUID], name: 'followUser', auth: true)]
@@ -184,25 +145,14 @@ class FollowUserEndpoint extends AbstractEndpoint
     )]
     private function followUser(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $followUser = OrmConnector::getInstance()->getRepository(FollowUser::class)->followUser($userUUID);
             $followUserData = OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($followUser);
-
 
             foreach ($followUserData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/user/:userUUID/follow', variables: ["userUUID" => RouteParam::UUID], name: 'unfollowUser', auth: true)]
@@ -223,26 +173,13 @@ class FollowUserEndpoint extends AbstractEndpoint
     )]
     private function unfollowUser(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($userUUID) {
             $followUser = OrmConnector::getInstance()->getRepository(FollowUser::class)->unfollowUser($userUUID);
             $followUserData = OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($followUser);
-
 
             foreach ($followUserData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
-
 }

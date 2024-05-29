@@ -35,30 +35,29 @@ class Authentication extends AbstractEndpoint
             new OA\Response(response: 404, description: "User not found"),
         ]
     )]
-    private function getToken(String $userUuid): void
+    private function getToken(string $userUuid): void
     {
-        $secretKey = EnvReader::getInstance()->get('JWT_SECRET');
-        $secretKeyEncoded = base64_encode($secretKey ?? '');
+        $this->reply(function ($response) use ($userUuid) {
+            $secretKey = EnvReader::getInstance()->get('JWT_SECRET');
+            $secretKeyEncoded = base64_encode($secretKey ?? '');
 
-        $date       = new DateTimeImmutable();
-        $expire_at  = $date->modify('+24 hour')->getTimestamp();
-        $domainName = "internal-api.descolar.fr";
+            $date = new DateTimeImmutable();
+            $expire_at = $date->modify('+24 hour')->getTimestamp();
+            $domainName = "internal-api.descolar.fr";
 
-        $request_data = [
-            'iat'  => $date->getTimestamp(),        // Issued at: time when the token was generated
-            'iss'  => $domainName,                  // Issuer
-            'nbf'  => $date->getTimestamp(),        // Not before
-            'exp'  => $expire_at,                   // Expire
-            'username' => $userUuid,                // User name
-        ];
+            $request_data = [
+                'iat' => $date->getTimestamp(),        // Issued at: time when the token was generated
+                'iss' => $domainName,                  // Issuer
+                'nbf' => $date->getTimestamp(),        // Not before
+                'exp' => $expire_at,                   // Expire
+                'username' => $userUuid,                // User name
+            ];
 
-        $jwt = JWT::encode($request_data, $secretKeyEncoded, 'HS256');
+            $jwt = JWT::encode($request_data, $secretKeyEncoded, 'HS256');
 
-        JsonBuilder::build()
-            ->setCode(200)
-            ->addData('token', $jwt)
-            ->addData('token_type', 'Bearer')
-            ->getResult();
+            $response->addData('token', $jwt)
+                ->addData('token_type', 'Bearer');
+        });
     }
 
 
@@ -74,10 +73,9 @@ class Authentication extends AbstractEndpoint
     )]
     private function verifyJwt(): void
     {
-        JsonBuilder::build()
-            ->setCode(200)
-            ->addData('message', 'Token is valid')
-            ->addData('user_uuid', App::getUserUuid())
-            ->getResult();
+        $this->reply(function ($response) {
+            $response->addDate('message', 'Token is valid')
+                ->addData('user_uuid', App::getUserUuid());
+        });
     }
 }
