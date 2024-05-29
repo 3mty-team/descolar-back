@@ -41,7 +41,7 @@ class GroupEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/group/{id}", summary: "getGroupById", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group retrieved")])]
     private function getGroupById(int $id): void
     {
-        $this->reply(function ($response) use ($id){
+        $this->reply(function ($response) use ($id) {
             $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($id);
             $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
@@ -55,10 +55,10 @@ class GroupEndpoint extends AbstractEndpoint
     #[OA\Post(path: "/group", summary: "createGroup", tags: ["Group"], responses: [new Response(response: 200, description: "Group created")])]
     private function createGroup(): void
     {
-        $name = $_POST['name'];
-        $admin = $_POST['admin'];
+        $this->reply(function ($response) {
+            $name = $_POST['name'];
+            $admin = $_POST['admin'];
 
-        $this->reply(function ($response) use ($name, $admin){
             $group = OrmConnector::getInstance()->getRepository(Group::class)->create($name, $admin);
             $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
@@ -72,51 +72,30 @@ class GroupEndpoint extends AbstractEndpoint
     #[OA\Put(path: "/group/{id}", summary: "updateGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group created")])]
     private function updateGroup(int $id): void
     {
-        global $_REQ;
-        RequestUtils::cleanBody();
-        $response = JsonBuilder::build()();
-        $name = $_REQ['name'];
-        $admin = $_REQ['admin'];
+        $this->reply(function ($response) use ($id) {
+            global $_REQ;
+            RequestUtils::cleanBody();
 
-        try {
+            $name = $_REQ['name'];
+            $admin = $_REQ['admin'];
+
             $group = OrmConnector::getInstance()->getRepository(Group::class)->editGroup($id, $name, $admin);
             $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
 
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Delete('/group/:id', variables: ["id" => RouteParam::NUMBER], name: 'deleteGroup', auth: true)]
     #[OA\Delete(path: "/group/{id}", summary: "deleteGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Group deleted")])]
     private function deleteGroup(int $id): void
     {
-
-        $response = JsonBuilder::build()();
-
-        try {
-
+        $this->reply(function ($response) use ($id) {
             $group = OrmConnector::getInstance()->getRepository(Group::class)->deleteGroup($id);
 
             $response->addData('id', $group);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
 }

@@ -38,10 +38,10 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     )]
     private function createPrivacyToUser(): void
     {
-        $feedVisibility = $_POST['feed_visibility'] ?? "";
-        $searchVisibility = $_POST['search_visibility'] ?? "";
+        $this->reply(function ($response) {
+            $feedVisibility = $_POST['feed_visibility'] ?? "";
+            $searchVisibility = $_POST['search_visibility'] ?? "";
 
-        $this->reply(function ($response) use ($feedVisibility, $searchVisibility) {
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
 
             $response->addData('message', 'User privacy preference created');
@@ -61,13 +61,13 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     )]
     private function updatePrivacyToUser(): void
     {
-        global $_REQ;
-        RequestUtils::cleanBody();
+        $this->reply(function ($response) {
+            global $_REQ;
+            RequestUtils::cleanBody();
 
-        $feedVisibility = $_REQ['feed_visibility'] ?? "";
-        $searchVisibility = $_REQ['search_visibility'] ?? "";
+            $feedVisibility = $_REQ['feed_visibility'] ?? "";
+            $searchVisibility = $_REQ['search_visibility'] ?? "";
 
-        $this->reply(function ($response) use ($feedVisibility, $searchVisibility) {
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
 
             $response->addData('message', 'User privacy preference updated');

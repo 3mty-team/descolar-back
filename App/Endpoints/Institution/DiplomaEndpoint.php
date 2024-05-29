@@ -19,41 +19,30 @@ class DiplomaEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/institution/diplomas", summary: "getAllDiplomas", tags: ["Institution"], responses: [new OA\Response(response: 200, description: "All diplomas retrieved")])]
     private function getAllDiplomas(): void
     {
+        $this->reply(function ($response){
+            /** @var Diploma[] $diplomas */
+            $diplomas = OrmConnector::getInstance()->getRepository(Diploma::class)->findAll();
 
-        /** @var Diploma[] $diplomas */
-        $diplomas = OrmConnector::getInstance()->getRepository(Diploma::class)->findAll();
+            $data = [];
+            foreach ($diplomas as $diploma) {
+                $data[] = OrmConnector::getInstance()->getRepository(Diploma::class)->toJson($diploma);
+            }
 
-        $data = [];
-        foreach ($diplomas as $diploma) {
-            $data[] = OrmConnector::getInstance()->getRepository(Diploma::class)->toJson($diploma);
-        }
-
-        $response = JsonBuilder::build()->setCode(200);
-        $response->addData('diplomas', $data);
-
-        $response->getResult();
+            $response->addData('diplomas', $data);
+        });
     }
 
     #[Get('/institution/diplomas/:id', variables: ["id" => RouteParam::NUMBER], name: 'getDiplomaById', auth: true)]
     #[OA\Get(path: "/institution/diplomas/{id}", summary: "getDiplomaById", tags: ["Institution"], parameters: [new PathParameter("id", "id", "Diploma ID", required: true)], responses: [new OA\Response(response: 200, description: "Diploma retrieved")])]
     private function getDiplomaById(int $id): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($id){
             $diploma = OrmConnector::getInstance()->getRepository(Diploma::class)->findById($id);
             $diplomaData = OrmConnector::getInstance()->getRepository(Diploma::class)->toJson($diploma);
 
             foreach ($diplomaData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

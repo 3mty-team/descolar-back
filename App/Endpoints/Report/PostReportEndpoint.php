@@ -24,9 +24,7 @@ class PostReportEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "All post reports retrieved")])]
     private function getAllPostReports(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response){
             $postReports = OrmConnector::getInstance()->getRepository(PostReport::class)->findAll();
 
             $data = [];
@@ -34,14 +32,8 @@ class PostReportEndpoint extends AbstractEndpoint
                 $data[] = OrmConnector::getInstance()->getRepository(PostReport::class)->toJson($report);
             }
 
-            $response->setCode(200);
             $response->addData('post_reports', $data);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Post('/report/post/create', name: 'createPostReport', auth: true)]
@@ -55,9 +47,7 @@ class PostReportEndpoint extends AbstractEndpoint
     )]
     private function createPostReport(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response){
             $postId = $_POST['post_id'] ?? 0;
             $reportCategoryId = $_POST['report_category_id'] ?? 0;
             $comment = $_POST['comment'] ?? '';
@@ -69,15 +59,7 @@ class PostReportEndpoint extends AbstractEndpoint
             foreach ($postReportData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/report/post/:reportId/delete', variables: ["reportId" => RouteParam::NUMBER], name: 'deletePostReport', auth: false)]
@@ -89,19 +71,10 @@ class PostReportEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Report deleted")])]
     private function deletePostReport(int $reportId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($reportId){
             $postReport = OrmConnector::getInstance()->getRepository(PostReport::class)->delete($reportId);
 
             $response->addData("id", $postReport);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

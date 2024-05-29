@@ -22,25 +22,13 @@ class MessageEndpoint extends AbstractEndpoint
 
     private function _getAllMessages(int $range, ?string $userUUID = null, ?int $timestamp = null): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($range, $userUUID, $timestamp) {
             $group = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJsonRange($range, $userUUID, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     // TODO fix route and update Postman
@@ -63,11 +51,7 @@ class MessageEndpoint extends AbstractEndpoint
     #[OA\Post(path: "/message", summary: "createMessage", tags: ["Message"], responses: [new OA\Response(response: 200, description: "Message created")])]
     private function createMessage(): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response){
             $receiver = $_POST['receiver_uuid'] ?? '';
             $content = $_POST['content'] ?? '';
             $date = $_POST['date'] ?? 0;
@@ -79,16 +63,7 @@ class MessageEndpoint extends AbstractEndpoint
             foreach ($messageData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Post('/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'likeMessage', auth: true)]
@@ -96,25 +71,14 @@ class MessageEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Message liked")])]
     private function likeMessage(int $messageId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($messageId){
             $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->like($messageId);
             $messageData = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJson($message);
 
             foreach ($messageData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/message/:messageId/like', variables: ["messageId" => RouteParam::NUMBER], name: 'unlikeMessage', auth: true)]
@@ -122,9 +86,7 @@ class MessageEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Message unliked")])]
     private function unlikeMessage(int $messageId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($messageId){
 
             $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->unlike($messageId);
             $messageData = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJson($message);
@@ -132,15 +94,7 @@ class MessageEndpoint extends AbstractEndpoint
             foreach ($messageData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/message/:messageId/delete', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteMessage', auth: false)]
@@ -148,19 +102,10 @@ class MessageEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Message deleted")])]
     private function deleteMessage(int $messageId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($messageId){
             $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->delete($messageId);
 
             $response->addData("id", $message);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

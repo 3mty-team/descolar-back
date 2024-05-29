@@ -58,10 +58,10 @@ class GroupMemberEndpoint extends AbstractEndpoint
     #[OA\Delete(path: "/group/{id}/member", summary: "removeMemberInGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member removed")])]
     private function removeMemberInGroup(int $id): void
     {
-        global $_REQ;
-        RequestUtils::cleanBody();
-
         $this->reply(function ($response) use ($id) {
+            global $_REQ;
+            RequestUtils::cleanBody();
+
             $userUUID = $_REQ['user_uuid'] ?? App::getUserUuid();
 
             $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->removeMemberInGroup($id, $userUUID);

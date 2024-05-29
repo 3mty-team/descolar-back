@@ -56,17 +56,18 @@ class RegisterEndpoint extends AbstractEndpoint
     )]
     private function register(): void
     {
-        $username = $_POST['username'] ?? "";
-        $password = $_POST['password'] ?? "";
-        $firstname = $_POST['firstname'] ?? "";
-        $lastname = $_POST['lastname'] ?? "";
-        $mail = $_POST['mail'] ?? "";
-        $formation_id = $_POST['formation_id'] ?? "";
-        $dateofbirth = $_POST['dateofbirth'] ?? "";
-        $profilePath = $_POST['profile_path'] ?? "";
-        $bannerPath = $_POST['banner_path'] ?? "";
+        $this->reply(function ($response) {
 
-        $this->reply(function ($response) use ($bannerPath, $profilePath, $dateofbirth, $formation_id, $mail, $lastname, $firstname, $password, $username) {
+            $username = $_POST['username'] ?? "";
+            $password = $_POST['password'] ?? "";
+            $firstname = $_POST['firstname'] ?? "";
+            $lastname = $_POST['lastname'] ?? "";
+            $mail = $_POST['mail'] ?? "";
+            $formation_id = $_POST['formation_id'] ?? "";
+            $dateofbirth = $_POST['dateofbirth'] ?? "";
+            $profilePath = $_POST['profile_path'] ?? "";
+            $bannerPath = $_POST['banner_path'] ?? "";
+
             $token = bin2hex(random_bytes(32));
 
             /** @var User $user */

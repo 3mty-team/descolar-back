@@ -51,9 +51,9 @@ class ThemeEndpoint extends AbstractEndpoint
     )]
     private function createThemeToUser(): void
     {
-        $themeId = $_POST['theme_id'] ?? "";
+        $this->reply(function ($response){
+            $themeId = $_POST['theme_id'] ?? "";
 
-        $this->reply(function ($response) use ($themeId) {
             if (empty($themeId)) {
                 $response->addData('message', 'Missing parameters');
                 return;
@@ -75,12 +75,12 @@ class ThemeEndpoint extends AbstractEndpoint
     #[OA\Put(path: '/config/theme', summary: 'Update theme to user', tags: ['Configuration'], responses: [new OA\Response(response: 201, description: 'Theme set'), new OA\Response(response: 400, description: 'Missing parameters or invalid parameters')])]
     private function updateThemeToUser(): void
     {
-        global $_REQ;
-        RequestUtils::cleanBody();
+        $this->reply(function ($response){
+            global $_REQ;
+            RequestUtils::cleanBody();
 
-        $themeId = $_REQ['theme_id'] ?? "";
+            $themeId = $_REQ['theme_id'] ?? "";
 
-        $this->reply(function ($response) use ($themeId) {
             if (empty($themeId)) {
                 $response->addData('message', 'Missing parameters');
                 return;

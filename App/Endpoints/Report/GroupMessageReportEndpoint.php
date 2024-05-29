@@ -24,9 +24,7 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "All group message reports retrieved")])]
     private function getAllGroupMessageReports(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $groupMessageReports = OrmConnector::getInstance()->getRepository(GroupMessageReport::class)->findAll();
 
             $data = [];
@@ -34,14 +32,8 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
                 $data[] = OrmConnector::getInstance()->getRepository(GroupMessageReport::class)->toJson($report);
             }
 
-            $response->setCode(200);
             $response->addData('group_message_reports', $data);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Post('/report/groupmessage/create', name: 'createGroupMessageReport', auth: true)]
@@ -55,9 +47,7 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
     )]
     private function createGroupMessageReport(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $groupMessageId = $_POST['group_message_id'] ?? 0;
             $reportCategoryId = $_POST['report_category_id'] ?? 0;
             $comment = $_POST['comment'] ?? '';
@@ -69,15 +59,7 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
             foreach ($groupMessageReportData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('group_message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/report/groupmessage/:reportId/delete', variables: ["reportId" => RouteParam::NUMBER], name: 'deleteGroupMessageReport', auth: false)]
@@ -89,19 +71,10 @@ class GroupMessageReportEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Report deleted")])]
     private function deleteGroupMessageReport(int $reportId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($reportId){
             $groupMessageReport = OrmConnector::getInstance()->getRepository(GroupMessageReport::class)->delete($reportId);
 
             $response->addData("id", $groupMessageReport);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

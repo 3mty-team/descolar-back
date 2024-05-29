@@ -23,26 +23,13 @@ class PostEndpoint extends AbstractEndpoint
 
     private function _getAllPosts(int $range, ?string $userUUID = null, ?int $timestamp = null): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($range, $userUUID, $timestamp) {
             $group = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJsonRange($range, $userUUID, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Get('/post/message/:range', variables: ["range" => RouteParam::NUMBER], name: 'getAllPostInRange', auth: true)]
@@ -78,7 +65,6 @@ class PostEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Post retrieved")])]
     private function getPostById(int $postId): void
     {
-
         $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->find($postId);
             $postData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
@@ -87,16 +73,13 @@ class PostEndpoint extends AbstractEndpoint
                 $response->addData($key, $value);
             }
         });
-
     }
 
     #[Post('/post', name: 'createPost', auth: true)]
     #[OA\Post(path: "/post", summary: "createPost", tags: ["Post"], responses: [new OA\Response(response: 200, description: "Post created")])]
-    private function createPost() : void
+    private function createPost(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
 
             $content = $_POST['content'] ?? "";
             $location = $_POST['location'] ?? "";
@@ -110,25 +93,14 @@ class PostEndpoint extends AbstractEndpoint
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Post('/repost', name: 'repostPost', auth: true)]
     #[OA\Post(path: "/repost", summary: "repostPost", tags: ["Post"], responses: [new OA\Response(response: 200, description: "Post reposted")])]
     private function repostPost(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) {
             $postId = $_POST['post_id'] ?? 0;
             $content = $_POST['content'] ?? "";
             $location = $_POST['location'] ?? "";
@@ -142,15 +114,7 @@ class PostEndpoint extends AbstractEndpoint
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/post/:postId', variables: ["postId" => RouteParam::NUMBER], name: 'deletePost', auth: false)]
@@ -158,20 +122,10 @@ class PostEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Post deleted")])]
     private function deletePost(int $postId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->delete($postId);
 
             $response->addData("id", $post);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
 }

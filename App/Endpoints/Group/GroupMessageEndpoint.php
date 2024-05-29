@@ -70,10 +70,10 @@ class GroupMessageEndpoint extends AbstractEndpoint
     #[OA\Put(path: "/group/{groupId}/{messageId}/message", summary: "updateGroupMessage", tags: ["Group"], parameters: [new PathParameter("groupId", "groupId", "Group ID", required: true), new PathParameter("messageId", "messageId", "Message ID", required: true)], responses: [new OA\Response(response: 200, description: "Group message updated")])]
     private function updateGroupMessage(int $groupId, int $messageId): void
     {
-        global $_REQ;
-        RequestUtils::cleanBody();
-
         $this->reply(function ($response) use ($groupId, $messageId){
+            global $_REQ;
+            RequestUtils::cleanBody();
+
             $content = $_REQ['content'] ?? "";
             $medias = json_decode($_REQ['medias'] ?? '[]');
 

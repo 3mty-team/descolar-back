@@ -22,75 +22,41 @@ class PostLikeEndpoint extends AbstractEndpoint
 {
 
     #[Get("post/:userUUID/like", variables: ["userUUID" => RouteParam::UUID], name: "likedPost", auth: true)]
-    #[OA\Get(path: "/post/{userUUID}/like", summary: "likedPost", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true)] ,responses: [new OA\Response(response: 200, description: "Post liked")])]
+    #[OA\Get(path: "/post/{userUUID}/like", summary: "likedPost", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true)], responses: [new OA\Response(response: 200, description: "Post liked")])]
     private function likedPost(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($userUUID) {
             $posts = OrmConnector::getInstance()->getRepository(PostLike::class)->getLikedPosts($userUUID);
 
             $response->addData('posts', $posts);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
-    #[Post("post/:postId/like", variables: ["postId" => RouteParam::NUMBER] , name: "likePost", auth: true)]
-    #[OA\Post(path: "/post/{postId}/like", summary: "likePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post liked")])]
+    #[Post("post/:postId/like", variables: ["postId" => RouteParam::NUMBER], name: "likePost", auth: true)]
+    #[OA\Post(path: "/post/{postId}/like", summary: "likePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)], responses: [new OA\Response(response: 200, description: "Post liked")])]
     private function likePost(int $postId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(PostLike::class)->like($postId);
             $postJson = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
-    #[Delete("post/:postId/like", variables: ["postId" => RouteParam::NUMBER] , name: "unlikePost", auth: true)]
-    #[OA\Delete(path: "/post/{postId}/like", summary: "unlikePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)] ,responses: [new OA\Response(response: 200, description: "Post unliked")])]
+    #[Delete("post/:postId/like", variables: ["postId" => RouteParam::NUMBER], name: "unlikePost", auth: true)]
+    #[OA\Delete(path: "/post/{postId}/like", summary: "unlikePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)], responses: [new OA\Response(response: 200, description: "Post unliked")])]
     private function unlikePost(int $postId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(PostLike::class)->unlike($postId);
             $postJson = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
 }

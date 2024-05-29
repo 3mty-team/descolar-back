@@ -18,9 +18,9 @@ class SessionEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/config/session/{sessionUuid}", summary: "Search Session by id", tags: ["Configuration"], parameters: [new Parameter("sessionUuid", "sessionUuid", "Session UUID", required: true)], responses: [new OA\Response(response: 201, description: "Session started"), new OA\Response(response: 404, description: "Session not found")])]
     private function searchSessionByUuid(string $sessionUuid): void
     {
-        $session = OrmConnector::getInstance()->getRepository(Session::class)->getSessionByUuid($sessionUuid);
+        $this->reply(function ($response) use ($sessionUuid) {
+            $session = OrmConnector::getInstance()->getRepository(Session::class)->getSessionByUuid($sessionUuid);
 
-        $this->reply(function ($response) use ($session) {
             if ($session === null) {
                 $response->addData('message', 'Session not found');
                 return;
@@ -43,11 +43,11 @@ class SessionEndpoint extends AbstractEndpoint
     )]
     private function createSession(): void
     {
-        $date = $_POST['date'] ?? "";
-        $localisation = $_POST['localisation'] ?? "";
-        $userAgent = $_POST['user_agent'] ?? "";
+        $this->reply(function ($response){
+            $date = $_POST['date'] ?? "";
+            $localisation = $_POST['localisation'] ?? "";
+            $userAgent = $_POST['user_agent'] ?? "";
 
-        $this->reply(function ($response) use ($date, $localisation, $userAgent) {
             if (empty($date) || empty($localisation) || empty($userAgent)) {
                 $response->addData('message', 'Missing parameters');
                 return;

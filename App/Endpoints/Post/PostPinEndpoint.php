@@ -25,79 +25,44 @@ class PostPinEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/post/{userUUID}/pin", summary: "pinnedPost", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true)], responses: [new OA\Response(response: 200, description: "Post pinned")])]
     private function pinnedPost(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($userUUID) {
             $post = OrmConnector::getInstance()->getRepository(Post::class)->getPinnedPost($userUUID);
 
-            if($post) {
+            if ($post) {
                 $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
                 foreach ($postJson as $key => $value) {
                     $response->addData($key, $value);
                 }
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Put("post/:postId/pin", variables: ["postId" => RouteParam::NUMBER], name: "pinPost", auth: true)]
     #[OA\Put(path: "/post/{postId}/pin", summary: "pinPost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "postId", required: true)], responses: [new OA\Response(response: 200, description: "Post pinned")])]
     private function pinPost(int $postId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(Post::class)->pin($postId);
             $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete("post/:userUUID/pin", variables: ["postId" => RouteParam::UUID], name: "unpinPost", auth: true)]
     #[OA\Delete(path: "/post/{userUUID}/pin", summary: "unpinPost", tags: ["Post"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true)], responses: [new OA\Response(response: 200, description: "Post unpinned")])]
     private function unpinPost(string $userUUID): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($userUUID) {
             $post = OrmConnector::getInstance()->getRepository(Post::class)->unpin($userUUID);
             $postJson = OrmConnector::getInstance()->getRepository(Post::class)->toJson($post);
 
             foreach ($postJson as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
 }

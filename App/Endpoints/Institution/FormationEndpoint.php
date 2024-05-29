@@ -19,41 +19,30 @@ class FormationEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/institution/formations", summary: "getAllFormations", tags: ["Institution"], responses: [new OA\Response(response: 200, description: "All formations retrieved")])]
     private function getAllGroups(): void
     {
+        $this->reply(function ($response){
+            /** @var Formation[] $formations */
+            $formations = OrmConnector::getInstance()->getRepository(Formation::class)->findAll();
 
-        /** @var Formation[] $formations */
-        $formations = OrmConnector::getInstance()->getRepository(Formation::class)->findAll();
+            $data = [];
+            foreach ($formations as $formation) {
+                $data[] = OrmConnector::getInstance()->getRepository(Formation::class)->toJson($formation);
+            }
 
-        $data = [];
-        foreach ($formations as $formation) {
-            $data[] = OrmConnector::getInstance()->getRepository(Formation::class)->toJson($formation);
-        }
-
-        $response = JsonBuilder::build()->setCode(200);
-        $response->addData('formations', $data);
-
-        $response->getResult();
+            $response->addData('formations', $data);
+        });
     }
 
     #[Get('/institution/formations/:id', variables: ["id" => RouteParam::NUMBER], name: 'getFormationById', auth: true)]
     #[OA\Get(path: "/institution/formations/{id}", summary: "getFormationById", tags: ["Institution"], parameters: [new PathParameter("id", "id", "Formation ID", required: true)], responses: [new OA\Response(response: 200, description: "Formation retrieved")])]
     private function getGroupById(int $id): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($id){
             $formation = OrmConnector::getInstance()->getRepository(Formation::class)->findById($id);
             $formationData = OrmConnector::getInstance()->getRepository(Formation::class)->toJson($formation);
 
             foreach ($formationData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }
