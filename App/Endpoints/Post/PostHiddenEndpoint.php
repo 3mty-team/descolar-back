@@ -2,19 +2,13 @@
 
 namespace Descolar\Endpoints\Post;
 
-use Descolar\Managers\Endpoint\AbstractEndpoint;
-
 use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\RouteParam;
-
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostHidden;
-
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-
-use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;

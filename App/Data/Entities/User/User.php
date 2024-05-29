@@ -4,8 +4,8 @@ namespace Descolar\Data\Entities\User;
 
 use DateTimeInterface;
 use Descolar\Adapters\Orm\Generator\UUIDGenerator;
-use Descolar\Data\Repository\User\UserRepository;
 use Descolar\Data\Entities\Institution\Formation;
+use Descolar\Data\Repository\User\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]

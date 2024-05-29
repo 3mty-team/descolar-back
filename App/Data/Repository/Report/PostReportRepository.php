@@ -4,12 +4,10 @@ namespace Descolar\Data\Repository\Report;
 
 use DateTime;
 use DateTimeZone;
-use Descolar\App;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Report\PostReport;
 use Descolar\Data\Entities\Report\ReportCategory;
 use Descolar\Data\Entities\User\User;
-use Descolar\Data\Repository\User\UserRepository;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;

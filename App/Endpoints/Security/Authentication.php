@@ -9,7 +9,6 @@ use Descolar\Adapters\Router\RouteParam;
 use Descolar\App;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Env\EnvReader;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Firebase\JWT\JWT;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;

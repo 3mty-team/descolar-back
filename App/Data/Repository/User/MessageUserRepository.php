@@ -5,7 +5,6 @@ namespace Descolar\Data\Repository\User;
 use DateTime;
 use DateTimeZone;
 use Descolar\App;
-use Descolar\Data\Entities\Group\Group;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Data\Entities\User\User;

@@ -2,13 +2,11 @@
 
 namespace Descolar;
 
+use Descolar\Adapters as Adapters;
+use Descolar\Managers\App\Traits as Traits;
 use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\Error\ErrorHandler;
 use Descolar\Managers\Router\Router;
-use Descolar\Managers\App\Traits as Traits;
-use Descolar\Adapters as Adapters;
-
-use Descolar\Managers\Websocket\WebsocketManager;
 use ReflectionException;
 
 /**

@@ -6,12 +6,9 @@ use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Put;
 use Descolar\Adapters\Router\RouteParam;
-use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 

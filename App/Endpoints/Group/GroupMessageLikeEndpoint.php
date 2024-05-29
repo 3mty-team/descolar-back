@@ -8,9 +8,6 @@ use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Group\GroupMessageLike;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;

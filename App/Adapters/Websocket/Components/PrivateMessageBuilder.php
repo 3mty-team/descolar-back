@@ -3,7 +3,6 @@
 namespace Descolar\Adapters\Websocket\Components;
 
 use Descolar\Adapters\Websocket\MessageManager;
-use Descolar\Adapters\Websocket\Utils\ConsoleColor;
 use Descolar\Adapters\Websocket\Utils\PrivateMessageObjectStorage;
 use Descolar\Adapters\Websocket\Utils\StringObject;
 use Override;

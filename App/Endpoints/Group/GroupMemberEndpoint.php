@@ -10,13 +10,10 @@ use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\App;
 use Descolar\Data\Entities\Group\GroupMember;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-
-
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
+
 
 class GroupMemberEndpoint extends AbstractEndpoint
 {

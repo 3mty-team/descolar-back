@@ -3,8 +3,8 @@
 namespace Descolar\Adapters\Router\Annotations;
 
 use Attribute;
-use Override;
 use Descolar\Managers\Router\Annotations\Link;
+use Override;
 
 /**
  * Annotation for PUT requests

@@ -6,11 +6,10 @@ use Descolar\Adapters\Media\Exceptions\ExtensionNotSupportedException;
 use Descolar\Adapters\Media\Exceptions\UploadMediaException;
 use Descolar\Adapters\Media\Types\Image;
 use Descolar\Adapters\Media\Types\Video;
+use Descolar\Data\Entities\Media\Media as MediaEntity;
 use Descolar\Managers\Media\Interfaces\IMedia;
 use Descolar\Managers\Media\Interfaces\IMediaManager;
 use Descolar\Managers\Media\Interfaces\IMediaType;
-
-use Descolar\Data\Entities\Media\Media as MediaEntity;
 
 class MediaAdapter implements IMediaManager
 {

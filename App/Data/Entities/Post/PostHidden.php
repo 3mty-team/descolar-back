@@ -2,7 +2,6 @@
 
 namespace Descolar\Data\Entities\Post;
 
-use DateTimeInterface;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Post\PostHiddenRepository;
 use Doctrine\ORM\Mapping as ORM;

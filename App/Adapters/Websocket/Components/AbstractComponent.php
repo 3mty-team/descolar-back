@@ -3,7 +3,6 @@
 namespace Descolar\Adapters\Websocket\Components;
 
 use Descolar\Adapters\Websocket\MessageManager;
-use Exception;
 use Override;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
