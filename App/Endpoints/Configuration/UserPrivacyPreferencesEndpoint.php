@@ -5,11 +5,10 @@ namespace Descolar\Endpoints\Configuration;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Put;
-use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Data\Entities\Configuration\UserPrivacyPreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
@@ -62,11 +61,9 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     private function updatePrivacyToUser(): void
     {
         $this->reply(function ($response) {
-            global $_REQ;
-            RequestUtils::cleanBody();
-
-            $feedVisibility = $_REQ['feed_visibility'] ?? "";
-            $searchVisibility = $_REQ['search_visibility'] ?? "";
+            [$feedVisibility, $searchVisibility] = Requester::getInstance()->trackMany(
+                "feed_visibility", "search_visibility"
+            );
 
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
 

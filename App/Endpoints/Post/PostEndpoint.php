@@ -10,10 +10,9 @@ use Descolar\Data\Entities\Post\Post as PostEntity;
 
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -81,10 +80,9 @@ class PostEndpoint extends AbstractEndpoint
     {
         $this->reply(function ($response) {
 
-            $content = $_POST['content'] ?? "";
-            $location = $_POST['location'] ?? "";
-            $date = $_POST['send_timestamp'] ?? 0;
-            $medias = @json_decode($_POST['medias'] ?? null);
+            [$content, $location, $date, $medias] = Requester::getInstance()->trackMany(
+                "content", "location", "send_timestamp", "medias"
+            );
 
             /** @var Post $post */
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->create($content, $location, $date, $medias);
