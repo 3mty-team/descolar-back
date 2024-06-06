@@ -25,6 +25,7 @@ class App
     use Traits\MailAdapter;
     use Traits\MediaAdapter;
     use Traits\SocketAdapter;
+    use Traits\RequesterAdapter;
 
     /**
      * @return bool True if the application is in development mode, false otherwise
@@ -88,5 +89,6 @@ class App
         self::useMail(Adapters\Mail\MailBuilder::class);
         self::useMedia(Adapters\Media\MediaAdapter::class);
         self::useSocket(Adapters\Websocket\MessageManager::class);
+        self::useRequester(Adapters\Requester\GlobalRequest::class);
     }
 }

@@ -73,7 +73,7 @@ class Authentication extends AbstractEndpoint
     private function verifyJwt(): void
     {
         $this->reply(function ($response) {
-            $response->addDate('message', 'Token is valid')
+            $response->addData('message', 'Token is valid')
                 ->addData('user_uuid', App::getUserUuid());
         });
     }

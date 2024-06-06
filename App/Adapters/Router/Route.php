@@ -2,7 +2,6 @@
 
 namespace Descolar\Adapters\Router;
 
-use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Adapters\Security\AuthMiddleware;
 use Descolar\Managers\Router\Interfaces\ILink;
 use Descolar\Managers\Router\Interfaces\IRoute;
@@ -121,9 +120,7 @@ class Route implements IRoute
             AuthMiddleware::validateJwt();
         }
 
-        RequestUtils::cleanBody();
-        $_REQ = $GLOBALS['_REQ'] ?? [];
-        call_user_func_array($this->callable, [...$this->matches, $_REQ]);
+        call_user_func_array($this->callable, [...$this->matches]);
     }
 
 }
