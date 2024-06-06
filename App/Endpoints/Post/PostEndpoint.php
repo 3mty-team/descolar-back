@@ -2,15 +2,12 @@
 
 namespace Descolar\Endpoints\Post;
 
+use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
-use Descolar\Adapters\Router\Annotations\Delete;
-
-use Descolar\Data\Entities\Post\Post as PostEntity;
-
 use Descolar\Adapters\Router\RouteParam;
+use Descolar\Data\Entities\Post\Post as PostEntity;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-
 use Descolar\Managers\Orm\OrmConnector;
 use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
