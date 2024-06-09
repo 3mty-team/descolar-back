@@ -78,12 +78,12 @@ class RegisterEndpoint extends AbstractEndpoint
     private function register(): void
     {
         $this->reply(function ($response) {
-            [$username, $password, $firstname, $lastname, $mail, $formationId, $dateOfBirth, $profilePath, $bannerPath] = Requester::getInstance()->trackMany(
+            [$username, $password, $firstName, $lastName, $mail, $formationId, $dateOfBirth, $profilePath, $bannerPath] = Requester::getInstance()->trackMany(
                 "username", "password", "firstname", "lastname", "mail", "formation_id", "dateofbirth", "profile_path", "banner_path"
             );
 
             /** @var User $user */
-            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formationId, $dateOfBirth, $profilePath, $bannerPath);
+            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstName, $lastName, $mail, $formationId, $dateOfBirth, $profilePath, $bannerPath);
 
             $response->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user));
 
