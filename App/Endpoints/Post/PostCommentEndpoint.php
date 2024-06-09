@@ -9,6 +9,7 @@ use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Post\PostComment;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 
@@ -47,8 +48,9 @@ class PostCommentEndpoint extends AbstractEndpoint
     private function createPostComment(int $postId): void
     {
         $this->reply(function ($response) use ($postId) {
-            $content = $_POST['content'] ?? "";
-            $date = $_POST['send_timestamp'] ?? 0;
+            [$content, $date] = Requester::getInstance()->trackMany(
+                "content", "send_timestamp"
+            );
 
             /** @var PostComment $post */
             $post = OrmConnector::getInstance()->getRepository(PostComment::class)->create($postId, $content, $date);

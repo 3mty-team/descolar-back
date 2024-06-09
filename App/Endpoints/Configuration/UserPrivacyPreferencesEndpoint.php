@@ -39,8 +39,9 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     private function createPrivacyToUser(): void
     {
         $this->reply(function ($response) {
-            $feedVisibility = $_POST['feed_visibility'] ?? "";
-            $searchVisibility = $_POST['search_visibility'] ?? "";
+            [$feedVisibility, $searchVisibility] = Requester::getInstance()->trackMany(
+                "feed_visibility", "search_visibility"
+            );
 
             $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
 

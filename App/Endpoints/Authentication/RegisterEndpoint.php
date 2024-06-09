@@ -10,6 +10,7 @@ use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Mail\MailManager;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class RegisterEndpoint extends AbstractEndpoint
@@ -77,19 +78,12 @@ class RegisterEndpoint extends AbstractEndpoint
     private function register(): void
     {
         $this->reply(function ($response) {
-
-            $username = $_POST['username'] ?? "";
-            $password = $_POST['password'] ?? "";
-            $firstname = $_POST['firstname'] ?? "";
-            $lastname = $_POST['lastname'] ?? "";
-            $mail = $_POST['mail'] ?? "";
-            $formation_id = $_POST['formation_id'] ?? "";
-            $dateofbirth = $_POST['dateofbirth'] ?? "";
-            $profilePath = $_POST['profile_path'] ?? "";
-            $bannerPath = $_POST['banner_path'] ?? "";
+            [$username, $password, $firstname, $lastname, $mail, $formationId, $dateOfBirth, $profilePath, $bannerPath] = Requester::getInstance()->trackMany(
+                "username", "password", "firstname", "lastname", "mail", "formation_id", "dateofbirth", "profile_path", "banner_path"
+            );
 
             /** @var User $user */
-            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formation_id, $dateofbirth, $profilePath, $bannerPath);
+            $user = OrmConnector::getInstance()->getRepository(User::class)->createUser($username, $password, $firstname, $lastname, $mail, $formationId, $dateOfBirth, $profilePath, $bannerPath);
 
             $response->addData('user', OrmConnector::getInstance()->getRepository(User::class)->toJson($user));
 

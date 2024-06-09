@@ -8,6 +8,7 @@ use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\Parameter;
 
@@ -40,10 +41,9 @@ class SessionEndpoint extends AbstractEndpoint
     private function createSession(): void
     {
         $this->reply(function ($response) {
-
-            $date = $_POST['date'] ?? "";
-            $localisation = $_POST['localisation'] ?? "";
-            $userAgent = $_POST['user_agent'] ?? "";
+            [$date, $localisation, $userAgent] = Requester::getInstance()->trackMany(
+                "date", "localisation", "user_agent"
+            );
 
             $session = OrmConnector::getInstance()->getRepository(Session::class)->createSession($date, $localisation, $userAgent);
             $sessionData = OrmConnector::getInstance()->getRepository(Session::class)->toJson($session);

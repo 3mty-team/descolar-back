@@ -8,6 +8,7 @@ use Descolar\App;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class SearchPostEndpoint extends AbstractEndpoint
@@ -19,9 +20,7 @@ class SearchPostEndpoint extends AbstractEndpoint
         $this->reply(function ($response) {
             $user_uuid = App::getUserUuid();
 
-            global $_REQ;
-            RequestUtils::cleanBody();
-            $content = $_REQ['content'] ?? "";
+            $content = Requester::getInstance()->trackOne("content");
 
             /** @var Post[] $posts */
             $posts = OrmConnector::getInstance()->getRepository(Post::class)->findByContent($content, $user_uuid);

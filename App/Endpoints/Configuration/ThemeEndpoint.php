@@ -10,6 +10,7 @@ use Descolar\Data\Entities\Configuration\Theme;
 use Descolar\Data\Entities\Configuration\UserThemePreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class ThemeEndpoint extends AbstractEndpoint
@@ -51,7 +52,7 @@ class ThemeEndpoint extends AbstractEndpoint
     private function createThemeToUser(): void
     {
         $this->reply(function ($response) {
-            $themeId = $_POST['theme_id'] ?? "";
+            $themeId = Requester::getInstance()->trackOne("theme_id");
 
             $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->createThemePreference($themeId);
             $themeData = OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme);
@@ -67,10 +68,7 @@ class ThemeEndpoint extends AbstractEndpoint
     private function updateThemeToUser(): void
     {
         $this->reply(function ($response) {
-            global $_REQ;
-            RequestUtils::cleanBody();
-
-            $themeId = $_REQ['theme_id'] ?? "";
+            $themeId = Requester::getInstance()->trackOne("theme_id");
 
             if (empty($themeId)) {
                 $response->addData('message', 'Missing parameters');

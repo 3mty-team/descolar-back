@@ -9,6 +9,7 @@ use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Report\UserReport;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -46,10 +47,9 @@ class UserReportEndpoint extends AbstractEndpoint
     private function createUserReport(): void
     {
         $this->reply(function ($response) {
-            $reportedUUID = $_POST['reported_uuid'];
-            $reportCategoryId = $_POST['report_category_id'];
-            $comment = $_POST['comment'] ?? '';
-            $date = $_POST['date'];
+            [$reportedUUID, $reportCategoryId, $comment, $date] = Requester::getInstance()->trackMany(
+                "reported_uuid", "report_category_id", "comment", "date"
+            );
 
             $userReport = OrmConnector::getInstance()->getRepository(UserReport::class)->create($reportedUUID, $reportCategoryId, $comment, $date);
             $userReportData = OrmConnector::getInstance()->getRepository(UserReport::class)->toJson($userReport);

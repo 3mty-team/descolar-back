@@ -11,6 +11,7 @@ use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Data\Entities\Group\GroupMessage;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -49,9 +50,9 @@ class GroupMessageEndpoint extends AbstractEndpoint
     private function createGroupMessage(int $groupId): void
     {
         $this->reply(function ($response) use ($groupId){
-            $content = $_POST['content'] ?? "";
-            $date = $_POST['send_timestamp'] ?? 0;
-            $medias = @json_decode($_POST['medias'] ?? null);
+            [$content, $date, $medias] = Requester::getInstance()->trackMany(
+                "content", "send_timestamp", "medias"
+            );
 
             /** @var GroupMessage $group */
             $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->create($groupId, $content, $date, $medias);
@@ -68,11 +69,9 @@ class GroupMessageEndpoint extends AbstractEndpoint
     private function updateGroupMessage(int $groupId, int $messageId): void
     {
         $this->reply(function ($response) use ($groupId, $messageId){
-            global $_REQ;
-            RequestUtils::cleanBody();
-
-            $content = $_REQ['content'] ?? "";
-            $medias = json_decode($_REQ['medias'] ?? '[]');
+            [$content, $medias] = Requester::getInstance()->trackMany(
+                "content", "medias"
+            );
 
             /** @var GroupMessage $group */
             $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->update($groupId, $messageId, $content, $medias);

@@ -9,6 +9,7 @@ use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -27,16 +28,14 @@ class MessageEndpoint extends AbstractEndpoint
         });
     }
 
-    // TODO fix route and update Postman
-    #[Get('/post/message/:userUUID/:range', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER], name: 'getAllMessageUserInRange', auth: true)]
+    #[Get('/message/conversation/:userUUID/:range', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER], name: 'getAllMessageUserInRange', auth: true)]
     private function getAllMessageUserInRange(int $range): void
     {
         $this->_getAllMessages($range, null, null);
     }
 
-    // TODO fix route and update Postman
-    #[Get('/post/message/:userUUID/:range/:timestamp', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::TIMESTAMP], name: 'getAllMessageUserInRangeWithTimestamp', auth: true)]
-    #[OA\Get(path: "/group/message/{userUUID}/{range}/{timestamp}", summary: "getAllMessageUserInRangeWithTimestamp", tags: ["Message"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
+    #[Get('/message/conversation/:userUUID/:range/:timestamp', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::TIMESTAMP], name: 'getAllMessageUserInRangeWithTimestamp', auth: true)]
+    #[OA\Get(path: "/message/conversation/{userUUID}/{range}/{timestamp}", summary: "getAllMessageUserInRangeWithTimestamp", tags: ["Message"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
     private function getAllMessageUserInRangeWithTimestamp(int $range, int $timestamp): void
     {
@@ -48,10 +47,9 @@ class MessageEndpoint extends AbstractEndpoint
     private function createMessage(): void
     {
         $this->reply(function ($response){
-            $receiver = $_POST['receiver_uuid'] ?? '';
-            $content = $_POST['content'] ?? '';
-            $date = $_POST['date'] ?? 0;
-            $medias = @json_decode($_POST['medias'] ?? null);
+            [$receiver, $content, $date, $medias] = Requester::getInstance()->trackMany(
+                "receiver_uuid", "content", "date", "medias"
+            );
 
             $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->create($receiver, $content, $date, $medias);
             $messageData = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJson($message);

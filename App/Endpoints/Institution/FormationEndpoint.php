@@ -15,7 +15,7 @@ class FormationEndpoint extends AbstractEndpoint
 
     #[Get('/institution/formations', name: 'getAllFormations', auth: true)]
     #[OA\Get(path: "/institution/formations", summary: "getAllFormations", tags: ["Institution"], responses: [new OA\Response(response: 200, description: "All formations retrieved")])]
-    private function getAllGroups(): void
+    private function getAllFormations(): void
     {
         $this->reply(function ($response){
             /** @var Formation[] $formations */
@@ -32,7 +32,7 @@ class FormationEndpoint extends AbstractEndpoint
 
     #[Get('/institution/formations/:id', variables: ["id" => RouteParam::NUMBER], name: 'getFormationById', auth: true)]
     #[OA\Get(path: "/institution/formations/{id}", summary: "getFormationById", tags: ["Institution"], parameters: [new PathParameter("id", "id", "Formation ID", required: true)], responses: [new OA\Response(response: 200, description: "Formation retrieved")])]
-    private function getGroupById(int $id): void
+    private function getFormationById(int $id): void
     {
         $this->reply(function ($response) use ($id){
             $formation = OrmConnector::getInstance()->getRepository(Formation::class)->findById($id);

@@ -15,8 +15,6 @@ use OpenApi\Attributes\PathParameter;
 
 class PostEndpoint extends AbstractEndpoint
 {
-
-
     private function _getAllPosts(int $range, ?string $userUUID = null, ?int $timestamp = null): void
     {
         $this->reply(function ($response) use ($range, $userUUID, $timestamp) {
@@ -96,11 +94,9 @@ class PostEndpoint extends AbstractEndpoint
     private function repostPost(): void
     {
         $this->reply(function ($response) {
-            $postId = $_POST['post_id'] ?? 0;
-            $content = $_POST['content'] ?? "";
-            $location = $_POST['location'] ?? "";
-            $date = $_POST['send_timestamp'] ?? 0;
-            $medias = @json_decode($_POST['medias'] ?? null);
+            [$postId, $content, $location, $date, $medias] = Requester::getInstance()->trackMany(
+                "post_id", "content", "location", "send_timestamp", "medias"
+            );
 
             /** @var Post $post */
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->repost($postId, $content, $location, $date, $medias);

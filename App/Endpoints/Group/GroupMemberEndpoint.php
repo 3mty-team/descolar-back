@@ -11,6 +11,7 @@ use Descolar\App;
 use Descolar\Data\Entities\Group\GroupMember;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -25,8 +26,9 @@ class GroupMemberEndpoint extends AbstractEndpoint
     private function getAllGroupMember(int $id): void
     {
         $this->reply(function ($response) use ($id) {
-            $userUUID = $_POST['userUUID'];
-            $date = $_POST['date'];
+            [$userUUID, $date] = Requester::getInstance()->trackMany(
+                "userUUID", "date"
+            );
 
             $groupMemberData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($id);
             foreach ($groupMemberData as $key => $value) {
@@ -40,8 +42,9 @@ class GroupMemberEndpoint extends AbstractEndpoint
     private function addMemberInGroup(int $id): void
     {
         $this->reply(function ($response) use ($id) {
-            $userUUID = $_POST['user_uuid'] ?? "";
-            $date = $_POST['date'] ?? "";
+            [$userUUID, $date] = Requester::getInstance()->trackMany(
+                "userUUID", "date"
+            );
 
             $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberInGroup($id, $userUUID, $date);
             $groupData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());
@@ -56,10 +59,8 @@ class GroupMemberEndpoint extends AbstractEndpoint
     private function removeMemberInGroup(int $id): void
     {
         $this->reply(function ($response) use ($id) {
-            global $_REQ;
-            RequestUtils::cleanBody();
-
-            $userUUID = $_REQ['user_uuid'] ?? App::getUserUuid();
+            $userUUID = Requester::getInstance()->trackOne(["user_uuid",
+                                                            App::getUserUuid()]);
 
             $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->removeMemberInGroup($id, $userUUID);
             $groupData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());

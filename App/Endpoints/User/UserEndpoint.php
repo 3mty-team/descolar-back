@@ -10,6 +10,7 @@ use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class UserEndpoint extends AbstractEndpoint
@@ -87,17 +88,12 @@ class UserEndpoint extends AbstractEndpoint
             new OA\Response(response: 404, description: "User not found"),
         ]
     )]
-    private function updateUser($_REQ): void
+    private function updateUser(): void
     {
-        $this->reply(function ($response) use ($_REQ) {
-            $username = $_REQ['username'] ?? "";
-            $profilePath = $_REQ['profile_path'] ?? "";
-            $bannerPath = $_REQ['banner_path'] ?? "";
-            $firstname = $_REQ['firstname'] ?? "";
-            $lastname = $_REQ['lastname'] ?? "";
-            $biography = $_REQ['biography'] ?? "";
-            $formationId = $_REQ['formation_id'] ?? 0;
-            $sendTimestamp = $_REQ['send_timestamp'] ?? 0;
+        $this->reply(function ($response) {
+            [$username, $profilePath, $bannerPath, $firstname, $lastname, $biography, $formationId, $sendTimestamp] = Requester::getInstance()->trackMany(
+                "username", "profile_path", "banner_path", "firstname", "lastname", "biography", "formation_id", "send_timestamp"
+            );
 
             $user = OrmConnector::getInstance()->getRepository(User::class)->editUser(
                 $username,

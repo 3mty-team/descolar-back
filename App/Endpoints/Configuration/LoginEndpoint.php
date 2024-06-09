@@ -8,6 +8,7 @@ use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class LoginEndpoint extends AbstractEndpoint
@@ -26,8 +27,9 @@ class LoginEndpoint extends AbstractEndpoint
     private function login(): void
     {
         $this->reply(function ($response) {
-            $username = $_POST['username'] ?? "";
-            $password = $_POST['password'] ?? "";
+            [$username, $password] = Requester::getInstance()->trackMany(
+                "username", "password"
+            );
 
             $user = OrmConnector::getInstance()->getRepository(Login::class)->getLoginInformation($username, $password);
             OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user);

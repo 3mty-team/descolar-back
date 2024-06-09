@@ -11,6 +11,7 @@ use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Data\Entities\Group\Group;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 use OpenApi\Attributes\Response;
@@ -53,8 +54,9 @@ class GroupEndpoint extends AbstractEndpoint
     private function createGroup(): void
     {
         $this->reply(function ($response) {
-            $name = $_POST['name'];
-            $admin = $_POST['admin'];
+            [$name, $admin] = Requester::getInstance()->trackMany(
+                "name", "admin"
+            );
 
             $group = OrmConnector::getInstance()->getRepository(Group::class)->create($name, $admin);
             $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
@@ -70,11 +72,9 @@ class GroupEndpoint extends AbstractEndpoint
     private function updateGroup(int $id): void
     {
         $this->reply(function ($response) use ($id) {
-            global $_REQ;
-            RequestUtils::cleanBody();
-
-            $name = $_REQ['name'];
-            $admin = $_REQ['admin'];
+            [$name, $admin] = Requester::getInstance()->trackMany(
+                "name", "admin"
+            );
 
             $group = OrmConnector::getInstance()->getRepository(Group::class)->editGroup($id, $name, $admin);
             $groupData = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
