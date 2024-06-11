@@ -5,11 +5,10 @@ namespace Descolar\Endpoints\Configuration;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\Annotations\Put;
-use Descolar\Adapters\Router\Utils\RequestUtils;
 use Descolar\Data\Entities\Configuration\UserPrivacyPreferences;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
@@ -18,13 +17,13 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     #[OA\Get(path: "/config/privacy", summary: "Retrieve all Themes", tags: ["Configuration"], responses: [new OA\Response(response: 200, description: "All themes retrieved")])]
     private function getPrivacy(): void
     {
-        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
+        $this->reply(function ($response) {
+            $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->getUserPrivacyPreferenceToJson();
 
-        JsonBuilder::build()
-            ->setCode(200)
-            ->addData('message', 'User privacy preference retrieved')
-            ->addData('privacy', $userPrivacyPreferences)
-            ->getResult();
+            foreach ($userPrivacyPreferences as $key => $value) {
+                $response->addData($key, $value);
+            }
+        });
     }
 
     #[Post('/config/privacy', name: 'Create Privacy to user', auth: true)]
@@ -39,16 +38,17 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     )]
     private function createPrivacyToUser(): void
     {
-        $feedVisibility = $_POST['feed_visibility'] ?? "";
-        $searchVisibility = $_POST['search_visibility'] ?? "";
+        $this->reply(function ($response) {
+            [$feedVisibility, $searchVisibility] = Requester::getInstance()->trackMany(
+                "feed_visibility", "search_visibility"
+            );
 
-        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
+            $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->createUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'User privacy preference created')
-            ->addData('theme', $userPrivacyPreferences)
-            ->getResult();
+            foreach ($userPrivacyPreferences as $key => $value) {
+                $response->addData($key, $value);
+            }
+        });
     }
 
     #[Put('/config/privacy', name: 'Update Privacy to user', auth: true)]
@@ -63,18 +63,16 @@ class UserPrivacyPreferencesEndpoint extends AbstractEndpoint
     )]
     private function updatePrivacyToUser(): void
     {
-        global $_REQ;
-        RequestUtils::cleanBody();
+        $this->reply(function ($response) {
+            [$feedVisibility, $searchVisibility] = Requester::getInstance()->trackMany(
+                "feed_visibility", "search_visibility"
+            );
 
-        $feedVisibility = $_REQ['feed_visibility'] ?? "";
-        $searchVisibility = $_REQ['search_visibility'] ?? "";
+            $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
 
-        $userPrivacyPreferences = OrmConnector::getInstance()->getRepository(UserPrivacyPreferences::class)->updateUserPrivacyPreference($feedVisibility, $searchVisibility);
-
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'User privacy preference updated')
-            ->addData('theme', $userPrivacyPreferences)
-            ->getResult();
+            foreach ($userPrivacyPreferences as $key => $value) {
+                $response->addData($key, $value);
+            }
+        });
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Descolar\Data\Repository\Post;
 
-use Descolar\App;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostHidden;
 use Descolar\Data\Entities\User\User;

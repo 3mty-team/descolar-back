@@ -4,8 +4,8 @@ namespace Descolar\Endpoints;
 
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use OpenApi\Generator;
 use OpenApi\Attributes as OA;
+use OpenApi\Generator;
 
 #[OA\Info(
     version: "1.0.0",

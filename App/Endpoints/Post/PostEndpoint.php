@@ -2,47 +2,28 @@
 
 namespace Descolar\Endpoints\Post;
 
+use Descolar\Adapters\Router\Annotations\Delete;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
-use Descolar\Adapters\Router\Annotations\Delete;
-
-use Descolar\Data\Entities\Post\Post as PostEntity;
-
 use Descolar\Adapters\Router\RouteParam;
+use Descolar\Data\Entities\Post\Post as PostEntity;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
 class PostEndpoint extends AbstractEndpoint
 {
-
-
     private function _getAllPosts(int $range, ?string $userUUID = null, ?int $timestamp = null): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($range, $userUUID, $timestamp) {
             $group = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJsonRange($range, $userUUID, $timestamp);
 
             foreach ($group as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Get('/post/message/:range', variables: ["range" => RouteParam::NUMBER], name: 'getAllPostInRange', auth: true)]
@@ -78,41 +59,25 @@ class PostEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Post retrieved")])]
     private function getPostById(int $postId): void
     {
-
-        $response = JsonBuilder::build();
-
-        try {
-
+        $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->find($postId);
             $postData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
 
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
-
+        });
     }
 
     #[Post('/post', name: 'createPost', auth: true)]
     #[OA\Post(path: "/post", summary: "createPost", tags: ["Post"], responses: [new OA\Response(response: 200, description: "Post created")])]
-    private function createPost() : void
+    private function createPost(): void
     {
-        $response = JsonBuilder::build();
+        $this->reply(function ($response) {
 
-        try {
-
-            $content = $_POST['content'] ?? "";
-            $location = $_POST['location'] ?? "";
-            $date = $_POST['send_timestamp'] ?? 0;
-            $medias = @json_decode($_POST['medias'] ?? null);
+            [$content, $location, $date, $medias] = Requester::getInstance()->trackMany(
+                "content", "location", "send_timestamp", "medias"
+            );
 
             /** @var Post $post */
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->create($content, $location, $date, $medias);
@@ -121,30 +86,17 @@ class PostEndpoint extends AbstractEndpoint
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Post('/repost', name: 'repostPost', auth: true)]
     #[OA\Post(path: "/repost", summary: "repostPost", tags: ["Post"], responses: [new OA\Response(response: 200, description: "Post reposted")])]
     private function repostPost(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-
-            $postId = $_POST['post_id'] ?? 0;
-            $content = $_POST['content'] ?? "";
-            $location = $_POST['location'] ?? "";
-            $date = $_POST['send_timestamp'] ?? 0;
-            $medias = @json_decode($_POST['medias'] ?? null);
+        $this->reply(function ($response) {
+            [$postId, $content, $location, $date, $medias] = Requester::getInstance()->trackMany(
+                "post_id", "content", "location", "send_timestamp", "medias"
+            );
 
             /** @var Post $post */
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->repost($postId, $content, $location, $date, $medias);
@@ -153,36 +105,18 @@ class PostEndpoint extends AbstractEndpoint
             foreach ($postData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
-    #[Delete('/post/:postId', variables: ["postId" => RouteParam::NUMBER], name: 'deletePost', auth: true)]
+    #[Delete('/post/:postId', variables: ["postId" => RouteParam::NUMBER], name: 'deletePost', auth: false)]
     #[OA\Delete(path: "/post/{postId}", summary: "deletePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "Post ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Post deleted")])]
     private function deletePost(int $postId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($postId) {
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->delete($postId);
 
             $response->addData("id", $post);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
-
 }

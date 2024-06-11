@@ -3,7 +3,6 @@
 namespace Descolar\Managers\Endpoint\Exceptions;
 
 use RuntimeException;
-use Throwable;
 
 class EndpointException extends RuntimeException
 {

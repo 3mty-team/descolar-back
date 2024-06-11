@@ -6,7 +6,6 @@ use DateTimeInterface;
 use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Report\MessageReportRepository;
-use Descolar\Data\Repository\User\MessageUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageReportRepository::class)]

@@ -8,9 +8,8 @@ use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Report\UserReport;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
 
@@ -24,27 +23,19 @@ class UserReportEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "All user reports retrieved")])]
     private function getAllUserReports(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) {
             $userReports = OrmConnector::getInstance()->getRepository(UserReport::class)->findAll();
-        
-        	$data = [];
+
+            $data = [];
             foreach ($userReports as $report) {
                 $data[] = OrmConnector::getInstance()->getRepository(UserReport::class)->toJson($report);
             }
-    
-            $response->setCode(200);
+
             $response->addData('user_reports', $data);
-            $response->getResult();
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
-    #[Post('/report/user/create', name: 'createUserReport', auth: false)]
+    #[Post('/report/user/create', name: 'createUserReport', auth: true)]
     #[OA\Post(
         path: "/report/user/create",
         summary: "createUserReport",
@@ -55,13 +46,10 @@ class UserReportEndpoint extends AbstractEndpoint
     )]
     private function createUserReport(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-            $reportedUUID = $_POST['reported_uuid'];
-            $reportCategoryId = $_POST['report_category_id'];
-            $comment = $_POST['comment'] ?? '';
-            $date = $_POST['date'];
+        $this->reply(function ($response) {
+            [$reportedUUID, $reportCategoryId, $comment, $date] = Requester::getInstance()->trackMany(
+                "reported_uuid", "report_category_id", "comment", "date"
+            );
 
             $userReport = OrmConnector::getInstance()->getRepository(UserReport::class)->create($reportedUUID, $reportCategoryId, $comment, $date);
             $userReportData = OrmConnector::getInstance()->getRepository(UserReport::class)->toJson($userReport);
@@ -69,15 +57,7 @@ class UserReportEndpoint extends AbstractEndpoint
             foreach ($userReportData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 
     #[Delete('/report/user/:reportId/delete', variables: ["reportId" => RouteParam::NUMBER], name: 'deleteUserReport', auth: false)]
@@ -89,19 +69,10 @@ class UserReportEndpoint extends AbstractEndpoint
         responses: [new OA\Response(response: 200, description: "Report deleted")])]
     private function deleteUserReport(int $reportId): void
     {
-        $response = JsonBuilder::build();
-
-        try {
+        $this->reply(function ($response) use ($reportId) {
             $userReport = OrmConnector::getInstance()->getRepository(UserReport::class)->delete($reportId);
 
             $response->addData("id", $userReport);
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

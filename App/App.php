@@ -2,12 +2,11 @@
 
 namespace Descolar;
 
+use Descolar\Adapters as Adapters;
+use Descolar\Managers\App\Traits as Traits;
 use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\Error\ErrorHandler;
 use Descolar\Managers\Router\Router;
-use Descolar\Managers\App\Traits as Traits;
-use Descolar\Adapters as Adapters;
-
 use ReflectionException;
 
 /**
@@ -25,6 +24,8 @@ class App
     use Traits\OrmAdapter;
     use Traits\MailAdapter;
     use Traits\MediaAdapter;
+    use Traits\SocketAdapter;
+    use Traits\RequesterAdapter;
 
     /**
      * @return bool True if the application is in development mode, false otherwise
@@ -87,5 +88,7 @@ class App
         self::useJsonBuilder(Adapters\JsonBuilder\JsonBuilderManager::class);
         self::useMail(Adapters\Mail\MailBuilder::class);
         self::useMedia(Adapters\Media\MediaAdapter::class);
+        self::useSocket(Adapters\Websocket\MessageManager::class);
+        self::useRequester(Adapters\Requester\GlobalRequest::class);
     }
 }

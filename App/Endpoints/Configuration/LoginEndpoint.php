@@ -7,9 +7,8 @@ use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 
 class LoginEndpoint extends AbstractEndpoint
@@ -27,11 +26,10 @@ class LoginEndpoint extends AbstractEndpoint
     )]
     private function login(): void
     {
-        $response = JsonBuilder::build();
-
-        try {
-            $username = $_POST['username'] ?? "";
-            $password = $_POST['password'] ?? "";
+        $this->reply(function ($response) {
+            [$username, $password] = Requester::getInstance()->trackMany(
+                "username", "password"
+            );
 
             $user = OrmConnector::getInstance()->getRepository(Login::class)->getLoginInformation($username, $password);
             OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user);
@@ -40,14 +38,6 @@ class LoginEndpoint extends AbstractEndpoint
             foreach ($userData as $key => $value) {
                 $response->addData($key, $value);
             }
-
-            $response->setCode(200);
-            $response->getResult();
-
-        } catch (EndpointException $e) {
-            $response->setCode($e->getCode());
-            $response->addData('message', $e->getMessage());
-            $response->getResult();
-        }
+        });
     }
 }

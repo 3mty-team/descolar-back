@@ -7,32 +7,25 @@ use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
-use Descolar\Managers\JsonBuilder\JsonBuilder;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Requester\Requester;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\Parameter;
 
 class SessionEndpoint extends AbstractEndpoint
 {
-    #[Get('/config/session/:sessionUuid', variables: ["sessionUUID" => RouteParam::NUMBER] , name: 'Search Session by id', auth: true)]
+    #[Get('/config/session/:sessionUuid', variables: ["sessionUUID" => RouteParam::NUMBER], name: 'Search Session by id', auth: true)]
     #[OA\Get(path: "/config/session/{sessionUuid}", summary: "Search Session by id", tags: ["Configuration"], parameters: [new Parameter("sessionUuid", "sessionUuid", "Session UUID", required: true)], responses: [new OA\Response(response: 201, description: "Session started"), new OA\Response(response: 404, description: "Session not found")])]
     private function searchSessionByUuid(string $sessionUuid): void
     {
-        $session = OrmConnector::getInstance()->getRepository(Session::class)->getSessionByUuid($sessionUuid);
+        $this->reply(function ($response) use ($sessionUuid) {
+            $session = OrmConnector::getInstance()->getRepository(Session::class)->getSessionByUuid($sessionUuid);
+            $sessionData = OrmConnector::getInstance()->getRepository(Session::class)->toJson($session);
 
-        if ($session === null) {
-            JsonBuilder::build()
-                ->setCode(404)
-                ->addData('message', 'Session not found')
-                ->getResult();
-            return;
-        }
-
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'Session started')
-            ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session))
-            ->getResult();
+            foreach ($sessionData as $key => $value) {
+                $response->addData($key, $value);
+            }
+        });
     }
 
     #[Post('/config/session', name: 'Create Session', auth: true)]
@@ -47,24 +40,17 @@ class SessionEndpoint extends AbstractEndpoint
     )]
     private function createSession(): void
     {
-        $date = $_POST['date'] ?? "";
-        $localisation = $_POST['localisation'] ?? "";
-        $userAgent = $_POST['user_agent'] ?? "";
+        $this->reply(function ($response) {
+            [$date, $localisation, $userAgent] = Requester::getInstance()->trackMany(
+                "date", "localisation", "user_agent"
+            );
 
-        if (empty($date) || empty($localisation) || empty($userAgent)) {
-            JsonBuilder::build()
-                ->setCode(400)
-                ->addData('message', 'Missing parameters')
-                ->getResult();
-            return;
-        }
+            $session = OrmConnector::getInstance()->getRepository(Session::class)->createSession($date, $localisation, $userAgent);
+            $sessionData = OrmConnector::getInstance()->getRepository(Session::class)->toJson($session);
 
-        $session = OrmConnector::getInstance()->getRepository(Session::class)->createSessionn($date, $localisation, $userAgent);
-
-        JsonBuilder::build()
-            ->setCode(201)
-            ->addData('message', 'Session started')
-            ->addData('session', OrmConnector::getInstance()->getRepository(Session::class)->toJson($session))
-            ->getResult();
+            foreach ($sessionData as $key => $value) {
+                $response->addData($key, $value);
+            }
+        });
     }
 }

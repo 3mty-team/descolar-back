@@ -36,7 +36,7 @@ const DIR_ROOT = __DIR__;
  */
 App::loadAdapters();
 
-/**
- * Run the application
- */
+
 App::run();
+
+

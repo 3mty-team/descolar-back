@@ -5,9 +5,9 @@ namespace Descolar\Data\Repository\User;
 use DateTimeZone;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
-use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
 use Doctrine\ORM\EntityRepository;
+use Exception;
 
 class DeactivationUserRepository extends EntityRepository
 {
@@ -30,18 +30,24 @@ class DeactivationUserRepository extends EntityRepository
             return false;
         }
 
-        return $deactivationUser->getIsFinal();
+        return $deactivationUser->isFinal();
     }
 
+    /**
+     * @throws Exception
+     */
     private function manageDisable(?User $user = null, bool $forever = false)
     {
-
         if ($user === null) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+            $deactivationUser = $this->findOneBy(["user" => $user]);
         }
 
-        $deactivationUser = new DeactivationUser();
-        $deactivationUser->setUser($user);
+        else{
+            $deactivationUser = new DeactivationUser();
+            $deactivationUser->setUser($user);
+        }
+
         $deactivationUser->setDate(new \DateTime("now", new DateTimeZone('Europe/Paris')));
         $deactivationUser->setIsFinal($forever);
         $deactivationUser->setIsActive(true);
@@ -62,20 +68,18 @@ class DeactivationUserRepository extends EntityRepository
         return $this->manageDisable($user, true);
     }
 
-    public function disableDeactivation(User $user): void
+    public function disableDeactivation(User $user): string
     {
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {
-            return;
-        }
-
-        if ($deactivationUser->getIsFinal()) {
-            throw new EndpointException("User is permanently disabled", 403);
+            return "User is not deactivated.";
         }
 
         $deactivationUser->setIsActive(false);
 
         $this->getEntityManager()->persist($deactivationUser);
         $this->getEntityManager()->flush();
+
+        return $user->getUUID();
     }
 }

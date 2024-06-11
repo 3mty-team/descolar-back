@@ -24,10 +24,16 @@ class UserThemePreferencesRepository extends EntityRepository
     }
     public function createThemePreference($themeId): ?Theme
     {
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
-        if ($user === null) {
-            throw new EndpointException('User not found', 404);
+
+        if (empty($themeId)) {
+            throw new EndpointException('Missing parameters', 400);
         }
+
+        if (!is_numeric($themeId)) {
+            throw new EndpointException('Invalid parameters', 400);
+        }
+
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $alreadyExists = $this->findOneBy(['user' => $user]);
         if ($alreadyExists !== null) {

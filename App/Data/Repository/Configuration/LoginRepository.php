@@ -10,6 +10,21 @@ use Doctrine\ORM\EntityRepository;
 
 class LoginRepository extends EntityRepository
 {
+
+    private function getUserByUsernameOrEmail(String $username): ?User
+    {
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["username" => $username]);
+        if($user == null) {
+            $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["mail" => $username]);
+        }
+
+        if(!$user) {
+            return null;
+        }
+
+        return OrmConnector::getInstance()->getRepository(User::class)->findByUUID($user->getUUID());
+    }
+
     public function createLogin(User $user, String $password): ?Login
     {
         $login = new Login();
@@ -26,20 +41,20 @@ class LoginRepository extends EntityRepository
          * @var User $user
          * @var Login $login
          */
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["username" => $username]);
+        $user = $this->getUserByUsernameOrEmail($username);
         $login = $this->findOneBy(["user" => $user?->getUUID()]);
 
         if($user == null || $login == null) {
-            throw new EndpointException("Invalid login or password", 403);
+            throw new EndpointException("Identifiant ou mot de passe invalide", 403);
         }
 
         if($user->getToken() != null) {
-            throw new EndpointException("Email not verified", 403);
+            throw new EndpointException("Veuillez confirmez votre email", 403);
         }
 
-        $isValid = password_verify($password, $login?->getPassword());
+        $isValid = password_verify($password, $login->getPassword());
         if (!$isValid) {
-            throw new EndpointException("Invalid login or password", 403);
+            throw new EndpointException("Identifiant ou mot de passe invalide", 403);
         }
 
         return $user;

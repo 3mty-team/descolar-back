@@ -16,7 +16,8 @@
         "symfony/cache": "^v7.0.6",
         "filp/whoops": "2.15.4",
         "firebase/php-jwt": "v6.10.0",
-        "phpmailer/phpmailer": "^v6.9.1"
+        "phpmailer/phpmailer": "^v6.9.1",
+        "cboden/ratchet": "v0.5.x-dev"
     },
     "require-dev": {
         "pestphp/pest": "^v2.34.7"

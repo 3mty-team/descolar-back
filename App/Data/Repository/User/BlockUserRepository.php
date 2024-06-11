@@ -18,6 +18,7 @@ class BlockUserRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("b")
             ->where("b.blocking = :user")
+            ->andWhere("b.isActive = true")
             ->setParameter("user", $user)
             ->getQuery()->getResult();
 
@@ -36,6 +37,7 @@ class BlockUserRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("b")
             ->where("b.blocked = :user")
+            ->andWhere("b.isActive = true")
             ->setParameter("user", $user)
             ->getQuery()->getResult();
 
@@ -54,6 +56,7 @@ class BlockUserRepository extends EntityRepository
             $blockUser = new BlockUser();
             $blockUser->setBlocking($blocking);
             $blockUser->setBlocked($blocked);
+            $blockUser->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
             $blockUser->setIsActive($setBlocked);
 
             $this->getEntityManager()->persist($blockUser);
@@ -61,6 +64,7 @@ class BlockUserRepository extends EntityRepository
             return $blockUser;
         }
 
+        $block->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
         $block->setIsActive($setBlocked);
 
         $this->getEntityManager()->persist($block);

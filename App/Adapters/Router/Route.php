@@ -120,7 +120,7 @@ class Route implements IRoute
             AuthMiddleware::validateJwt();
         }
 
-        call_user_func_array($this->callable, $this->matches);
+        call_user_func_array($this->callable, [...$this->matches]);
     }
 
 }

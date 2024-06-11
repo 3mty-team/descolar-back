@@ -3,7 +3,6 @@
 namespace Descolar\Data\Repository\Post;
 
 use DateTime;
-use Descolar\App;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Data\Entities\Post\PostLike;
 use Descolar\Data\Entities\User\User;

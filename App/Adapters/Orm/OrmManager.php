@@ -6,20 +6,17 @@ use Descolar\App;
 use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\Orm\Exceptions\OrmDataNotDefined;
 use Descolar\Managers\Orm\Interfaces\IOrmManager;
-
-use Doctrine\DBAL\DriverManager;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMSetup;
-use Doctrine\ORM\Configuration;
-use Doctrine\ORM\Mapping\Driver\AttributeDriver;
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\DBAL\Connection;
-
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Doctrine\ORM\ORMSetup;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Override;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
-use Psr\Cache\CacheItemPoolInterface;
-
-use Override;
 
 class OrmManager implements IOrmManager
 {
