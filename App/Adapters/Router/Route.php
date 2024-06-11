@@ -2,10 +2,12 @@
 
 namespace Descolar\Adapters\Router;
 
+use Descolar\Adapters\Router\Exceptions\TooManyRequestsException;
 use Descolar\Adapters\Security\AuthMiddleware;
 use Descolar\Managers\Router\Interfaces\ILink;
 use Descolar\Managers\Router\Interfaces\IRoute;
 use Override;
+use function PHPUnit\Framework\throwException;
 
 /**
  * Route adapted for the router
@@ -116,6 +118,10 @@ class Route implements IRoute
 
     #[Override] public function call(): void
     {
+        if (Control::getInstance()->isOverLimit()) {
+            throw new TooManyRequestsException();
+        }
+
         if ($this->route->getAuth()) {
             AuthMiddleware::validateJwt();
         }
