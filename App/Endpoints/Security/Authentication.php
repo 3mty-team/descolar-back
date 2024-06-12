@@ -43,13 +43,14 @@ class Authentication extends AbstractEndpoint
             $date = new DateTimeImmutable();
             $expire_at = $date->modify('+24 hour')->getTimestamp();
             $domainName = "internal-api.descolar.fr";
+            $usernameSha256 = hash('sha256', $userUuid);
 
             $request_data = [
                 'iat' => $date->getTimestamp(),        // Issued at: time when the token was generated
                 'iss' => $domainName,                  // Issuer
                 'nbf' => $date->getTimestamp(),        // Not before
                 'exp' => $expire_at,                   // Expire
-                'username' => $userUuid,                // User name
+                'username' => $usernameSha256,         // User name
             ];
 
             $jwt = JWT::encode($request_data, $secretKeyEncoded, 'HS256');
