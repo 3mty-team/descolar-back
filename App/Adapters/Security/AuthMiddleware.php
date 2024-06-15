@@ -18,8 +18,8 @@ class AuthMiddleware
         try {
             $jwt = $_SERVER['HTTP_AUTHORIZATION'];
             $jwt = str_replace('Bearer ', '', $jwt);
-            $usernameSha256 = JWT::decode($jwt, new Key($secretKeyEncoded, 'HS256'))->username;
-            $userUuid = hash('sha256', $usernameSha256);
+            $hashedUsername = JWT::decode($jwt, new Key($secretKeyEncoded, 'HS256'))->username;
+            $userUuid = hash('sha256', $hashedUsername);
             App::setUserUuid($userUuid);
         } catch (Exception $e) {
             throw new UnauthorizedException();
