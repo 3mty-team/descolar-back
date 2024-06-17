@@ -13,7 +13,7 @@ use OpenApi\Attributes\PathParameter;
 class DiplomaEndpoint extends AbstractEndpoint
 {
 
-    #[Get('/institution/diplomas', name: 'getAllDiplomas', auth: true)]
+    #[Get('/institution/diplomas', name: 'getAllDiplomas', auth: false)]
     #[OA\Get(path: "/institution/diplomas", summary: "getAllDiplomas", tags: ["Institution"], responses: [new OA\Response(response: 200, description: "All diplomas retrieved")])]
     private function getAllDiplomas(): void
     {

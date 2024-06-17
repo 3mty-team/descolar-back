@@ -13,7 +13,7 @@ use OpenApi\Attributes\PathParameter;
 class FormationEndpoint extends AbstractEndpoint
 {
 
-    #[Get('/institution/formations', name: 'getAllFormations', auth: true)]
+    #[Get('/institution/formations', name: 'getAllFormations', auth: false)]
     #[OA\Get(path: "/institution/formations", summary: "getAllFormations", tags: ["Institution"], responses: [new OA\Response(response: 200, description: "All formations retrieved")])]
     private function getAllFormations(): void
     {
