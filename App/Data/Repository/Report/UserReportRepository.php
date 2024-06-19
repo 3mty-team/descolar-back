@@ -14,6 +14,18 @@ use Doctrine\ORM\EntityRepository;
 
 class UserReportRepository extends EntityRepository
 {
+
+    public function findById(int $id): UserReport
+    {
+        $userReport = $this->find($id);
+
+        if ($userReport === null || !$userReport->isActive()) {
+            throw new EndpointException('User report not found', 404);
+        }
+
+        return $userReport;
+    }
+
     public function findAll(): array
     {
 	 return $this->createQueryBuilder('ur')
@@ -26,20 +38,15 @@ class UserReportRepository extends EntityRepository
     /**
      * @throws \Exception
      */
-    public function create(string $reportedUUID, int $reportCategoryId, ?string $comment, int $date): UserReport
+    public function create(?string $reportedUUID, ?int $reportCategoryId, ?string $comment, ?int $date): UserReport
     {
 
         if (empty($reportedUUID) || empty($reportCategoryId)) {
             throw new EndpointException('Missing parameters "reported" or "reportCategory"', 400);
         }
 
-        $reporterUUID = App::getUserUuid();
-        if ($reporterUUID === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
+        $reporter = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         $reported = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($reportedUUID);
-        $reporter = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($reporterUUID);
 
         $reportCategory = OrmConnector::getInstance()->getRepository(ReportCategory::class)->findById($reportCategoryId);
 
@@ -60,11 +67,7 @@ class UserReportRepository extends EntityRepository
 
     public function delete(int $userReportId)
     {
-        $userReport = $this->find($userReportId);
-
-        if ($userReport === null) {
-            throw new EndpointException('User report not found', 404);
-        }
+        $userReport = $this->findById($userReportId);
 
         $userReport->setIsActive(false);
 

@@ -18,10 +18,8 @@ class SearchUserEndpoint extends AbstractEndpoint
     private function searchUserByName(string $username): void
     {
         $this->reply(function ($response) use ($username) {
-            $user_uuid = App::getUserUuid();
 
-            /** @var User[] $users */
-            $users = OrmConnector::getInstance()->getRepository(User::class)->findByUsername($username, $user_uuid);
+            $users = OrmConnector::getInstance()->getRepository(User::class)->findByUsername($username);
 
             $data = [];
             foreach ($users as $user) {

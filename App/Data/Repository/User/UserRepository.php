@@ -60,7 +60,7 @@ class UserRepository extends EntityRepository
     /**
      * @throws Exception
      */
-    public function createUser(string $username, string $password, string $firstname, string $lastname, string $mail, string $formation_id, string $dateofbirth, string $profilePath, string $bannerPath): User
+    public function createUser(?string $username, ?string $password, ?string $firstname, ?string $lastname, ?string $mail, ?string $formation_id, ?string $dateofbirth, ?string $profilePath, ?string $bannerPath): User
     {
 
         $token = bin2hex(random_bytes(32));
@@ -112,9 +112,9 @@ class UserRepository extends EntityRepository
         return $user;
     }
 
-    public function findByUsername(string $username, string $user_uuid): array
+    public function findByUsername(string $username): array
     {
-        OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->addToSearchHistory($username, $user_uuid);
+        OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->addToSearchHistory($username);
 
         return $this->createQueryBuilder('u')
             ->select('u')
@@ -125,14 +125,14 @@ class UserRepository extends EntityRepository
     }
 
     public function editUser(
-        string $username,
-        string $profilePath,
-        string $bannerPath,
-        string $firstname,
-        string $lastname,
-        string $biography,
-        int $formationId,
-        int $sendTimestamp
+        ?string $username,
+        ?string $profilePath,
+        ?string $bannerPath,
+        ?string $firstname,
+        ?string $lastname,
+        ?string $biography,
+        ?int $formationId,
+        ?int $sendTimestamp
     ): User
     {
 
@@ -228,6 +228,7 @@ class UserRepository extends EntityRepository
             'bannerPath' => $user->getBannerPath(),
             'followers' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerCount($user),
             'following' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowingCount($user),
+            'formation' => OrmConnector::getInstance()->getRepository(Formation::class)->toJson($user->getFormation()),
             'isActive' => $user->isActive(),
         ];
     }
@@ -253,6 +254,7 @@ class UserRepository extends EntityRepository
             'lastname' => $user->getLastname(),
             'followers' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowerCount($user),
             'following' => OrmConnector::getInstance()->getRepository(FollowUser::class)->getFollowingCount($user),
+            'formation' => OrmConnector::getInstance()->getRepository(Formation::class)->toJson($user->getFormation()),
             'mail' => $user->getMail(),
             'date' => $user->getDate()?->format('d-m-Y'),
             'biography' => $user->getBiography(),

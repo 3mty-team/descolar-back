@@ -19,10 +19,9 @@ class SearchHistoryEndpoint extends AbstractEndpoint
     private function getSearchHistory(): void
     {
         $this->reply(function ($response) {
-            $user_uuid = App::getUserUuid();
 
             /** @var SearchHistoryUser[] $searches */
-            $searches = OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->getSearchHistory($user_uuid);
+            $searches = OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->getSearchHistory();
 
             $data = [];
             foreach ($searches as $search) {
@@ -38,8 +37,7 @@ class SearchHistoryEndpoint extends AbstractEndpoint
     private function removeSearchHistory(int $id): void
     {
         $this->reply(function ($response) use ($id){
-            $user_uuid = App::getUserUuid();
-            $searchHistoryId = OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->removeSearchHistoryById($user_uuid, $id);
+            $searchHistoryId = OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->removeSearchHistoryById($id);
 
             $response->addData('id', $searchHistoryId);
         });
@@ -50,8 +48,7 @@ class SearchHistoryEndpoint extends AbstractEndpoint
     private function clearSearchHistory(): void
     {
         $this->reply(function ($response){
-            $user_uuid = App::getUserUuid();
-            OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->clearSearchHistory($user_uuid);
+            OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->clearSearchHistory();
 
             $response->addData('clearSearchHistory', true);
         });

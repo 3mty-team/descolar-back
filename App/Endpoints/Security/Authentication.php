@@ -7,8 +7,10 @@ use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
 use Descolar\App;
+use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Env\EnvReader;
+use Descolar\Managers\Orm\OrmConnector;
 use Firebase\JWT\JWT;
 use OpenAPI\Attributes as OA;
 use OpenApi\Attributes\PathParameter;
@@ -74,8 +76,10 @@ class Authentication extends AbstractEndpoint
     private function verifyJwt(): void
     {
         $this->reply(function ($response) {
+            $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+
             $response->addData('message', 'Token is valid')
-                ->addData('user_uuid', App::getUserUuid());
+                ->addData('user_uuid', $user->getUuid());
         });
     }
 }

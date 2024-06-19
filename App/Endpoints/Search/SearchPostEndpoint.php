@@ -18,12 +18,10 @@ class SearchPostEndpoint extends AbstractEndpoint
     private function searchPostByContent(): void
     {
         $this->reply(function ($response) {
-            $user_uuid = App::getUserUuid();
-
             $content = Requester::getInstance()->trackOne("content");
 
             /** @var Post[] $posts */
-            $posts = OrmConnector::getInstance()->getRepository(Post::class)->findByContent($content, $user_uuid);
+            $posts = OrmConnector::getInstance()->getRepository(Post::class)->findByContent($content);
 
             $data = [];
             foreach ($posts as $post) {

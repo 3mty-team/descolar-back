@@ -41,16 +41,8 @@ class MessageUserRepository extends EntityRepository
             throw new EndpointException('Range must be greater than 0', 400);
         }
 
-        $senderUUID = App::getUserUuid();
-        if($senderUUID === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $receiver = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
-        $sender = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $senderUUID]);
-        if ($sender === null || $receiver === null) {
-            throw new EndpointException('Receiver or Sender not found', 404);
-        }
+        $receiver = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($userUUID);
+        $sender = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         return $this->queryMessages($sender, $receiver, $range, $timestamp);
     }
@@ -92,24 +84,15 @@ class MessageUserRepository extends EntityRepository
         return $message;
     }
 
-    public function create(string $receiverUUID, string $content, int $date, ?array $medias): MessageUser
+    public function create(?string $receiverUUID, ?string $content, ?int $date, ?array $medias): MessageUser
     {
 
         if(empty($content) || empty($receiverUUID) || $medias === null) {
             throw new EndpointException('Missing parameters "Content", "receiverLocation" or "Medias"', 400);
         }
 
-        $senderUUID = App::getUserUuid();
-        if($senderUUID === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $receiver = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $receiverUUID]);
-        $sender = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $senderUUID]);
-
-        if($receiver === null || $sender === null) {
-            throw new EndpointException('Receiver or Sender not found', 404);
-        }
+        $receiver = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($receiverUUID);
+        $sender = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $message = new MessageUser();
         $message->setSender($sender);
@@ -121,10 +104,7 @@ class MessageUserRepository extends EntityRepository
         $message->setIsActive(true);
 
         foreach ($medias as $media) {
-            $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
-            if($media === null) {
-                throw new EndpointException('Media not found', 404);
-            }
+            $media = OrmConnector::getInstance()->getRepository(Media::class)->findById($media);
             $message->addMedia($media);
         }
 

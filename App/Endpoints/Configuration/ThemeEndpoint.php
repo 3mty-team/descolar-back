@@ -70,20 +70,13 @@ class ThemeEndpoint extends AbstractEndpoint
         $this->reply(function ($response) {
             $themeId = Requester::getInstance()->trackOne("theme_id");
 
-            if (empty($themeId)) {
-                $response->addData('message', 'Missing parameters');
-                return;
-            }
-
-            if (!is_numeric($themeId)) {
-                $response->addData('message', 'Invalid parameters');
-                return;
-            }
-
             $theme = OrmConnector::getInstance()->getRepository(UserThemePreferences::class)->updateThemePreference($themeId);
+            $themeData = OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme);
 
-            $response->addData('message', 'Theme set')
-                ->addData('theme', OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme));
+            foreach ($themeData as $key => $value) {
+                $response->addData($key, $value);
+            }
+
         });
     }
 }

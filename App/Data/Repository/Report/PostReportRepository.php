@@ -14,6 +14,18 @@ use Doctrine\ORM\EntityRepository;
 
 class PostReportRepository extends EntityRepository
 {
+
+    public function findById(int $id): PostReport
+    {
+        $postReport = $this->find($id);
+
+        if ($postReport === null || !$postReport->isActive()) {
+            throw new EndpointException('Post report not found', 404);
+        }
+
+        return $postReport;
+    }
+
     public function findAll(): array
     {
         return $this->createQueryBuilder('pr')
@@ -26,7 +38,7 @@ class PostReportRepository extends EntityRepository
     /**
      * @throws \Exception
      */
-    public function create(int $postId, int $reportCategoryId, ?string $comment, int $date): PostReport
+    public function create(?int $postId, ?int $reportCategoryId, ?string $comment, ?int $date): PostReport
     {
 
         if (empty($postId) || empty($reportCategoryId)) {
@@ -55,11 +67,7 @@ class PostReportRepository extends EntityRepository
 
     public function delete(int $postReportId): int
     {
-        $postReport = $this->find($postReportId);
-
-        if ($postReport === null) {
-            throw new EndpointException('Post report not found', 404);
-        }
+        $postReport = $this->findById($postReportId);
 
         $postReport->setIsActive(false);
 

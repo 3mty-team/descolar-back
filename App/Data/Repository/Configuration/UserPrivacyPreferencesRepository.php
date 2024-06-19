@@ -18,7 +18,7 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
 
-    public function createUserPrivacyPreference(String $sFeedVisibility, String $sSearchVisibility): array
+    public function createUserPrivacyPreference(?string $sFeedVisibility, ?string $sSearchVisibility): array
     {
         if ($this->convertToBool($sFeedVisibility) === null || $this->convertToBool($sSearchVisibility) === null) {
             throw new EndpointException('Invalid parameters', 400);
@@ -48,7 +48,7 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
 
-    public function updateUserPrivacyPreference(?String $sFeedVisibility, ?String $sSearchVisibility): array
+    public function updateUserPrivacyPreference(?string $sFeedVisibility, ?string $sSearchVisibility): array
     {
         $userPrivacyPreferences = $this->findOneBy(['user' => App::getUserUuid()]);
         if ($userPrivacyPreferences === null) {
@@ -78,7 +78,7 @@ class UserPrivacyPreferencesRepository extends EntityRepository
     }
 
 
-    private function convertToBool(String $value): ?bool
+    private function convertToBool(string $value): ?bool
     {
         if ($value === 'true' || $value === '1') {
             return true;

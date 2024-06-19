@@ -27,7 +27,7 @@ class GroupMemberRepository extends EntityRepository
         return $this->findBy(['group' => $group, 'isActive' => 1]);
     }
 
-    public function addMemberInGroup(int $groupId, string $userUUID, ?string $date): GroupMember
+    public function addMemberInGroup(?int $groupId, ?string $userUUID, ?string $date): GroupMember
     {
         if(empty($userUUID) || empty($date)) {
             throw new EndpointException('Missing parameters "userId" or "date"', 400);

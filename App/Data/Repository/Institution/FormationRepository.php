@@ -32,12 +32,9 @@ class FormationRepository extends EntityRepository
 
     public function toJson(Formation $formation): array
     {
-        $diploma = $formation->getDiploma();
-        $diplomaData = OrmConnector::getInstance()->getRepository(Diploma::class)->toJson($diploma);
-
         return [
             'id' => $formation->getId(),
-            'diploma' => $diplomaData,
+            'diploma' => OrmConnector::getInstance()->getRepository(Diploma::class)->toJson($formation->getDiploma()),
             'name' => $formation->getName(),
             'shortName' => $formation->getShortName(),
             'isActive' => $formation->isActive()

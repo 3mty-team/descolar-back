@@ -58,7 +58,7 @@ class App
      * @param string $userUuid The user uuid
      * @return void
      */
-    public static function setUserUuid(String $userUuid): void
+    public static function setUserUuid(string $userUuid): void
     {
         $_SESSION['userUuid'] = $userUuid;
     }

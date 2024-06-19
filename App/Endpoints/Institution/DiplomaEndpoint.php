@@ -18,7 +18,6 @@ class DiplomaEndpoint extends AbstractEndpoint
     private function getAllDiplomas(): void
     {
         $this->reply(function ($response){
-            /** @var Diploma[] $diplomas */
             $diplomas = OrmConnector::getInstance()->getRepository(Diploma::class)->findAll();
 
             $data = [];

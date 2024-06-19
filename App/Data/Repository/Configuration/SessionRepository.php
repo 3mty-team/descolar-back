@@ -2,6 +2,8 @@
 
 namespace Descolar\Data\Repository\Configuration;
 
+use DateTime;
+use DateTimeZone;
 use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
@@ -10,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 
 class SessionRepository extends EntityRepository
 {
-    public function createSession($date, $localisation, $userAgent): ?Session
+    public function createSession(?string $date, ?string $localisation, ?string $userAgent): ?Session
     {
 
         if (empty($date) || empty($localisation) || empty($userAgent)) {
@@ -24,7 +26,7 @@ class SessionRepository extends EntityRepository
 
         $session = new Session();
         $session->setUser($user);
-        $session->setDate($date);
+        $session->setDate(new DateTime("@$date", new DateTimeZone('Europe/Paris')));
         $session->setLocalisation($localisation);
         $session->setUserAgent($userAgent);
         $session->setIsActive(true);
@@ -47,7 +49,7 @@ class SessionRepository extends EntityRepository
         ];
     }
 
-    public function getSessionByUuid(string $sessionUuid): Session
+    public function getSessionByUuid(?string $sessionUuid): Session
     {
         $session = $this->findOneBy(['id' => $sessionUuid]);
         if ($session === null) {

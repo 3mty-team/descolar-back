@@ -95,9 +95,10 @@ class PostRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findByContent(string $content, string $user_uuid): array
+    public function findByContent(?string $content): array
     {
-        OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->addToSearchHistory($content, $user_uuid);
+
+        OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->addToSearchHistory($content);
 
         return $this->createQueryBuilder('p')
             ->select('p')
@@ -150,20 +151,14 @@ class PostRepository extends EntityRepository
 
     public function repost(int $postId, ?string $content, ?string $location, int $date, ?array $medias): Post
     {
-        $post = $this->find($postId);
-        if($post === null) {
-            throw new EndpointException('Post not found', 404);
-        }
+        $post = $this->findById($postId);
 
         return $this->buildPost($post, $content, $location, $date, $medias);
     }
 
     public function delete(int $postId): int
     {
-        $post = $this->find($postId);
-        if($post === null) {
-            throw new EndpointException('Post not found', 404);
-        }
+        $post = $this->findById($postId);
 
         $post->setIsActive(false);
         OrmConnector::getInstance()->flush();
@@ -173,10 +168,7 @@ class PostRepository extends EntityRepository
 
     private function buildPin(int $postId, bool $setToPin): Post
     {
-        $post = $this->find($postId);
-        if($post === null) {
-            throw new EndpointException('Post not found', 404);
-        }
+        $post = $this->findById($postId);
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
@@ -197,14 +189,8 @@ class PostRepository extends EntityRepository
 
     public function getPinnedPost(string $userUUID): ?Post
     {
-        if (empty($userUUID)) {
-            throw new EndpointException('User not found', 403);
-        }
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
-        if ($user === null) {
-            throw new EndpointException('User not found', 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($userUUID);
 
         /* @var ?Post $post */
         return $this->findOneBy(['user' => $user, 'isPinned' => true]);
@@ -212,9 +198,9 @@ class PostRepository extends EntityRepository
 
     public function pin(int $postId): ?Post
     {
-        $userUUID = App::getUserUuid();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
-        if(($post = $this->getPinnedPost($userUUID)) !== null) {
+        if(($post = $this->getPinnedPost($user->getUUID())) !== null) {
             $post->setPinned(false);
             OrmConnector::getInstance()->flush();
         }
@@ -252,7 +238,7 @@ class PostRepository extends EntityRepository
             'medias' => $post->getMedias()->map(fn($media) => $media->getId())->toArray(),
             'likes' => OrmConnector::getInstance()->getRepository(PostLike::class)->countLikes($post),
             'reposts' => $this->countReposts($post),
-            'comments' => OrmConnector::getInstance()->getRepository(PostComment::class)->countComments($post), //NOT IMPLEMENTED
+            'comments' => OrmConnector::getInstance()->getRepository(PostComment::class)->countComments($post),
             'isActive' => $post->isActive(),
         ];
     }

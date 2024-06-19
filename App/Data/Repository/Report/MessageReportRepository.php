@@ -14,6 +14,18 @@ use Doctrine\ORM\EntityRepository;
 
 class MessageReportRepository extends EntityRepository
 {
+
+    public function findById($id) : MessageReport
+    {
+        $messageReport = $this->find($id);
+
+        if ($messageReport === null || !$messageReport->isActive()) {
+            throw new EndpointException('Message report not found', 404);
+        }
+
+        return $messageReport;
+    }
+
     public function findAll(): array
     {
         return $this->createQueryBuilder('mr')
@@ -26,7 +38,7 @@ class MessageReportRepository extends EntityRepository
     /**
      * @throws \Exception
      */
-    public function create(int $messageId, int $reportCategoryId, ?string $comment, int $date): MessageReport
+    public function create(?int $messageId, ?int $reportCategoryId, ?string $comment, ?int $date): MessageReport
     {
 
         if (empty($messageId) || empty($reportCategoryId)) {
@@ -55,11 +67,7 @@ class MessageReportRepository extends EntityRepository
 
     public function delete(int $messageReportId): int
     {
-        $messageReport = $this->find($messageReportId);
-
-        if ($messageReport === null) {
-            throw new EndpointException('Message report not found', 404);
-        }
+        $messageReport = $this->findById($messageReportId);
 
         $messageReport->setIsActive(false);
 

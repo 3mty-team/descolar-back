@@ -14,6 +14,17 @@ use Doctrine\ORM\EntityRepository;
 
 class GroupMessageReportRepository extends EntityRepository
 {
+    public function findById(int $id): GroupMessageReport
+    {
+        $groupMessageReport = $this->find($id);
+
+        if ($groupMessageReport === null || !$groupMessageReport->isActive()) {
+            throw new EndpointException('Group message report not found', 404);
+        }
+
+        return $groupMessageReport;
+    }
+
     public function findAll(): array
     {
         return $this->createQueryBuilder('gmr')
@@ -26,17 +37,14 @@ class GroupMessageReportRepository extends EntityRepository
     /**
      * @throws \Exception
      */
-    public function create(int $groupMessageId, int $reportCategoryId, ?string $comment, int $date): GroupMessageReport
+    public function create(?int $groupMessageId, ?int $reportCategoryId, ?string $comment, ?int $date): GroupMessageReport
     {
 
         if (empty($groupMessageId) || empty($reportCategoryId)) {
             throw new EndpointException('Missing parameters "groupMessageId" or "reportCategory"', 400);
         }
 
-        $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->find($groupMessageId);
-        if ($groupMessage === null){
-            throw new EndpointException('Message not found', 400);
-        }
+        $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupMessageId);
 
         $reporter = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
@@ -58,11 +66,7 @@ class GroupMessageReportRepository extends EntityRepository
 
     public function delete(int $groupMessageReportId): int
     {
-        $groupMessageReport = $this->find($groupMessageReportId);
-
-        if ($groupMessageReport === null) {
-            throw new EndpointException('Group message report not found', 404);
-        }
+        $groupMessageReport = $this->findById($groupMessageReportId);
 
         $groupMessageReport->setIsActive(false);
 

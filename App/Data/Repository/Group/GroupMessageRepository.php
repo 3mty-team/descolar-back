@@ -31,6 +31,9 @@ class GroupMessageRepository extends EntityRepository
         return $groupMessage;
     }
 
+    /**
+     * @return array<GroupMessage> List of messages
+     */
     public function findAllInRange(int $groupId, int $range, ?int $timestamp): array
     {
         if ($range < 1) {
@@ -59,34 +62,15 @@ class GroupMessageRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function create(int $groupId, ?string $content, int $date, ?array $medias): GroupMessage
+    public function create(int $groupId, ?string $content, ?int $date, ?array $medias): GroupMessage
     {
 
         if (empty($content) || empty($date) || $medias === null) {
             throw new EndpointException('Missing parameters "content" or "date" or "medias"', 400);
         }
 
-        $userUUID = App::getUserUuid();
-        if (empty($userUUID)) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
-
-        $group = OrmConnector::getInstance()->getRepository(Group::class)->find($groupId);
-        if ($group === null) {
-            throw new EndpointException('Group not found', 404);
-        }
-
-        foreach ($medias as $media) {
-            $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
-            if ($media === null) {
-                throw new EndpointException('Media not found', 404);
-            }
-        }
+        $userUUID = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($groupId);
 
         $groupMessage = new GroupMessage();
         $groupMessage->setGroup($group);
@@ -95,7 +79,7 @@ class GroupMessageRepository extends EntityRepository
         $groupMessage->setDate(new \DateTime("@$date"));
         $groupMessage->setIsActive(true);
         foreach ($medias as $media) {
-            $groupMessage->addMedia(OrmConnector::getInstance()->getRepository(Media::class)->find($media));
+            $groupMessage->addMedia(OrmConnector::getInstance()->getRepository(Media::class)->findById($media));
         }
 
         OrmConnector::getInstance()->persist($groupMessage);
@@ -104,7 +88,7 @@ class GroupMessageRepository extends EntityRepository
         return $groupMessage;
     }
 
-    public function update(int $groupId, $messageId, $content, $medias): GroupMessage
+    public function update(int $groupId, ?int $messageId, ?string $content, ?array $medias): GroupMessage
     {
         if (empty($content) && $medias === null) {
             throw new EndpointException('Missing parameters "content" or "medias"', 400);
@@ -118,11 +102,9 @@ class GroupMessageRepository extends EntityRepository
 
         if ($medias !== null) {
             foreach ($medias as $media) {
-                $media = OrmConnector::getInstance()->getRepository(Media::class)->find($media);
-                if ($media === null) {
-                    throw new EndpointException('Media not found', 404);
-                }
+                OrmConnector::getInstance()->getRepository(Media::class)->findById($media);
             }
+
             $groupMessage->setMedias(new ArrayCollection($medias));
         }
 
@@ -168,7 +150,6 @@ class GroupMessageRepository extends EntityRepository
 
         $messages = [];
         foreach ($groupMessages as $groupMessage) {
-            /** @var GroupMessage $groupMessage */
             $messages[] = [
                 'id' => $groupMessage->getId(),
                 'user' => OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($groupMessage->getUser()),

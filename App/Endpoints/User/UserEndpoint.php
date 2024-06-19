@@ -125,9 +125,9 @@ class UserEndpoint extends AbstractEndpoint
     private function disableUser(): void
     {
         $this->reply(function ($response) {
-            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disable();
+            $userUUIDDisabled = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disable();
 
-            $response->addData('id', $userId);
+            $response->addData('id', $userUUIDDisabled);
         });
     }
 
@@ -153,9 +153,9 @@ class UserEndpoint extends AbstractEndpoint
     {
         $this->reply(function ($response) use ($userUUID) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever($user);
+            $userUUIDDisabled = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableForever($user);
 
-            $response->addData('id', $userId);
+            $response->addData('id', $userUUIDDisabled);
         });
     }
 
@@ -181,9 +181,9 @@ class UserEndpoint extends AbstractEndpoint
     {
         $this->reply(function ($response) use ($userUUID) {
             $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
-            $userId = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user);
+            $userUUIDUnbanned = OrmConnector::getInstance()->getRepository(DeactivationUser::class)->disableDeactivation($user);
 
-            $response->addData('id', $userId);
+            $response->addData('uuid', $userUUIDUnbanned);
         });
     }
 

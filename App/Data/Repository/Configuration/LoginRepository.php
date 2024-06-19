@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityRepository;
 class LoginRepository extends EntityRepository
 {
 
-    private function getUserByUsernameOrEmail(String $username): ?User
+    private function getUserByUsernameOrEmail(string $username): ?User
     {
         $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["username" => $username]);
         if($user == null) {
@@ -25,7 +25,7 @@ class LoginRepository extends EntityRepository
         return OrmConnector::getInstance()->getRepository(User::class)->findByUUID($user->getUUID());
     }
 
-    public function createLogin(User $user, String $password): ?Login
+    public function createLogin(User $user, string $password): ?Login
     {
         $login = new Login();
         $login->setUser($user);
@@ -35,7 +35,7 @@ class LoginRepository extends EntityRepository
         return $login;
     }
 
-    public function getLoginInformation(String $username, String $password) : User
+    public function getLoginInformation(?string $username, ?string $password) : User
     {
         /**
          * @var User $user

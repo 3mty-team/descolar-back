@@ -3,6 +3,7 @@
 namespace Descolar\Data\Repository\Configuration;
 
 use Descolar\Data\Entities\Configuration\Theme;
+use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Doctrine\ORM\EntityRepository;
 
 class ThemeRepository extends EntityRepository
@@ -22,14 +23,15 @@ class ThemeRepository extends EntityRepository
         return $themesArray;
     }
 
-    public function getOneThemeToJson(int $themeId): array
+    public function getThemeById(int $themeId): Theme
     {
         $theme = $this->find($themeId);
+
         if ($theme === null) {
-            return [];
+            throw new EndpointException('Theme not found', 404);
         }
 
-        return $this->toJson($theme);
+        return $theme;
     }
 
     public function toJson(Theme $theme): array

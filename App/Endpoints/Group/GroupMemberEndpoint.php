@@ -26,14 +26,12 @@ class GroupMemberEndpoint extends AbstractEndpoint
     private function getAllGroupMember(int $id): void
     {
         $this->reply(function ($response) use ($id) {
-            [$userUUID, $date] = Requester::getInstance()->trackMany(
-                "userUUID", "date"
-            );
 
             $groupMemberData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($id);
             foreach ($groupMemberData as $key => $value) {
                 $response->addData($key, $value);
             }
+
         });
     }
 
@@ -59,8 +57,9 @@ class GroupMemberEndpoint extends AbstractEndpoint
     private function removeMemberInGroup(int $id): void
     {
         $this->reply(function ($response) use ($id) {
-            $userUUID = Requester::getInstance()->trackOne(["user_uuid",
-                                                            App::getUserUuid()]);
+            $userUUID = Requester::getInstance()->trackOne(
+                ["user_uuid", App::getUserUuid()]
+            );
 
             $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->removeMemberInGroup($id, $userUUID);
             $groupData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());

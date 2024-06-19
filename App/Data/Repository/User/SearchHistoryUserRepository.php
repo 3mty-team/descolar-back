@@ -12,77 +12,90 @@ use Exception;
 
 class SearchHistoryUserRepository extends EntityRepository
 {
-    public function addToSearchHistory(string $search, string $user_uuid): void
+
+    public function findById(int $searchHistoryId): SearchHistoryUser
     {
-        try {
-            $user = $this->getEntityManager()->getRepository(User::class)->find($user_uuid);
+        $searchHistory = $this->find($searchHistoryId);
 
-            $searchHistory = new SearchHistoryUser();
-            $searchHistory->setUser($user);
-            $searchHistory->setSearch($search);
-            $searchHistory->setDate(new DateTime("now", new DateTimeZone('Europe/Paris')));
-            $searchHistory->setIsActive(true);
-
-            $this->getEntityManager()->persist($searchHistory);
-            $this->getEntityManager()->flush();
-        } catch (Exception $e) {
-            throw new EndpointException("Error adding search history: " . $e->getMessage(), 500);
+        if ($searchHistory === null || !$searchHistory->isActive()) {
+            throw new EndpointException('Search history not found', 404);
         }
+
+        return $searchHistory;
     }
 
-    public function getSearchHistory(string $user_uuid): array
+    public function findByIdAndUser(int $searchHistoryId, User $user): SearchHistoryUser
     {
-        try {
-            $user = $this->getEntityManager()->getRepository(User::class)->find($user_uuid);
+        $searchHistory = $this->findById($searchHistoryId);
 
-            return $this->createQueryBuilder('sh')
-                ->select('sh')
-                ->where('sh.user = :user')
-                ->andWhere('sh.isActive = 1')
-                ->setParameter('user', $user)
-                ->orderBy('sh.date', 'DESC')
-                ->getQuery()
-                ->getResult();
-
-        } catch (Exception $e) {
-            throw new EndpointException("Error getting search history: " . $e->getMessage(), 500);
+        if ($searchHistory->getUser() !== $user) {
+            throw new EndpointException('Search history not found', 404);
         }
+
+        return $searchHistory;
     }
 
-    public function clearSearchHistory(string $user_uuid): void
+    public function findByUser(User $user): array
     {
-        try {
-            $user = $this->getEntityManager()->getRepository(User::class)->find($user_uuid);
+        $searchHistory = $this->findBy(['user' => $user]);
 
-            $searchHistory = $this->findBy(['user' => $user]);
-
-            foreach ($searchHistory as $history) {
-                $history->setIsActive(false);
-                $this->getEntityManager()->persist($history);
-            }
-
-            $this->getEntityManager()->flush();
-        } catch (Exception $e) {
-            throw new EndpointException("Error deleting search history: " . $e->getMessage(), 500);
+        if (empty($searchHistory)) {
+            throw new EndpointException('Search history not found', 404);
         }
+
+        return $searchHistory;
     }
 
-    public function removeSearchHistoryById(string $user_uuid, int $searchHistoryId,): int
+    public function addToSearchHistory(string $search): void
     {
-        try {
-            $user = $this->getEntityManager()->getRepository(User::class)->find($user_uuid);
-            $searchHistory = $this->findOneBy(['id' => $searchHistoryId, 'user' => $user]);
+        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
 
-            if ($searchHistory === null) {
-                throw new EndpointException("Search history not found", 404);
-            }
+        $searchHistory = new SearchHistoryUser();
+        $searchHistory->setUser($user);
+        $searchHistory->setSearch($search);
+        $searchHistory->setDate(new DateTime("now", new DateTimeZone('Europe/Paris')));
+        $searchHistory->setIsActive(true);
 
-            $searchHistory->setIsActive(false);
-            $this->getEntityManager()->persist($searchHistory);
-            $this->getEntityManager()->flush();
-        } catch (Exception $e) {
-            throw new EndpointException("Error deleting search history: " . $e->getMessage(), 500);
+        $this->getEntityManager()->persist($searchHistory);
+        $this->getEntityManager()->flush();
+    }
+
+    public function getSearchHistory(): array
+    {
+        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+
+        return $this->createQueryBuilder('sh')
+            ->select('sh')
+            ->where('sh.user = :user')
+            ->andWhere('sh.isActive = 1')
+            ->setParameter('user', $user)
+            ->orderBy('sh.date', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function clearSearchHistory(): void
+    {
+        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+
+        $searchHistory = $this->findByUser($user);
+
+        foreach ($searchHistory as $history) {
+            $history->setIsActive(false);
+            $this->getEntityManager()->persist($history);
         }
+
+        $this->getEntityManager()->flush();
+    }
+
+    public function removeSearchHistoryById(int $searchHistoryId): int
+    {
+        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $searchHistory = $this->findByIdAndUser($searchHistoryId, $user);
+
+        $searchHistory->setIsActive(false);
+        $this->getEntityManager()->persist($searchHistory);
+        $this->getEntityManager()->flush();
 
         return $searchHistoryId;
     }

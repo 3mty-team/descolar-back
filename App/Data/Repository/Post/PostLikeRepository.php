@@ -26,10 +26,7 @@ class PostLikeRepository extends EntityRepository
 
     public function getLikedPosts(string $userUUID): array
     {
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
-        if ($user === null) {
-            throw new EndpointException('User not found', 404);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($userUUID);
 
         $posts = $this->createQueryBuilder('pl')
             ->select('pl')

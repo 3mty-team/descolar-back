@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityRepository;
 
 class UserThemePreferencesRepository extends EntityRepository
 {
+
     public function getThemePreferenceToJson(): array
     {
 
@@ -22,7 +23,7 @@ class UserThemePreferencesRepository extends EntityRepository
 
         return OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme);
     }
-    public function createThemePreference($themeId): ?Theme
+    public function createThemePreference(?int $themeId): ?Theme
     {
 
         if (empty($themeId)) {
@@ -40,10 +41,7 @@ class UserThemePreferencesRepository extends EntityRepository
             throw new EndpointException('User theme preference already exists', 400);
         }
 
-        $theme = OrmConnector::getInstance()->getRepository(Theme::class)->findOneBy(["id" => $themeId]);
-        if ($theme === null) {
-            throw new EndpointException('Theme not found', 404);
-        }
+        $theme = OrmConnector::getInstance()->getRepository(Theme::class)->getThemeById($themeId);
 
         $userThemePreference = new UserThemePreferences();
         $userThemePreference->setUser($user);
@@ -57,15 +55,18 @@ class UserThemePreferencesRepository extends EntityRepository
 
     public function updateThemePreference($themeId): ?Theme
     {
-        $userThemePreference = $this->findOneBy(["user" => App::getUserUuid()]);
-        if ($userThemePreference === null) {
-            throw new EndpointException('User theme preference does not exist', 404);
+
+        if (empty($themeId)) {
+            throw new EndpointException('Missing parameters', 400);
         }
 
-        $theme = OrmConnector::getInstance()->getRepository(Theme::class)->findOneBy(["id" => $themeId]);
-        if ($theme === null) {
-            throw new EndpointException('Theme not found', 404);
+        if (!is_numeric($themeId)) {
+            throw new EndpointException('Invalid parameters', 400);
         }
+
+        $userThemePreference = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+
+        $theme = $this->getThemeById($themeId);
 
         $userThemePreference->setTheme($theme);
 

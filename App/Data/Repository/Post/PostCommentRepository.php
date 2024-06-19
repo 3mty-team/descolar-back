@@ -64,7 +64,7 @@ class PostCommentRepository extends EntityRepository
         return $postComment;
     }
 
-    public function create(int $postId, string $content, int $timestamp): PostComment
+    public function create(int $postId, ?string $content, ?int $timestamp): PostComment
     {
         $post = OrmConnector::getInstance()->getRepository(Post::class)->findById($postId);
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
