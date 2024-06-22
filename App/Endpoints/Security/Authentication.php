@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use Descolar\Adapters\Router\Annotations\Get;
 use Descolar\Adapters\Router\Annotations\Post;
 use Descolar\Adapters\Router\RouteParam;
-use Descolar\App;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Env\EnvReader;
@@ -45,14 +44,13 @@ class Authentication extends AbstractEndpoint
             $date = new DateTimeImmutable();
             $expire_at = $date->modify('+24 hour')->getTimestamp();
             $domainName = "internal-api.descolar.fr";
-            $hashedUsername = hash('sha256', $userUuid);
 
             $request_data = [
                 'iat' => $date->getTimestamp(),        // Issued at: time when the token was generated
                 'iss' => $domainName,                  // Issuer
                 'nbf' => $date->getTimestamp(),        // Not before
                 'exp' => $expire_at,                   // Expire
-                'username' => $hashedUsername,         // User name
+                'userUUID' => $userUuid,         // UserUUID
             ];
 
             $jwt = JWT::encode($request_data, $secretKeyEncoded, 'HS256');
