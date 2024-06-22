@@ -165,8 +165,10 @@ class Router
     {
         $this->loadRoutes();
 
-        if (!isset($this->getRoutes()[$_SERVER['REQUEST_METHOD']])) {
-            throw new RequestException($_SERVER['REQUEST_METHOD']);
+        $requestMethod = $_SERVER['REQUEST_METHOD'] ?? "";
+
+        if (!isset($this->getRoutes()[$requestMethod])) {
+            throw new RequestException($requestMethod);
         }
 
         $matchedRoute = $this->getRouteByUrl($this->url);
