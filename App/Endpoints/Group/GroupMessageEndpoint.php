@@ -54,6 +54,8 @@ class GroupMessageEndpoint extends AbstractEndpoint
                 "content", "send_timestamp", "medias"
             );
 
+            $medias = @json_decode($medias);
+
             /** @var GroupMessage $group */
             $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->create($groupId, $content, $date, $medias);
             $groupData = OrmConnector::getInstance()->getRepository(GroupMessage::class)->toJson($group);
@@ -72,6 +74,8 @@ class GroupMessageEndpoint extends AbstractEndpoint
             [$content, $medias] = Requester::getInstance()->trackMany(
                 "content", "medias"
             );
+
+            $medias = @json_decode($medias);
 
             /** @var GroupMessage $group */
             $group = OrmConnector::getInstance()->getRepository(GroupMessage::class)->update($groupId, $messageId, $content, $medias);

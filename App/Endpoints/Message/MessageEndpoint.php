@@ -51,6 +51,8 @@ class MessageEndpoint extends AbstractEndpoint
                 "receiver_uuid", "content", "date", "medias"
             );
 
+            $medias = @json_decode($medias);
+
             $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->create($receiver, $content, $date, $medias);
             $messageData = OrmConnector::getInstance()->getRepository(MessageUser::class)->toJson($message);
 

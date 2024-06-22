@@ -227,7 +227,7 @@ class PostRepository extends EntityRepository
         return $postList;
     }
 
-    public function toJson(Post $post): array
+    public function toJson(?Post $post): array
     {
         return [
             'id' => $post->getId(),

@@ -142,34 +142,34 @@ class UserRepository extends EntityRepository
 
         $user = self::getLoggedUser();
 
-        if($username !== "" && $username !== $user->getUsername()) {
+        if($username !== null && $username !== "" && $username !== $user->getUsername()) {
             if($this->findOneBy(['username' => $username]) !== null) {
                 throw new EndpointException("Username already exists", 403);
             }
             $user->setUsername($username);
         }
 
-        if($profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+        if($profilePath !== null && $profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
             $user->setProfilePicturePath($profilePath);
         }
 
-        if($bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
+        if($bannerPath !== null && $bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
             $user->setBannerPath($bannerPath);
         }
 
-        if($firstname !== "" && $firstname !== $user->getFirstname()) {
+        if($firstname !== null && $firstname !== "" && $firstname !== $user->getFirstname()) {
             $user->setFirstname($firstname);
         }
 
-        if($lastname !== "" && $lastname !== $user->getLastname()) {
+        if($lastname !== null && $lastname !== "" && $lastname !== $user->getLastname()) {
             $user->setLastname($lastname);
         }
 
-        if($biography !== "" && $biography !== $user->getBiography()) {
+        if($biography !== null && $biography !== "" && $biography !== $user->getBiography()) {
             $user->setBiography($biography);
         }
 
-        if($formationId !== 0 && $formationId !== $user->getFormation()->getId()) {
+        if($formationId !== null && $formationId !== 0 && $formationId !== $user->getFormation()->getId()) {
             $formation = OrmConnector::getInstance()->getRepository(Formation::class)->find($formationId);
             if($formation === null) {
                 throw new EndpointException("Formation not found", 404);

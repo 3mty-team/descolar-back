@@ -79,6 +79,8 @@ class PostEndpoint extends AbstractEndpoint
                 "content", "location", "send_timestamp", "medias"
             );
 
+            $medias = @json_decode($medias);
+
             /** @var Post $post */
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->create($content, $location, $date, $medias);
             $postData = OrmConnector::getInstance()->getRepository(PostEntity::class)->toJson($post);
@@ -97,6 +99,8 @@ class PostEndpoint extends AbstractEndpoint
             [$postId, $content, $location, $date, $medias] = Requester::getInstance()->trackMany(
                 "post_id", "content", "location", "send_timestamp", "medias"
             );
+
+            $medias = @json_decode($medias);
 
             /** @var Post $post */
             $post = OrmConnector::getInstance()->getRepository(PostEntity::class)->repost($postId, $content, $location, $date, $medias);
