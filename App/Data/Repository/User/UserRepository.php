@@ -96,11 +96,11 @@ class UserRepository extends EntityRepository
         $user->setIsActive(true);
         $user->setToken($token);
 
-        if($profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+        if($profilePath !== null && $profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
             $user->setProfilePicturePath($profilePath);
         }
 
-        if($bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
+        if($bannerPath !== null && $bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
             $user->setBannerPath($bannerPath);
         }
 
