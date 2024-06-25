@@ -30,8 +30,9 @@ class GroupEndpoint extends AbstractEndpoint
             $data = [];
             foreach ($groups as $group) {
                 $data[] = OrmConnector::getInstance()->getRepository(Group::class)->toJson($group);
-                $response->addData($data["name"], $data);
             }
+
+            $response->addData("groups", $data);
         });
     }
 

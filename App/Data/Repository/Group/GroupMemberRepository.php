@@ -3,6 +3,7 @@
 namespace Descolar\Data\Repository\Group;
 
 use DateTime;
+use DateTimeZone;
 use Descolar\Data\Entities\Group\Group;
 use Descolar\Data\Entities\Group\GroupMember;
 use Descolar\Data\Entities\User\User;
@@ -27,7 +28,10 @@ class GroupMemberRepository extends EntityRepository
         return $this->findBy(['group' => $group, 'isActive' => 1]);
     }
 
-    public function addMemberInGroup(?int $groupId, ?string $userUUID, ?string $date): GroupMember
+    /**
+     * @throws \Exception
+     */
+    public function addMemberToGroup(?int $groupId, ?string $userUUID, ?string $date): GroupMember
     {
         if(empty($userUUID) || empty($date)) {
             throw new EndpointException('Missing parameters "userId" or "date"', 400);
@@ -48,19 +52,17 @@ class GroupMemberRepository extends EntityRepository
         }
 
         if(($gm = $this->checkIfUserAlreadyRegistered($groupId, $userUUID)) !== null) {
-
             $gm->setIsActive(true);
             $gm->setJoinDate(new DateTime($date));
             OrmConnector::getInstance()->persist($gm);
             OrmConnector::getInstance()->flush();
             return $gm;
-
         }
 
         $groupMember = new GroupMember();
         $groupMember->setGroup($group);
         $groupMember->setUser($user);
-        $groupMember->setJoinDate(new DateTime($date));
+        $groupMember->setJoinDate(new DateTime("@$date", new DateTimeZone('Europe/Paris')));
         $groupMember->setIsActive(true);
 
         OrmConnector::getInstance()->persist($groupMember);
@@ -69,7 +71,7 @@ class GroupMemberRepository extends EntityRepository
         return $groupMember;
     }
 
-    public function removeMemberInGroup(int $groupId, ?string $userUUID): GroupMember
+    public function removeMemberOfGroup(int $groupId, ?string $userUUID): GroupMember
     {
         if(empty($userUUID)) {
             throw new EndpointException('Missing parameters "userId"', 400);

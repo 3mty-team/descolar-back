@@ -35,16 +35,16 @@ class GroupMemberEndpoint extends AbstractEndpoint
         });
     }
 
-    #[Post('/group/:id/member', variables: ["id" => RouteParam::NUMBER], name: 'addMemberInGroup', auth: true)]
-    #[OA\Post(path: "/group/{id}/member", summary: "addMemberInGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member added")])]
-    private function addMemberInGroup(int $id): void
+    #[Post('/group/:id/member', variables: ["id" => RouteParam::NUMBER], name: 'addMemberToGroup', auth: true)]
+    #[OA\Post(path: "/group/{id}/member", summary: "addMemberToGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member added")])]
+    private function addMemberToGroup(int $id): void
     {
         $this->reply(function ($response) use ($id) {
             [$userUUID, $date] = Requester::getInstance()->trackMany(
                 "userUUID", "date"
             );
 
-            $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberInGroup($id, $userUUID, $date);
+            $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberToGroup($id, $userUUID, $date);
             $groupData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
@@ -52,16 +52,16 @@ class GroupMemberEndpoint extends AbstractEndpoint
         });
     }
 
-    #[Delete('/group/:id/member', variables: ["id" => RouteParam::NUMBER], name: 'removeMemberInGroup', auth: true)]
-    #[OA\Delete(path: "/group/{id}/member", summary: "removeMemberInGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member removed")])]
-    private function removeMemberInGroup(int $id): void
+    #[Delete('/group/:id/member', variables: ["id" => RouteParam::NUMBER], name: 'removeMemberOfGroup', auth: true)]
+    #[OA\Delete(path: "/group/{id}/member", summary: "removeMemberOfGroup", tags: ["Group"], parameters: [new PathParameter("id", "id", "Group ID", required: true)], responses: [new OA\Response(response: 200, description: "Member removed")])]
+    private function removeMemberOfGroup(int $id): void
     {
         $this->reply(function ($response) use ($id) {
             $userUUID = Requester::getInstance()->trackOne(
                 ["user_uuid", App::getUserUuid()]
             );
 
-            $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->removeMemberInGroup($id, $userUUID);
+            $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->removeMemberOfGroup($id, $userUUID);
             $groupData = OrmConnector::getInstance()->getRepository(GroupMember::class)->toJson($group->getGroup()->getId());
             foreach ($groupData as $key => $value) {
                 $response->addData($key, $value);
