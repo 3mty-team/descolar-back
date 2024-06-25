@@ -16,7 +16,7 @@ class Group
     #[ORM\Column(name: "group_id", type: "integer", length: 11)]
     private int $id;
 
-    #[ORM\Column(name: "group_name", type: "string", length: 60)]
+    #[ORM\Column(name: "group_name", type: "string", length: 150)]
     private string $name;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
