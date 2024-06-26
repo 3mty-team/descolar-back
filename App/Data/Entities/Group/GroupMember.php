@@ -6,9 +6,11 @@ use DateTimeInterface;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Group\GroupMemberRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: GroupMemberRepository::class)]
 #[ORM\Table(name: "group_member")]
+#[Validate\Validate]
 class GroupMember
 {
     #[ORM\Id]
@@ -21,11 +23,11 @@ class GroupMember
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
     private User $user;
 
-    #[ORM\Column(name: "groupmember_joindate", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "groupmember_joindate", type: "datetime")]
     private ?DateTimeInterface $joinDate;
 
-    #[ORM\Column(name: "groupmember_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "groupmember_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     public function getGroup(): Group
     {

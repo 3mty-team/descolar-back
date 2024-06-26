@@ -7,10 +7,13 @@ use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Group\GroupMessageRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: GroupMessageRepository::class)]
 #[ORM\Table(name: "group_message")]
+#[Validate\Validate]
 class GroupMessage
 {
 
@@ -21,20 +24,29 @@ class GroupMessage
 
     #[ORM\ManyToOne(targetEntity: Group::class)]
     #[ORM\JoinColumn(name: "group_id", referencedColumnName: "group_id")]
+    #[Validate\Validate("group")]
+    #[Validate\NotNull]
     private Group $group;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("user")]
+    #[Validate\NotNull]
     private User $user;
 
     #[ORM\Column(name: "groupmessage_content", type: "string", length: 2000)]
+    #[Validate\Validate("content")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 2000)]
     private string $content;
 
-    #[ORM\Column(name: "groupmessage_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "groupmessage_date", type: "datetime")]
+    #[Validate\Validate("date")]
+    #[Validate\NotNull]
     private DateTimeInterface $date;
 
-    #[ORM\Column(name: "groupmessage_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "groupmessage_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     #[ORM\JoinTable(name: 'link_groupmessagemedia')]
     #[ORM\JoinColumn(name: 'groupmessage_id', referencedColumnName: 'groupmessage_id')]
@@ -104,6 +116,9 @@ class GroupMessage
 
     public function getMedias(): Collection
     {
+        if(!isset($this->medias)) {
+            $this->medias = new ArrayCollection();
+        }
         return $this->medias;
     }
 
@@ -114,6 +129,6 @@ class GroupMessage
 
     public function addMedia(Media $media): void
     {
-        $this->medias->add($media);
+        $this->getMedias()->add($media);
     }
 }

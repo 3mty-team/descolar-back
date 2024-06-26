@@ -6,9 +6,11 @@ use DateTimeInterface;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Post\PostLikeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: PostLikeRepository::class)]
 #[ORM\Table(name: "post_like")]
+#[Validate\Validate]
 class PostLike
 {
     #[ORM\Id]
@@ -21,11 +23,13 @@ class PostLike
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
     private User $user;
 
-    #[ORM\Column(name: "postlike_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "postlike_date", type: "datetime")]
+    #[Validate\Validate(name: "date")]
+    #[Validate\NotNull]
     private DateTimeInterface $date;
 
-    #[ORM\Column(name: "postlike_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "postlike_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     public function getPost(): Post
     {

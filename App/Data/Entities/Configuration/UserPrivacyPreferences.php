@@ -5,22 +5,26 @@ namespace Descolar\Data\Entities\Configuration;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Configuration\UserPrivacyPreferencesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: UserPrivacyPreferencesRepository::class)]
 #[ORM\Table(name: "param_user_privacy_preferences")]
+#[Validate\Validate]
 class UserPrivacyPreferences
 {
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("user")]
+    #[Validate\NotNull]
     private User $user;
 
-    #[ORM\Column(name: "feed_visibility", type: "boolean", options: ["default" => 1])]
-    private bool $feedVisibility;
+    #[ORM\Column(name: "feed_visibility", type: "boolean")]
+    private bool $feedVisibility = true;
 
-    #[ORM\Column(name:"search_visibility", type: "boolean", options: ["default" => 1])]
-    private bool $searchVisibility;
+    #[ORM\Column(name:"search_visibility", type: "boolean")]
+    private bool $searchVisibility = true;
 
     public function getUser(): User
     {

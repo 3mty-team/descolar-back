@@ -7,9 +7,11 @@ use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Report\MessageReportRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: MessageReportRepository::class)]
 #[ORM\Table(name: "message_report")]
+#[Validate\Validate]
 class MessageReport
 {
     #[ORM\Id]
@@ -19,24 +21,34 @@ class MessageReport
 
     #[ORM\ManyToOne(targetEntity: MessageUser::class)]
     #[ORM\JoinColumn(name: "message_id", referencedColumnName: "message_id")]
+    #[Validate\Validate("message")]
+    #[Validate\NotNull]
     private MessageUser $message;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("reporter")]
+    #[Validate\NotNull]
     private User $reporter;
 
     #[ORM\ManyToOne(targetEntity: ReportCategory::class)]
     #[ORM\JoinColumn(name: "reportcategory_id", referencedColumnName: "reportcategory_id")]
+    #[Validate\Validate("reportCategory")]
+    #[Validate\NotNull]
     private ReportCategory $reportCategory;
 
     #[ORM\Column(name: "messagereport_comment", type: "string", length: 100, nullable: true)]
+    #[Validate\Validate("comment")]
+    #[Validate\Length(max: 100)]
     private ?string $comment = null;
 
-    #[ORM\Column(name: "messagereport_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "messagereport_date", type: "datetime")]
+    #[Validate\Validate("date")]
+    #[Validate\NotNull]
     private DateTimeInterface $date;
 
-    #[ORM\Column(name: "messagereport_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "messagereport_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     public function getId(): int
     {

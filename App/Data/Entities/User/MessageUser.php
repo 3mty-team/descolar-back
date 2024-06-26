@@ -8,9 +8,11 @@ use Descolar\Data\Repository\User\MessageUserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: MessageUserRepository::class)]
 #[ORM\Table(name: "message")]
+#[Validate\Validate]
 class MessageUser
 {
     #[ORM\Id]
@@ -20,26 +22,33 @@ class MessageUser
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_sender_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("sender")]
+    #[Validate\NotNull]
     private User $sender; # A, the person sending a message to B
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_receiver_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("receiver")]
+    #[Validate\NotNull]
     private User $receiver; # B, the person receiving a message from A
 
     #[ORM\Column(name: "message_content", type: "string", length: 2000)]
+    #[Validate\Validate("content")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 2000)]
     private string $content;
 
-    #[ORM\Column(name: "message_islikedbysender", type: "boolean", options: ["default" => 0])]
-    private bool $isLikedBySender;
+    #[ORM\Column(name: "message_islikedbysender", type: "boolean")]
+    private bool $isLikedBySender = false;
 
-    #[ORM\Column(name: "message_islikedbyreceiver", type: "boolean", options: ["default" => 0])]
-    private bool $isLikedByReceiver;
+    #[ORM\Column(name: "message_islikedbyreceiver", type: "boolean")]
+    private bool $isLikedByReceiver = false;
 
-    #[ORM\Column(name: "message_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "message_date", type: "datetime")]
     private ?DateTimeInterface $date;
 
-    #[ORM\Column(name: "message_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "message_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     #[ORM\JoinTable(name: 'link_messagemedia')]
     #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'message_id')]

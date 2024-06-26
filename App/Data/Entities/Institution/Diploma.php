@@ -4,9 +4,11 @@ namespace Descolar\Data\Entities\Institution;
 
 use Descolar\Data\Repository\Institution\DiplomaRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: DiplomaRepository::class)]
 #[ORM\Table(name: "diploma")]
+#[Validate\Validate]
 class Diploma
 {
 
@@ -16,10 +18,13 @@ class Diploma
     private int $id;
 
     #[ORM\Column(name: "diploma_name", type: "string", length: 100)]
+    #[Validate\Validate(name: "name")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 100)]
     private string $name;
 
-    #[ORM\Column(name:"diploma_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name:"diploma_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     public function getId(): int
     {

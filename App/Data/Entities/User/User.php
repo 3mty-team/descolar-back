@@ -7,9 +7,11 @@ use Descolar\Adapters\Orm\Generator\UUIDGenerator;
 use Descolar\Data\Entities\Institution\Formation;
 use Descolar\Data\Repository\User\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user")]
+#[Validate\Validate]
 class User
 {
 
@@ -20,46 +22,65 @@ class User
     private string $uuid;
 
     #[ORM\Column(name: "user_username", type: "string", length: 20, unique: true)]
+    #[Validate\Validate("username")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 20)]
+    #[Validate\Unique(clazzEntity: User::class, fieldEntity: "username")]
+    #[Validate\Regex(regex: "^[a-zA-Z0-9_-]+$")]
     private string $username;
 
     #[ORM\Column(name: "user_profilepicturepath", type: "string", length: 200, nullable: true)]
+    #[Validate\Validate("pfpPath")]
+    #[Validate\Length(max: 200)]
     private ?string $pfpPath = null;
 
     #[ORM\Column(name: "user_bannerpath", type: "string", length: 200, nullable: true)]
+    #[Validate\Validate("bannerPath")]
+    #[Validate\Length(max: 200)]
     private ?string $bannerPath = null;
 
     #[ORM\Column(name: "user_firstname", type: "string", length: 100)]
+    #[Validate\Validate("firstname")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 100)]
     private string $firstname;
 
     #[ORM\Column(name: "user_lastname", type: "string", length: 50)]
+    #[Validate\Validate("lastname")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 50)]
     private string $lastname;
 
     #[ORM\Column(name: "user_mail", type: "string", length: 255, unique: true)]
+    #[Validate\Validate("mail")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 255)]
+    #[Validate\Unique(clazzEntity: User::class, fieldEntity: "mail")]
+    #[Validate\PatternMatch(endWith: "@etu.u-paris.fr")]
     private string $mail;
 
     #[ORM\Column(name: "user_account_verify", type: "string", length: 255, nullable: true)]
+    #[Validate\Validate("token")]
+    #[Validate\Length(max: 255)]
     private ?string $token = null;
 
     #[ORM\Column(name: "user_dateofbirth", type: "date", nullable: true)]
     private ?DateTimeInterface $date;
 
     #[ORM\Column(name: "user_biography", type: "string", length: 100, nullable: true)]
+    #[Validate\Validate("biography")]
+    #[Validate\Length(max: 100)]
     private ?string $biography = null;
 
     #[ORM\ManyToOne(targetEntity: Formation::class, fetch: "EAGER")]
     #[ORM\JoinColumn(name: "user_formation", referencedColumnName: "formation_id")]
     private ?Formation $formation = null;
 
-    #[ORM\Column(name: "user_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "user_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     public function __construct()
     {
-        $this->formation = null;
-        $this->pfpPath = null;
-        $this->date = null;
-        $this->biography = null;
-        $this->isActive = true;
     }
 
     public function getUUID(): string
