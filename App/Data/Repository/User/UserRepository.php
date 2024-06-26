@@ -48,7 +48,7 @@ class UserRepository extends EntityRepository
 
     public function findByUuid(?string $userUUID): User
     {
-        $user = $this->find($userUUID);
+        $user = $this->find($userUUID ?? "");
         if ($user === null) {
             throw new EndpointException("Compte introuvable", 404);
         }

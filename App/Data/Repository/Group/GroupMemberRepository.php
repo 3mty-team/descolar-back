@@ -44,6 +44,7 @@ class GroupMemberRepository extends EntityRepository
         }
 
         if(($gm = $this->checkIfUserAlreadyRegistered($groupId, $userUUID)) !== null) {
+
             $gm->setIsActive(true);
             $gm->setJoinDate(new DateTime($date));
 
