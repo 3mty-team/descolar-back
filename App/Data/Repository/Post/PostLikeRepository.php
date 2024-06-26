@@ -105,7 +105,7 @@ class PostLikeRepository extends EntityRepository
 
         $postLike->setIsActive(false);
 
-Validator::getInstance($postLike)->check();
+		Validator::getInstance($postLike)->check();
 
         OrmConnector::getInstance()->persist($postLike);
         OrmConnector::getInstance()->flush();
