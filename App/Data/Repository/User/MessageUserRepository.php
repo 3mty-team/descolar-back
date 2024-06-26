@@ -87,8 +87,8 @@ class MessageUserRepository extends EntityRepository
     public function create(?string $receiverUUID, ?string $content, ?int $date, ?array $medias): MessageUser
     {
 
-        if(empty($content) || empty($receiverUUID) || $medias === null) {
-            throw new EndpointException('Missing parameters "Content", "receiverLocation" or "Medias"', 400);
+        if(empty($content) || empty($receiverUUID)) {
+            throw new EndpointException('Missing parameters "Content", "receiverUUID"', 400);
         }
 
         $receiver = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($receiverUUID);
