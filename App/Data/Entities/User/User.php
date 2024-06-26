@@ -25,8 +25,8 @@ class User
     #[Validate\Validate("username")]
     #[Validate\NotNull]
     #[Validate\Length(max: 20)]
+    #[Validate\Regex(regex: "`^[a-zA-Z0-9_-]+$`")]
     #[Validate\Unique(clazzEntity: User::class, fieldEntity: "username")]
-    #[Validate\Regex(regex: "^[a-zA-Z0-9_-]+$")]
     private string $username;
 
     #[ORM\Column(name: "user_profilepicturepath", type: "string", length: 200, nullable: true)]

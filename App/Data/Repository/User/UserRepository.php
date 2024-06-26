@@ -82,11 +82,11 @@ class UserRepository extends EntityRepository
         $user->setIsActive(true);
         $user->setToken($token);
 
-        if (OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+        if ($profilePath !== null && OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
             $user->setProfilePicturePath($profilePath);
         }
 
-        if (OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
+        if ($bannerPath !== null && OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
             $user->setBannerPath($bannerPath);
         }
 
@@ -98,7 +98,7 @@ class UserRepository extends EntityRepository
         OrmConnector::getInstance()->getRepository(Login::class)->createLogin($user, $password);
 
         $date = new DateTime('now', new \DateTimeZone('Europe/Paris'));
-        $stringDate = $date->format('Y-m-d H:i:s');
+        $stringDate = $date->getTimestamp();
         OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberToGroup($formationId, $user->getUUID(), $stringDate);
 
         return $user;

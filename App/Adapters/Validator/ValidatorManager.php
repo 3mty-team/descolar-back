@@ -143,7 +143,11 @@ class ValidatorManager implements IValidator
     private function createContainer(ReflectionAttribute $attribute, string $propertyName): void
     {
         if ($attribute->getName() == Validate::class) {
-            /** @var Validate $validateClass */
+
+            if(isset($this->getContainers()[$propertyName])) {
+                return;
+            }
+
             $validateClass = $attribute->newInstance();
 
             $propertyContainer = new PropertyContainer($propertyName, $validateClass->getName());
@@ -159,7 +163,7 @@ class ValidatorManager implements IValidator
      */
     private function storeProperty(ReflectionAttribute $attribute, string $propertyName, &$propertyList): void
     {
-        if (isset($propertyList[$propertyName])) {
+        if (!isset($propertyList[$propertyName])) {
             $propertyList[$propertyName] = array();
         }
 
