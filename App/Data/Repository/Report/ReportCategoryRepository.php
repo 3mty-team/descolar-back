@@ -21,16 +21,6 @@ class ReportCategoryRepository extends EntityRepository
 
     public function findAll(): array
     {
-        try{
-            $this->createQueryBuilder('rc')
-                ->select('rc')
-                ->where('rc.isActive = 1')
-                ->getQuery()
-                ->getResult();
-        }catch (\Exception $e){
-            throw new EndpointException($e);
-        }
-
         return $this->createQueryBuilder('rc')
             ->select('rc')
             ->where('rc.isActive = 1')

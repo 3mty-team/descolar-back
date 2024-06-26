@@ -7,6 +7,7 @@ use Descolar\Data\Entities\Group\Group;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class GroupRepository extends EntityRepository
@@ -21,7 +22,7 @@ class GroupRepository extends EntityRepository
             ->getResult();
     }
 
-    public function findById(int $id): Group|int
+    public function findById(int $id): Group
     {
         $group = $this->find($id);
 
@@ -34,21 +35,15 @@ class GroupRepository extends EntityRepository
 
     public function create(?string $name, ?string $userUUID): Group {
 
-        if(empty($name) || empty($userUUID)) {
-            throw new EndpointException('Missing parameters "name" or "admin"', 400);
-        }
-
-        $admin = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
-
-        if ($admin === null) {
-            throw new EndpointException('User not found', 404);
-        }
+        $admin = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
 
         $group = new Group();
         $group->setName($name);
         $group->setAdmin($admin);
         $group->setCreationDate(new DateTime());
         $group->setIsActive(true);
+
+        Validator::getInstance($group)->check();
 
         OrmConnector::getInstance()->persist($group);
         OrmConnector::getInstance()->flush();
@@ -58,16 +53,8 @@ class GroupRepository extends EntityRepository
 
     public function editGroup(?int $id, ?string $name, ?string $userUUID): Group {
 
-        if(empty($id) || (empty($name) && empty($userUUID))) {
-            throw new EndpointException('Missing parameter "id" or ["name" or "admin"]', 400);
-        }
-
-        $group = $this->find($id);
-        $admin = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
-
-        if($group === null || $admin === null) {
-            throw new EndpointException('Group or User not found', 404);
-        }
+        $group = $this->findById($id);
+        $admin = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
 
         if(!empty($name)) {
             $group->setName($name);
@@ -77,6 +64,8 @@ class GroupRepository extends EntityRepository
             $group->setAdmin($admin);
         }
 
+        Validator::getInstance($group)->check();
+
         OrmConnector::getInstance()->flush();
 
         return $group;
@@ -84,17 +73,11 @@ class GroupRepository extends EntityRepository
 
     public function deleteGroup(?int $id): int {
 
-        if(empty($id)) {
-            throw new EndpointException('Missing parameter "id"', 400);
-        }
-
-        $group = $this->find($id);
-
-        if($group === null) {
-            throw new EndpointException('Group not found', 404);
-        }
+        $group = $this->findById($id);
 
         $group->setIsActive(false);
+
+        Validator::getInstance($group)->check();
 
         OrmConnector::getInstance()->flush();
 

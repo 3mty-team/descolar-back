@@ -10,6 +10,7 @@ use Descolar\Data\Entities\Report\ReportCategory;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class PostReportRepository extends EntityRepository
@@ -41,10 +42,6 @@ class PostReportRepository extends EntityRepository
     public function create(?int $postId, ?int $reportCategoryId, ?string $comment, ?int $date): PostReport
     {
 
-        if (empty($postId) || empty($reportCategoryId)) {
-            throw new EndpointException('Missing parameters "postId" or "reportCategory"', 400);
-        }
-
         $post = OrmConnector::getInstance()->getRepository(Post::class)->findById($postId);
 
         $reporter = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
@@ -59,6 +56,8 @@ class PostReportRepository extends EntityRepository
         $postReport->setDate(new DateTime("@$date", new DateTimeZone('Europe/Paris')));
         $postReport->setIsActive(true);
 
+        Validator::getInstance($postReport)->check();
+
         OrmConnector::getInstance()->persist($postReport);
         OrmConnector::getInstance()->flush();
 
@@ -70,6 +69,8 @@ class PostReportRepository extends EntityRepository
         $postReport = $this->findById($postReportId);
 
         $postReport->setIsActive(false);
+
+        Validator::getInstance($postReport)->check();
 
         OrmConnector::getInstance()->flush();
 

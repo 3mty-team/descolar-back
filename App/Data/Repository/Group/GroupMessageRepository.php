@@ -9,6 +9,7 @@ use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 
@@ -40,16 +41,13 @@ class GroupMessageRepository extends EntityRepository
             throw new EndpointException('Range must be greater than 0', 400);
         }
 
-        $group = OrmConnector::getInstance()->getRepository(Group::class)->find($groupId);
-        if ($group === null) {
-            throw new EndpointException('Group not found', 404);
-        }
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($groupId);
 
         $qb = $this->createQueryBuilder('gm')
             ->select('gm')
             ->where('gm.group = :groupId')
             ->andWhere('gm.isActive = 1')
-            ->setParameter('groupId', $groupId)
+            ->setParameter('groupId', $group->getId())
             ->orderBy('gm.date', 'DESC')
             ->setMaxResults($range);
 
@@ -65,11 +63,8 @@ class GroupMessageRepository extends EntityRepository
     public function create(int $groupId, ?string $content, ?int $date, ?array $medias): GroupMessage
     {
 
-        if (empty($content) || empty($date) || $medias === null) {
-            throw new EndpointException('Missing parameters "content" or "date" or "medias"', 400);
-        }
-
-        $userUUID = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+        $medias ??= [];
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($groupId);
 
         $groupMessage = new GroupMessage();
@@ -79,8 +74,11 @@ class GroupMessageRepository extends EntityRepository
         $groupMessage->setDate(new \DateTime("@$date"));
         $groupMessage->setIsActive(true);
         foreach ($medias as $media) {
-            $groupMessage->addMedia(OrmConnector::getInstance()->getRepository(Media::class)->findById($media));
+            $mediaObj = OrmConnector::getInstance()->getRepository(Media::class)->findById($media);
+            $groupMessage->addMedia($mediaObj);
         }
+
+        Validator::getInstance($groupMessage)->check();
 
         OrmConnector::getInstance()->persist($groupMessage);
         OrmConnector::getInstance()->flush();
@@ -90,23 +88,20 @@ class GroupMessageRepository extends EntityRepository
 
     public function update(int $groupId, ?int $messageId, ?string $content, ?array $medias): GroupMessage
     {
-        if (empty($content) && $medias === null) {
-            throw new EndpointException('Missing parameters "content" or "medias"', 400);
-        }
 
+        $medias ??= [];
         $groupMessage = $this->findById($groupId, $messageId);
 
         if (!empty($content)) {
             $groupMessage->setContent($content);
         }
 
-        if ($medias !== null) {
-            foreach ($medias as $media) {
-                OrmConnector::getInstance()->getRepository(Media::class)->findById($media);
-            }
-
-            $groupMessage->setMedias(new ArrayCollection($medias));
+        foreach ($medias as $media) {
+            $mediaObj = OrmConnector::getInstance()->getRepository(Media::class)->findById($media);
+            $groupMessage->addMedia($mediaObj);
         }
+
+        Validator::getInstance($groupMessage)->check();
 
         OrmConnector::getInstance()->persist($groupMessage);
         OrmConnector::getInstance()->flush();
@@ -114,11 +109,13 @@ class GroupMessageRepository extends EntityRepository
         return $groupMessage;
     }
 
-    public function delete(int $groupId, $messageId): int
+    public function delete(int $groupId, int $messageId): int
     {
         $groupMessage = $this->findById($groupId, $messageId);
 
         $groupMessage->setIsActive(false);
+
+        Validator::getInstance($groupMessage)->check();
 
         OrmConnector::getInstance()->persist($groupMessage);
         OrmConnector::getInstance()->flush();

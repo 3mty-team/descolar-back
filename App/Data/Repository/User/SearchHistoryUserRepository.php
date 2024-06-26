@@ -7,6 +7,8 @@ use DateTimeZone;
 use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 
@@ -48,7 +50,7 @@ class SearchHistoryUserRepository extends EntityRepository
 
     public function addToSearchHistory(string $search): void
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $searchHistory = new SearchHistoryUser();
         $searchHistory->setUser($user);
@@ -56,13 +58,15 @@ class SearchHistoryUserRepository extends EntityRepository
         $searchHistory->setDate(new DateTime("now", new DateTimeZone('Europe/Paris')));
         $searchHistory->setIsActive(true);
 
-        $this->getEntityManager()->persist($searchHistory);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($searchHistory)->check();
+
+        OrmConnector::getInstance()->persist($searchHistory);
+        OrmConnector::getInstance()->flush();
     }
 
     public function getSearchHistory(): array
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         return $this->createQueryBuilder('sh')
             ->select('sh')
@@ -76,26 +80,31 @@ class SearchHistoryUserRepository extends EntityRepository
 
     public function clearSearchHistory(): void
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $searchHistory = $this->findByUser($user);
 
         foreach ($searchHistory as $history) {
             $history->setIsActive(false);
-            $this->getEntityManager()->persist($history);
+
+            Validator::getInstance($history)->check();
+
+            OrmConnector::getInstance()->persist($history);
         }
 
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->flush();
     }
 
     public function removeSearchHistoryById(int $searchHistoryId): int
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         $searchHistory = $this->findByIdAndUser($searchHistoryId, $user);
 
         $searchHistory->setIsActive(false);
-        $this->getEntityManager()->persist($searchHistory);
-        $this->getEntityManager()->flush();
+
+        Validator::getInstance($searchHistory)->check();
+        OrmConnector::getInstance()->persist($searchHistory);
+        OrmConnector::getInstance()->flush();
 
         return $searchHistoryId;
     }

@@ -10,6 +10,7 @@ use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class MessageReportRepository extends EntityRepository
@@ -41,10 +42,6 @@ class MessageReportRepository extends EntityRepository
     public function create(?int $messageId, ?int $reportCategoryId, ?string $comment, ?int $date): MessageReport
     {
 
-        if (empty($messageId) || empty($reportCategoryId)) {
-            throw new EndpointException('Missing parameters "messageId" or "reportCategory"', 400);
-        }
-
         $message = OrmConnector::getInstance()->getRepository(MessageUser::class)->findById($messageId);
 
         $reporter = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
@@ -59,6 +56,8 @@ class MessageReportRepository extends EntityRepository
         $messageReport->setDate(new DateTime("@$date", new DateTimeZone('Europe/Paris')));
         $messageReport->setIsActive(true);
 
+        Validator::getInstance($messageReport)->check();
+
         OrmConnector::getInstance()->persist($messageReport);
         OrmConnector::getInstance()->flush();
 
@@ -70,6 +69,8 @@ class MessageReportRepository extends EntityRepository
         $messageReport = $this->findById($messageReportId);
 
         $messageReport->setIsActive(false);
+
+        Validator::getInstance($messageReport)->check();
 
         OrmConnector::getInstance()->flush();
 

@@ -7,13 +7,15 @@ use Descolar\Data\Entities\Configuration\UserPrivacyPreferences;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class UserPrivacyPreferencesRepository extends EntityRepository
 {
     public function getUserPrivacyPreferenceToJson(): array
     {
-        $userPrivacyPreferences = $this->findOneBy(['user' => App::getUserUuid()]);
+        $loggedUser = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+        $userPrivacyPreferences = $this->findOneBy(['user' => $loggedUser]);
 
         return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
@@ -27,10 +29,7 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         $feedVisibility = $this->convertToBool($sFeedVisibility);
         $searchVisibility = $this->convertToBool($sSearchVisibility);
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["uuid" => App::getUserUuid()]);
-        if ($user === null) {
-            throw new EndpointException('User not found', 404);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $alreadyExists = $this->findOneBy(['user' => $user]);
         if ($alreadyExists !== null) {
@@ -42,15 +41,18 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         $userPrivacyPreferences->setFeedVisibility($feedVisibility);
         $userPrivacyPreferences->setSearchVisibility($searchVisibility);
 
-        $this->getEntityManager()->persist($userPrivacyPreferences);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($userPrivacyPreferences)->check();
+
+        OrmConnector::getInstance()->persist($userPrivacyPreferences);
+        OrmConnector::getInstance()->flush();
 
         return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
 
     public function updateUserPrivacyPreference(?string $sFeedVisibility, ?string $sSearchVisibility): array
     {
-        $userPrivacyPreferences = $this->findOneBy(['user' => App::getUserUuid()]);
+        $loggedUser = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+        $userPrivacyPreferences = $this->findOneBy(['user' => $loggedUser]);
         if ($userPrivacyPreferences === null) {
             throw new EndpointException('User privacy preference does not exist', 404);
         }
@@ -71,8 +73,8 @@ class UserPrivacyPreferencesRepository extends EntityRepository
             $userPrivacyPreferences->setSearchVisibility($searchVisibility);
         }
 
-        $this->getEntityManager()->persist($userPrivacyPreferences);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($userPrivacyPreferences);
+        OrmConnector::getInstance()->flush();
 
         return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
@@ -88,7 +90,7 @@ class UserPrivacyPreferencesRepository extends EntityRepository
         return null;
     }
 
-    public function userPrivacyPreferenceToJson($privacyPreferences): array
+    public function userPrivacyPreferenceToJson(UserPrivacyPreferences $privacyPreferences): array
     {
         return [
             'feed_visibility' => $privacyPreferences->isFeedVisibility(),

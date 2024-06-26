@@ -14,6 +14,7 @@ use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 
@@ -36,18 +37,18 @@ class UserRepository extends EntityRepository
 
     public function getLoggedUser(): User
     {
-        $UUID = App::getUserUuid();
+        $userUUID = App::getUserUuid();
 
-        if ($UUID === null) {
+        if ($userUUID === null) {
             throw new EndpointException("User not logged", 403);
         }
 
-        return $this->findByUuid($UUID);
+        return $this->findByUuid($userUUID);
     }
 
-    public function findByUuid(string $uuid): User
+    public function findByUuid(string $userUUID): User
     {
-        $user = $this->find($uuid);
+        $user = $this->find($userUUID);
         if ($user === null) {
             throw new EndpointException("Compte introuvable", 404);
         }
@@ -67,25 +68,8 @@ class UserRepository extends EntityRepository
 
         $token = bin2hex(random_bytes(32));
 
-        if ($this->findOneBy(['username' => $username]) !== null) {
-            throw new EndpointException("Le nom d'utilisateur existe déjà", 403);
-        }
-
-        if ($this->findOneBy(['mail' => $mail]) !== null) {
-            throw new EndpointException("L'adresse mail existe déjà", 403);
-        }
-
-        try {
-            $date = new DateTime($dateofbirth);
-        } catch (Exception $e) {
-            throw new EndpointException("Date de naissance invalide", 403);
-        }
-
-        try {
-            $formation = OrmConnector::getInstance()->getRepository(Formation::class)->find($formationId);
-        } catch (Exception $e) {
-            throw new EndpointException("Formation not found", 404);
-        }
+        $date = new DateTime($dateofbirth, new \DateTimeZone('Europe/Paris'));
+        $formation = OrmConnector::getInstance()->getRepository(Formation::class)->findById($formationId);
 
         $user = new User();
         $user->setUsername($username);
@@ -98,18 +82,21 @@ class UserRepository extends EntityRepository
         $user->setIsActive(true);
         $user->setToken($token);
 
-        if ($profilePath !== null && $profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+        if (OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
             $user->setProfilePicturePath($profilePath);
         }
 
-        if ($bannerPath !== null && $bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
+        if (OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
             $user->setBannerPath($bannerPath);
         }
 
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($user)->check();
+
+        OrmConnector::getInstance()->persist($user);
+        OrmConnector::getInstance()->flush();
 
         OrmConnector::getInstance()->getRepository(Login::class)->createLogin($user, $password);
+
         $date = new DateTime('now', new \DateTimeZone('Europe/Paris'));
         $stringDate = $date->format('Y-m-d H:i:s');
         OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberToGroup($formationId, $user->getUUID(), $stringDate);
@@ -140,56 +127,46 @@ class UserRepository extends EntityRepository
         ?int    $sendTimestamp
     ): User
     {
-
-        if ($sendTimestamp === 0) {
-            throw new EndpointException("Edit User need a valid timestamp", 403);
-        }
-
         $user = self::getLoggedUser();
 
-        if ($username !== null && $username !== "" && $username !== $user->getUsername()) {
-            if ($this->findOneBy(['username' => $username]) !== null) {
-                throw new EndpointException("Username already exists", 403);
-            }
+        if($username !== null) {
             $user->setUsername($username);
         }
 
-        if ($profilePath !== null && $profilePath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
+        if ($profilePath !== null && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
             $user->setProfilePicturePath($profilePath);
         }
 
-        if ($bannerPath !== null && $bannerPath !== "" && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
+        if ($bannerPath !== null && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($bannerPath)) {
             $user->setBannerPath($bannerPath);
         }
 
-        if ($firstname !== null && $firstname !== "" && $firstname !== $user->getFirstname()) {
+        if ($firstname !== null && $firstname !== $user->getFirstname()) {
             $user->setFirstname($firstname);
         }
 
-        if ($lastname !== null && $lastname !== "" && $lastname !== $user->getLastname()) {
+        if ($lastname !== null && $lastname !== $user->getLastname()) {
             $user->setLastname($lastname);
         }
 
-        if ($biography !== null && $biography !== "" && $biography !== $user->getBiography()) {
+        if ($biography !== null && $biography !== $user->getBiography()) {
             $user->setBiography($biography);
         }
 
-        if ($formationId !== null && $formationId !== 0 && $formationId !== $user->getFormation()->getId()) {
-            $formation = OrmConnector::getInstance()->getRepository(Formation::class)->find($formationId);
-            if ($formation === null) {
-                throw new EndpointException("Formation not found", 404);
-            }
+        if ($formationId !== null && $formationId !== $user->getFormation()->getId()) {
+            $formation = OrmConnector::getInstance()->getRepository(Formation::class)->findById($formationId);
 
             // For formation groups, formation_id = group_id
             OrmConnector::getInstance()->getRepository(GroupMember::class)->removeMemberOfGroup($user->getFormation()->getId(), $user->getUUID());
             OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberToGroup($formationId, $user->getUUID(), $sendTimestamp);
 
             $user->setFormation($formation);
-
         }
 
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($user)->check();
+
+        OrmConnector::getInstance()->persist($user);
+        OrmConnector::getInstance()->flush();
 
         return $user;
     }
@@ -203,13 +180,17 @@ class UserRepository extends EntityRepository
             $deactivationUser->setIsActive(false);
             $deactivationUser->setIsFinal(true);
 
-            $this->getEntityManager()->persist($deactivationUser);
-            $this->getEntityManager()->flush();
+            Validator::getInstance($deactivationUser)->check();
+
+            OrmConnector::getInstance()->persist($deactivationUser);
+            OrmConnector::getInstance()->flush();
         }
 
         $user->setIsActive(false);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+
+        Validator::getInstance($user)->check();
+        OrmConnector::getInstance()->persist($user);
+        OrmConnector::getInstance()->flush();
 
         return $user->getUUID();
     }
@@ -222,8 +203,11 @@ class UserRepository extends EntityRepository
         }
 
         $user->setToken(null);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+
+        Validator::getInstance($user)->check();
+
+        OrmConnector::getInstance()->persist($user);
+        OrmConnector::getInstance()->flush();
 
         return $user;
     }

@@ -8,6 +8,7 @@ use Descolar\Data\Entities\Configuration\UserThemePreferences;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class UserThemePreferencesRepository extends EntityRepository
@@ -16,7 +17,9 @@ class UserThemePreferencesRepository extends EntityRepository
     public function getThemePreferenceToJson(): array
     {
 
-        $theme = $this->findOneBy(["user" => App::getUserUuid()])->getTheme();
+        $loggedUser = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
+
+        $theme = $this->findOneBy(["user" => $loggedUser])->getTheme();
         if ($theme === null) {
             throw new EndpointException('User theme preference does not exist', 404);
         }
@@ -25,14 +28,6 @@ class UserThemePreferencesRepository extends EntityRepository
     }
     public function createThemePreference(?int $themeId): ?Theme
     {
-
-        if (empty($themeId)) {
-            throw new EndpointException('Missing parameters', 400);
-        }
-
-        if (!is_numeric($themeId)) {
-            throw new EndpointException('Invalid parameters', 400);
-        }
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
@@ -47,8 +42,10 @@ class UserThemePreferencesRepository extends EntityRepository
         $userThemePreference->setUser($user);
         $userThemePreference->setTheme($theme);
 
-        $this->getEntityManager()->persist($userThemePreference);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($userThemePreference)->check();
+
+        OrmConnector::getInstance()->persist($userThemePreference);
+        OrmConnector::getInstance()->flush();
 
         return $theme;
     }
@@ -56,22 +53,16 @@ class UserThemePreferencesRepository extends EntityRepository
     public function updateThemePreference($themeId): ?Theme
     {
 
-        if (empty($themeId)) {
-            throw new EndpointException('Missing parameters', 400);
-        }
-
-        if (!is_numeric($themeId)) {
-            throw new EndpointException('Invalid parameters', 400);
-        }
-
         $userThemePreference = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $theme = $this->getThemeById($themeId);
 
         $userThemePreference->setTheme($theme);
 
-        $this->getEntityManager()->persist($userThemePreference);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($userThemePreference)->check();
+
+        OrmConnector::getInstance()->persist($userThemePreference);
+        OrmConnector::getInstance()->flush();
 
         return $theme;
     }

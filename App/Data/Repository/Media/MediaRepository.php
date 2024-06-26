@@ -8,6 +8,8 @@ use Descolar\Data\Entities\Media\Media;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Media\Interfaces\IMedia;
 use Descolar\Managers\Media\MediaManager;
+use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class MediaRepository extends EntityRepository
@@ -60,8 +62,10 @@ class MediaRepository extends EntityRepository
         $mediaEntity->setMediaType($media->getType()->toMediaType());
         $mediaEntity->setIsActive(true);
 
-        $this->getEntityManager()->persist($mediaEntity);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($mediaEntity)->check();
+
+        OrmConnector::getInstance()->persist($mediaEntity);
+        OrmConnector::getInstance()->flush();
 
         return $mediaEntity;
     }
@@ -85,19 +89,17 @@ class MediaRepository extends EntityRepository
     {
         $media = $this->findById($id);
 
-        if (!$media->isActive()) {
-            throw new EndpointException("Media already deleted", 403);
-        }
-
         $media->setIsActive(false);
 
-        $this->getEntityManager()->flush();
+        Validator::getInstance($media)->check();
+
+        OrmConnector::getInstance()->flush();
 
         $mediaObject = MediaManager::getInstance()->generateMedia($media);
 
         MediaManager::getInstance()->disableMedia($mediaObject);
 
-        return $id;
+        return $media->getId();
     }
 
     public function toJson(Media $media): array

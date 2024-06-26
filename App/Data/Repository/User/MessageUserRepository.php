@@ -10,6 +10,7 @@ use Descolar\Data\Entities\User\MessageUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class MessageUserRepository extends EntityRepository
@@ -62,10 +63,7 @@ class MessageUserRepository extends EntityRepository
 
     private function manageLikes(int $messageId, bool $needToLike): MessageUser
     {
-        $message = $this->find($messageId);
-        if($message === null) {
-            throw new EndpointException('Message not found', 404);
-        }
+        $message = $this->findById($messageId);
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
@@ -80,6 +78,8 @@ class MessageUserRepository extends EntityRepository
                 throw new EndpointException('User not allowed to like this message', 403);
         }
 
+        Validator::getInstance($message)->check();
+
         OrmConnector::getInstance()->persist($message);
         OrmConnector::getInstance()->flush();
 
@@ -88,10 +88,6 @@ class MessageUserRepository extends EntityRepository
 
     public function create(?string $receiverUUID, ?string $content, ?int $date, ?array $medias): MessageUser
     {
-
-        if(empty($content) || empty($receiverUUID)) {
-            throw new EndpointException('Missing parameters "Content", "receiverUUID"', 400);
-        }
 
         $medias ??= [];
 
@@ -112,6 +108,8 @@ class MessageUserRepository extends EntityRepository
             $message->addMedia($media);
         }
 
+        Validator::getInstance($message)->check();
+
         OrmConnector::getInstance()->persist($message);
         OrmConnector::getInstance()->flush();
 
@@ -130,12 +128,11 @@ class MessageUserRepository extends EntityRepository
 
     public function delete(int $messageId): int
     {
-        $message = $this->find($messageId);
-        if($message === null) {
-            throw new EndpointException('Message not found', 404);
-        }
+        $message = $this->findById($messageId);
 
         $message->setIsActive(false);
+
+        Validator::getInstance($message)->check();
 
         OrmConnector::getInstance()->flush();
 
@@ -151,8 +148,8 @@ class MessageUserRepository extends EntityRepository
         foreach ($messages as $message) {
 
             /** @var MessageUser $message */
-            $sender = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $message->getSender()->getUUID()]);
-            $receiver = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $message->getReceiver()->getUUID()]);
+            $sender = @OrmConnector::getInstance()->getRepository(User::class)->findByUUID($message->getSender()->getUUID());
+            $receiver = @OrmConnector::getInstance()->getRepository(User::class)->findByUUID($message->getReceiver()->getUUID());
 
             $messageUsers[] = [
                 'id' => $message->getId(),

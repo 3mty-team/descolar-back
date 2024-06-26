@@ -6,23 +6,24 @@ use Descolar\Data\Entities\Configuration\Login;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class LoginRepository extends EntityRepository
 {
 
-    private function getUserByUsernameOrEmail(string $username): ?User
+    private function getUserByUsernameOrEmail(string $usernameOrMail): ?User
     {
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["username" => $username]);
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["username" => $usernameOrMail]);
         if($user == null) {
-            $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["mail" => $username]);
+            $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(["mail" => $usernameOrMail]);
         }
 
         if(!$user) {
             return null;
         }
 
-        return OrmConnector::getInstance()->getRepository(User::class)->findByUUID($user->getUUID());
+        return $user;
     }
 
     public function createLogin(User $user, string $password): ?Login
@@ -30,8 +31,11 @@ class LoginRepository extends EntityRepository
         $login = new Login();
         $login->setUser($user);
         $login->setPassword(password_hash($password, PASSWORD_DEFAULT));
-        $this->getEntityManager()->persist($login);
-        $this->getEntityManager()->flush();
+
+        Validator::getInstance($login)->check();
+
+        OrmConnector::getInstance()->persist($login);
+        OrmConnector::getInstance()->flush();
         return $login;
     }
 

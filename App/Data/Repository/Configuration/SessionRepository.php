@@ -8,17 +8,13 @@ use Descolar\Data\Entities\Configuration\Session;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class SessionRepository extends EntityRepository
 {
     public function createSession(?string $date, ?string $localisation, ?string $userAgent): ?Session
     {
-
-        if (empty($date) || empty($localisation) || empty($userAgent)) {
-            throw new EndpointException("Missing parameters", 400);
-        }
-
         /*
          * @var User $user
          */
@@ -31,10 +27,12 @@ class SessionRepository extends EntityRepository
         $session->setUserAgent($userAgent);
         $session->setIsActive(true);
 
-        $this->getEntityManager()->persist($session);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($session)->check();
 
-        return $this->findOneBy(['date' => $date, 'localisation' => $localisation, 'userAgent' => $userAgent]);
+        OrmConnector::getInstance()->persist($session);
+        OrmConnector::getInstance()->flush();
+
+        return $session;
     }
 
     public function toJson(Session $session): array

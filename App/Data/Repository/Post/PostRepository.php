@@ -13,6 +13,7 @@ use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class PostRepository extends EntityRepository
@@ -72,10 +73,7 @@ class PostRepository extends EntityRepository
             throw new EndpointException('Range must be greater than 0', 400);
         }
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->findOneBy(['uuid' => $userUUID]);
-        if ($user === null) {
-            throw new EndpointException('User not found', 404);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID($userUUID);
 
         $qb = $this->createQueryBuilder('p')
             ->select('p')
@@ -110,9 +108,6 @@ class PostRepository extends EntityRepository
 
     private function buildPost(?Post $retweetedPost, ?string $content, ?string $location, int $date, ?array $medias): Post
     {
-        if (empty($content) || empty($date) || empty($location)) {
-            throw new EndpointException('Missing parameters "content" or "location" or "date"', 400);
-        }
 
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
@@ -138,6 +133,8 @@ class PostRepository extends EntityRepository
             $post->setRepostedPost($retweetedPost);
         }
 
+        Validator::getInstance($post)->check();
+
         OrmConnector::getInstance()->persist($post);
         OrmConnector::getInstance()->flush();
 
@@ -161,6 +158,9 @@ class PostRepository extends EntityRepository
         $post = $this->findById($postId);
 
         $post->setIsActive(false);
+
+        Validator::getInstance($post)->check();
+
         OrmConnector::getInstance()->flush();
 
         return $postId;
@@ -182,6 +182,9 @@ class PostRepository extends EntityRepository
         }
 
         $post->setPinned($setToPin);
+
+        Validator::getInstance($post)->check();
+
         OrmConnector::getInstance()->flush();
 
         return $post;
@@ -202,6 +205,8 @@ class PostRepository extends EntityRepository
 
         if(($post = $this->getPinnedPost($user->getUUID())) !== null) {
             $post->setPinned(false);
+
+            Validator::getInstance($post)->check();
             OrmConnector::getInstance()->flush();
         }
 

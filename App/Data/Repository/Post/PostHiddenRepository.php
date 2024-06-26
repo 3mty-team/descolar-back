@@ -7,6 +7,7 @@ use Descolar\Data\Entities\Post\PostHidden;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class PostHiddenRepository extends EntityRepository
@@ -50,6 +51,8 @@ class PostHiddenRepository extends EntityRepository
             $postHidden->setUser($user);
             $postHidden->setIsActive($needToHide);
 
+            Validator::getInstance($postHidden)->check();
+
             OrmConnector::getInstance()->persist($postHidden);
             OrmConnector::getInstance()->flush();
 
@@ -62,6 +65,9 @@ class PostHiddenRepository extends EntityRepository
         }
 
         $postHidden->setIsActive($needToHide);
+
+        Validator::getInstance($postHidden)->check();
+
         OrmConnector::getInstance()->persist($postHidden);
         OrmConnector::getInstance()->flush();
 
