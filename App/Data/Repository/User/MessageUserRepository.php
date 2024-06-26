@@ -91,6 +91,8 @@ class MessageUserRepository extends EntityRepository
             throw new EndpointException('Missing parameters "Content", "receiverUUID"', 400);
         }
 
+        $medias ??= [];
+
         $receiver = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($receiverUUID);
         $sender = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
