@@ -122,7 +122,7 @@ class Route implements IRoute
             throw new TooManyRequestsException();
         }
 
-        if ($this->route->getModerationAuth()) {
+        if ($this->route->getModerationAuth($this->route->getAuth())) {
             AuthMiddleware::validateModerationToken();
         }
 

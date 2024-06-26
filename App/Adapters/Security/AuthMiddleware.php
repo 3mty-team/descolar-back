@@ -26,17 +26,19 @@ class AuthMiddleware
         }
     }
 
-    public static function validateModerationToken(): void
+    public static function validateModerationToken(bool $isJWTAuth): void
     {
         $envToken = EnvReader::getInstance("/opt/www/descolar-env/.env")->get('TOKEN');
         try {
             $token = $_SERVER['HTTP_AUTHORIZATION'];
             $token = str_replace('Bearer ', '', $token);
         } catch (Exception $e) {
-            throw new UnauthorizedException();
+            if (!$isJWTAuth) {
+                throw new UnauthorizedException();
+            }
         }
 
-        if ($token !== $envToken) {
+        if ($token !== $envToken && !$isJWTAuth) {
             throw new UnauthorizedException();
         }
     }
