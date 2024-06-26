@@ -5,9 +5,11 @@ namespace Descolar\Data\Entities\User;
 use DateTimeInterface;
 use Descolar\Data\Repository\User\DeactivationUserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: DeactivationUserRepository::class)]
 #[ORM\Table(name: "user_deactivation")]
+#[Validate\Validate]
 class DeactivationUser
 {
     #[ORM\Id]
@@ -17,15 +19,17 @@ class DeactivationUser
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("user")]
+    #[Validate\NotNull]
     private User $user;
 
-    #[ORM\Column(name: "userdeactivation_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "userdeactivation_date", type: "datetime")]
     private ?DateTimeInterface $date;
 
-    #[ORM\Column(name: "userdeactivation_isfinal", type: "boolean", options: ["default" => 0])]
+    #[ORM\Column(name: "userdeactivation_isfinal", type: "boolean")]
     private bool $isFinal = false;
 
-    #[ORM\Column(name: "userdeactivation_isactive", type: "boolean", options: ["default" => 1])]
+    #[ORM\Column(name: "userdeactivation_isactive", type: "boolean")]
     private bool $isActive = true;
 
     public function getId(): int

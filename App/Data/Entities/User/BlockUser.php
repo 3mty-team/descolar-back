@@ -5,26 +5,32 @@ namespace Descolar\Data\Entities\User;
 use DateTimeInterface;
 use Descolar\Data\Repository\User\BlockUserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: BlockUserRepository::class)]
 #[ORM\Table(name: "user_block")]
+#[Validate\Validate]
 class BlockUser
 {
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_blocking_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("blocking")]
+    #[Validate\NotNull]
     private User $blocking; # A, the person blocking B
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_blocked_id", referencedColumnName: "user_id")]
+    #[Validate\Validate("blocked")]
+    #[Validate\NotNull]
     private User $blocked; # B, the person being blocked by A
 
-    #[ORM\Column(name: "userblock_date", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "userblock_date", type: "datetime")]
     private ?DateTimeInterface $date;
 
-    #[ORM\Column(name: "userblock_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "userblock_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     public function getBlocking(): User
     {

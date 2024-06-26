@@ -5,9 +5,11 @@ namespace Descolar\Data\Entities\Post;
 use Descolar\Data\Entities\User\User;
 use Descolar\Data\Repository\Post\PostHiddenRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Descolar\Adapters\Validator\Annotations as Validate;
 
 #[ORM\Entity(repositoryClass: PostHiddenRepository::class)]
 #[ORM\Table(name: "hidden_post")]
+#[Validate\Validate]
 class PostHidden
 {
     #[ORM\Id]
@@ -17,10 +19,12 @@ class PostHidden
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
+    #[Validate\Validate(name: "user")]
+    #[Validate\NotNull]
     private User $user;
 
-    #[ORM\Column(name: "hiddenpost_isactive", type: "boolean", options: ["default" => 1])]
-    private bool $isActive;
+    #[ORM\Column(name: "hiddenpost_isactive", type: "boolean")]
+    private bool $isActive = true;
 
     public function getPost(): Post
     {

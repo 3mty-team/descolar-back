@@ -24,8 +24,8 @@ class App
     use Traits\OrmAdapter;
     use Traits\MailAdapter;
     use Traits\MediaAdapter;
-    use Traits\SocketAdapter;
     use Traits\RequesterAdapter;
+    use Traits\ValidatorAdapter;
 
     /**
      * @return bool True if the application is in development mode, false otherwise
@@ -83,12 +83,12 @@ class App
         self::useErrorHandler(Adapters\Error\ErrorManager::class);
         self::useEnv(Adapters\Env\EnvManager::class);
         self::useOrm(Adapters\Orm\OrmManager::class);
+        self::useValidator(Adapters\Validator\ValidatorManager::class);
         self::useRouter(Adapters\Router\RouterRetriever::class);
         self::useEvent(Adapters\Event\EventReader::class);
         self::useJsonBuilder(Adapters\JsonBuilder\JsonBuilderManager::class);
         self::useMail(Adapters\Mail\MailBuilder::class);
         self::useMedia(Adapters\Media\MediaAdapter::class);
-        self::useSocket(Adapters\Websocket\MessageManager::class);
         self::useRequester(Adapters\Requester\GlobalRequest::class);
     }
 }
