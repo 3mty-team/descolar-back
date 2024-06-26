@@ -62,8 +62,8 @@ class BlockUserRepository extends EntityRepository
 
             Validator::getInstance($blockUser)->check();
 
-            $this->getEntityManager()->persist($blockUser);
-            $this->getEntityManager()->flush();
+            OrmConnector::getInstance()->persist($blockUser);
+            OrmConnector::getInstance()->flush();
             return $blockUser;
         }
 
@@ -72,8 +72,8 @@ class BlockUserRepository extends EntityRepository
 
         Validator::getInstance($block)->check();
 
-        $this->getEntityManager()->persist($block);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($block);
+        OrmConnector::getInstance()->flush();
 
         return $block;
     }

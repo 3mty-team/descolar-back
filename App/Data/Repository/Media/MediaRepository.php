@@ -8,6 +8,7 @@ use Descolar\Data\Entities\Media\Media;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Media\Interfaces\IMedia;
 use Descolar\Managers\Media\MediaManager;
+use Descolar\Managers\Orm\OrmConnector;
 use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
@@ -63,8 +64,8 @@ class MediaRepository extends EntityRepository
 
         Validator::getInstance($mediaEntity)->check();
 
-        $this->getEntityManager()->persist($mediaEntity);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($mediaEntity);
+        OrmConnector::getInstance()->flush();
 
         return $mediaEntity;
     }
@@ -92,7 +93,7 @@ class MediaRepository extends EntityRepository
 
         Validator::getInstance($media)->check();
 
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->flush();
 
         $mediaObject = MediaManager::getInstance()->generateMedia($media);
 

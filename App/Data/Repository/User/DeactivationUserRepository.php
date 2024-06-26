@@ -50,8 +50,8 @@ class DeactivationUserRepository extends EntityRepository
 
         Validator::getInstance($deactivationUser)->check();
 
-        $this->getEntityManager()->persist($deactivationUser);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($deactivationUser);
+        OrmConnector::getInstance()->flush();
 
         return $deactivationUser->getId();
     }
@@ -77,8 +77,8 @@ class DeactivationUserRepository extends EntityRepository
 
         Validator::getInstance($deactivationUser)->check();
 
-        $this->getEntityManager()->persist($deactivationUser);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($deactivationUser);
+        OrmConnector::getInstance()->flush();
 
         return $user->getUUID();
     }
