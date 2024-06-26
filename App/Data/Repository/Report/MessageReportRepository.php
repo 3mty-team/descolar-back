@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityRepository;
 class MessageReportRepository extends EntityRepository
 {
 
-    public function findById($id) : MessageReport
+    public function findById(?int $id) : MessageReport
     {
         $messageReport = $this->find($id);
 

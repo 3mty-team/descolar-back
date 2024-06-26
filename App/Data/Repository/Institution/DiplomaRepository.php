@@ -17,7 +17,7 @@ class DiplomaRepository extends EntityRepository
             ->getResult();
     }
 
-    public function findById(int $id): Diploma|int
+    public function findById(?int $id): Diploma
     {
         $diploma = $this->find($id);
 

@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityRepository;
 class UserReportRepository extends EntityRepository
 {
 
-    public function findById(int $id): UserReport
+    public function findById(?int $id): UserReport
     {
         $userReport = $this->find($id);
 

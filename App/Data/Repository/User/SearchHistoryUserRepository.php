@@ -15,7 +15,7 @@ use Exception;
 class SearchHistoryUserRepository extends EntityRepository
 {
 
-    public function findById(int $searchHistoryId): SearchHistoryUser
+    public function findById(?int $searchHistoryId): SearchHistoryUser
     {
         $searchHistory = $this->find($searchHistoryId);
 
@@ -26,7 +26,7 @@ class SearchHistoryUserRepository extends EntityRepository
         return $searchHistory;
     }
 
-    public function findByIdAndUser(int $searchHistoryId, User $user): SearchHistoryUser
+    public function findByIdAndUser(?int $searchHistoryId, ?User $user): SearchHistoryUser
     {
         $searchHistory = $this->findById($searchHistoryId);
 
@@ -37,7 +37,7 @@ class SearchHistoryUserRepository extends EntityRepository
         return $searchHistory;
     }
 
-    public function findByUser(User $user): array
+    public function findByUser(?User $user): array
     {
         $searchHistory = $this->findBy(['user' => $user]);
 
