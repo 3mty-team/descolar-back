@@ -2,6 +2,7 @@
 
 namespace Descolar\Adapters\Validator\Annotations;
 
+use Descolar\Data\Entities\Media\MediaType;
 use Descolar\Managers\Validator\Annotations\Property;
 
 use Attribute;
@@ -24,7 +25,7 @@ class InList extends Property
         mixed ...$valuesToAccept
     )
     {
-        $this->arrayToAccept = [...$valuesToAccept];
+        $this->arrayToAccept = [...$valuesToAccept]["values"];
     }
 
     #[Override] public function check(mixed $content): bool
