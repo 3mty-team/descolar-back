@@ -40,7 +40,12 @@ class GroupMessageLikeRepository extends EntityRepository
         $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID(App::getUserUuid());
 
         $groupMessageLike = $this->getGroupMessageLike($groupMessage, $user);
-        if ($groupMessageLike !== null && !$groupMessageLike->isActive()) {
+        if ($groupMessageLike !== null) {
+
+            if($groupMessageLike->isActive() === true){
+                throw new EndpointException('User already liked this message', 400);
+            }
+
             $groupMessageLike->setIsActive(true);
 
             Validator::getInstance($groupMessageLike)->check();
