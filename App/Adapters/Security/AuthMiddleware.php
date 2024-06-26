@@ -28,7 +28,7 @@ class AuthMiddleware
 
     public static function validateModerationToken(bool $isJWTAuth): void
     {
-        $envToken = EnvReader::getInstance("/opt/www/descolar-env/.env")->get('TOKEN');
+        $envToken = EnvReader::getInstance("/opt/www/descolar-env/")->get('TOKEN');
         try {
             $token = $_SERVER['HTTP_AUTHORIZATION'];
             $token = str_replace('Bearer ', '', $token);
