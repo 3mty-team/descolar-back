@@ -18,12 +18,21 @@ class EnvManager implements IEnv
      * @param array $envContent The content of the file
      */
     public function __construct(
-        private readonly string $fileName = "",
+        private string $fileName = "",
         private readonly string $fileExtension = ".env",
         private array           $envContent = []
     )
     {
         $this->loadEnv();
+    }
+
+    public function setFileName(string $fileName): self
+    {
+        $this->fileName = $fileName;
+        $this->envContent = [];
+        $this->loadEnv();
+
+        return $this;
     }
 
     private function getPath(): string

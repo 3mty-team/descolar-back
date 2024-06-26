@@ -15,7 +15,7 @@ use OpenApi\Attributes\PathParameter;
 
 class MessageReportEndpoint extends AbstractEndpoint
 {
-    #[Get('/report/message', name: 'getAllMessageReports', auth: false)]
+    #[Get('/report/message', name: 'getAllMessageReports', moderationAuth: true)]
     #[OA\Get(
         path: "/report/message",
         summary: "getAllMessageReports",
@@ -60,7 +60,7 @@ class MessageReportEndpoint extends AbstractEndpoint
         });
     }
 
-    #[Delete('/report/message/:reportId/delete', variables: ["reportId" => RouteParam::NUMBER], name: 'deleteMessageReport', auth: false)]
+    #[Delete('/report/message/:reportId/delete', variables: ["reportId" => RouteParam::NUMBER], name: 'deleteMessageReport', moderationAuth: true)]
     #[OA\Delete(
         path: "/report/message/{reportId}/delete",
         summary: "deleteMessageReport",

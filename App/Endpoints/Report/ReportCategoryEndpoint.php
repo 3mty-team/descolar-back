@@ -10,7 +10,7 @@ use OpenAPI\Attributes as OA;
 
 class ReportCategoryEndpoint extends AbstractEndpoint
 {
-    #[Get('/report/category', name: 'getAllReportCategories', auth: false)]
+    #[Get('/report/category', name: 'getAllReportCategories', moderationAuth: true)]
     #[OA\Get(
         path: "/report/category",
         summary: "getAllReportCategories",

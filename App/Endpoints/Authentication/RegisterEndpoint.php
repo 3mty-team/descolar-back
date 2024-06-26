@@ -65,7 +65,7 @@ class RegisterEndpoint extends AbstractEndpoint
 
     }
 
-    #[Post('/auth/register', name: 'login', auth: false)]
+    #[Post('/auth/register', name: 'register', auth: false)]
     #[OA\Post(
         path: '/auth/register',
         summary: 'Register',

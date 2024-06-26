@@ -25,4 +25,19 @@ class AuthMiddleware
             throw new UnauthorizedException();
         }
     }
+
+    public static function validateModerationToken(): void
+    {
+        $envToken = EnvReader::getInstance("/opt/www/descolar-env/.env")->get('TOKEN');
+        try {
+            $token = $_SERVER['HTTP_AUTHORIZATION'];
+            $token = str_replace('Bearer ', '', $token);
+        } catch (Exception $e) {
+            throw new UnauthorizedException();
+        }
+
+        if ($token !== $envToken) {
+            throw new UnauthorizedException();
+        }
+    }
 }

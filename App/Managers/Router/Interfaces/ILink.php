@@ -42,4 +42,10 @@ interface ILink
      * @return bool|null The auth of the route
      */
     public function getAuth(): ?bool;
+
+    /**
+     * Get the moderation auth of the route
+     *
+     * @return bool|null The moderation auth of the route
+     */
 }

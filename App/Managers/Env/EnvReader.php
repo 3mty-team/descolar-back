@@ -7,15 +7,13 @@ use Descolar\Managers\Env\Interfaces\IEnv;
 
 class EnvReader
 {
-
     /**
      * Get the instance of the EnvManager
      *
      * @return IEnv|null The instance of the EnvManager
      */
-    public static function getInstance(): ?IEnv
+    public static function getInstance(string $fileName = ""): ?IEnv
     {
-        return App::getEnvManager();
+        return App::getEnvManager()->setFileName($fileName);
     }
-
 }
