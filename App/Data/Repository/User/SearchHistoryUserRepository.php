@@ -48,13 +48,13 @@ class SearchHistoryUserRepository extends EntityRepository
         return $searchHistory;
     }
 
-    public function addToSearchHistory(string $search): void
+    public function addToSearchHistory(?string $search): void
     {
         $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $searchHistory = new SearchHistoryUser();
         $searchHistory->setUser($user);
-        $searchHistory->setSearch($search);
+        $searchHistory->setSearch($search ?? "");
         $searchHistory->setDate(new DateTime("now", new DateTimeZone('Europe/Paris')));
         $searchHistory->setIsActive(true);
 
