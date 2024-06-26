@@ -42,4 +42,5 @@ interface ILink
      * @return bool|null The auth of the route
      */
     public function getAuth(): ?bool;
+
 }

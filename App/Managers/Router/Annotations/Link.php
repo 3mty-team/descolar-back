@@ -17,12 +17,14 @@ abstract readonly class Link implements ILink
      * @param array<string, string> $variables The variables of the route
      * @param string|null $name The name of the route
      * @param bool|null $auth The auth of the route
+     * @param bool|null $moderationAuth The auth of the route for moderation
      */
     public function __construct(
         private string $path,
         private array $variables = array(),
         private ?string $name = null,
-        private ?bool $auth = false
+        private ?bool $auth = false,
+        private ?bool $moderationAuth = false
     )
     {
     }
@@ -62,5 +64,13 @@ abstract readonly class Link implements ILink
     public function getAuth(): ?bool
     {
         return $this->auth;
+    }
+
+    /**
+     * @see ILink::getModerationAuth()
+     */
+    public function getModerationAuth(): ?bool
+    {
+        return $this->moderationAuth;
     }
 }

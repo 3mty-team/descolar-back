@@ -93,7 +93,7 @@ class MessageEndpoint extends AbstractEndpoint
         });
     }
 
-    #[Delete('/message/:messageId/delete', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteMessage', auth: false)]
+    #[Delete('/message/:messageId/delete', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteMessage', auth: true, moderationAuth: true)]
     #[OA\Delete(path: "/message/{messageId}/delete", summary: "deleteMessage", tags: ["Message"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Message deleted")])]
     private function deleteMessage(int $messageId): void

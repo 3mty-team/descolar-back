@@ -7,6 +7,11 @@ use Descolar\Managers\Env\Exceptions\EnvNotFoundException;
 
 interface IEnv
 {
+    /**
+     * Set the path of the file to read
+     * @param string $filePath The path of the file
+     */
+    public function setFilePath(string $filePath): self;
 
     /**
      * Get element from the environment variables
