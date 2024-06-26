@@ -41,7 +41,7 @@ class GroupMemberEndpoint extends AbstractEndpoint
     {
         $this->reply(function ($response) use ($id) {
             [$userUUID, $date] = Requester::getInstance()->trackMany(
-                "userUUID", "date"
+                "user_uuid", "date"
             );
 
             $group = OrmConnector::getInstance()->getRepository(GroupMember::class)->addMemberToGroup($id, $userUUID, $date);
