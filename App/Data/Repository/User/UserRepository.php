@@ -128,9 +128,11 @@ class UserRepository extends EntityRepository
     ): User
     {
         $user = self::getLoggedUser();
+        $valuesToIgnore = ["username", "mail"];
 
         if($username !== null) {
             $user->setUsername($username);
+            $valuesToIgnore = array_diff($valuesToIgnore, ["username"]);
         }
 
         if ($profilePath !== null && $media = OrmConnector::getInstance()->getRepository(Media::class)->findByUrl($profilePath)) {
@@ -163,7 +165,7 @@ class UserRepository extends EntityRepository
             $user->setFormation($formation);
         }
 
-        Validator::getInstance($user)->check();
+        Validator::getInstance($user)->check(...$valuesToIgnore);
 
         OrmConnector::getInstance()->persist($user);
         OrmConnector::getInstance()->flush();
