@@ -26,7 +26,7 @@ class DeactivationUserRepository extends EntityRepository
     {
         $deactivationUser = $this->findOneBy(["user" => $user]);
 
-        return $deactivationUser->isFinal() ?? false;
+        return $deactivationUser?->isFinal() ?? false;
     }
 
     /**

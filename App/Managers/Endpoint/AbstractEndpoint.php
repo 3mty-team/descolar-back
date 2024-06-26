@@ -7,6 +7,7 @@ use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Endpoint\Interfaces\IEndpoint;
 use Descolar\Managers\JsonBuilder\Interfaces\IJsonBuilder;
 use Descolar\Managers\JsonBuilder\JsonBuilder;
+use Descolar\Managers\Validator\Exceptions\PropertyIsNotValidException;
 use Override;
 
 /**
@@ -42,7 +43,7 @@ abstract class AbstractEndpoint implements IEndpoint
         try {
             $closure($response);
             $response->setCode(200);
-        } catch (EndpointException $e) {
+        } catch (EndpointException | PropertyIsNotValidException $e) {
             $response->setCode($e->getCode());
             $response->addData('message', $e->getMessage());
         } finally {
