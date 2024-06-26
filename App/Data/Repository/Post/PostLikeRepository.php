@@ -8,6 +8,7 @@ use Descolar\Data\Entities\Post\PostLike;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class PostLikeRepository extends EntityRepository
@@ -70,6 +71,9 @@ class PostLikeRepository extends EntityRepository
             }
 
             $postLike->setIsActive(true);
+
+            Validator::getInstance($postLike)->check();
+
             OrmConnector::getInstance()->flush();
 
             return $postLike->getPost();
@@ -80,6 +84,8 @@ class PostLikeRepository extends EntityRepository
         $postLike->setUser($user);
         $postLike->setIsActive(true);
         $postLike->setDate(new DateTime());
+
+        Validator::getInstance($postLike)->check();
 
         OrmConnector::getInstance()->persist($postLike);
         OrmConnector::getInstance()->flush();
@@ -98,6 +104,8 @@ class PostLikeRepository extends EntityRepository
         }
 
         $postLike->setIsActive(false);
+
+Validator::getInstance($postLike)->check();
 
         OrmConnector::getInstance()->persist($postLike);
         OrmConnector::getInstance()->flush();

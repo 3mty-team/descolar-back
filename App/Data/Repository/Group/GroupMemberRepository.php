@@ -9,21 +9,22 @@ use Descolar\Data\Entities\Group\GroupMember;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class GroupMemberRepository extends EntityRepository
 {
-    private function checkIfUserAlreadyRegistered(int $groupId, string $userUUID): ?GroupMember
+    private function checkIfUserAlreadyRegistered(?int $groupId, ?string $userUUID): ?GroupMember
     {
         return $this->findOneBy(['group' => $groupId, 'user' => $userUUID]);
     }
 
-    private function checkGroupMemberExists(int $groupId, string $userUUID): ?GroupMember
+    private function checkGroupMemberExists(?int $groupId, ?string $userUUID): ?GroupMember
     {
         return $this->findOneBy(['group' => $groupId, 'user' => $userUUID, 'isActive' => 1]);
     }
 
-    public function getUsersByGroup(Group $group): array
+    public function getUsersByGroup(?Group $group): array
     {
         return $this->findBy(['group' => $group, 'isActive' => 1]);
     }
@@ -33,19 +34,10 @@ class GroupMemberRepository extends EntityRepository
      */
     public function addMemberToGroup(?int $groupId, ?string $userUUID, ?string $date): GroupMember
     {
-        if(empty($userUUID) || empty($date)) {
-            throw new EndpointException('Missing parameters "userId" or "date"', 400);
-        }
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find($userUUID);
-        if($user === null) {
-            throw new EndpointException('User not found', 404);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findByUuid($userUUID);
 
-        $group = OrmConnector::getInstance()->getRepository(Group::class)->find($groupId);
-        if($group === null) {
-            throw new EndpointException('Group not found', 404);
-        }
+        $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($groupId);
 
         if($this->checkGroupMemberExists($groupId, $userUUID) !== null) {
             throw new EndpointException('User already in group', 400);
@@ -54,6 +46,9 @@ class GroupMemberRepository extends EntityRepository
         if(($gm = $this->checkIfUserAlreadyRegistered($groupId, $userUUID)) !== null) {
             $gm->setIsActive(true);
             $gm->setJoinDate(new DateTime($date));
+
+            Validator::getInstance($gm)->check();
+
             OrmConnector::getInstance()->persist($gm);
             OrmConnector::getInstance()->flush();
             return $gm;
@@ -65,6 +60,8 @@ class GroupMemberRepository extends EntityRepository
         $groupMember->setJoinDate(new DateTime("@$date", new DateTimeZone('Europe/Paris')));
         $groupMember->setIsActive(true);
 
+        Validator::getInstance($groupMember)->check();
+
         OrmConnector::getInstance()->persist($groupMember);
         OrmConnector::getInstance()->flush();
 
@@ -73,9 +70,6 @@ class GroupMemberRepository extends EntityRepository
 
     public function removeMemberOfGroup(int $groupId, ?string $userUUID): GroupMember
     {
-        if(empty($userUUID)) {
-            throw new EndpointException('Missing parameters "userId"', 400);
-        }
 
         $groupMember = $this->checkGroupMemberExists($groupId, $userUUID);
         if($groupMember === null) {
@@ -83,6 +77,8 @@ class GroupMemberRepository extends EntityRepository
         }
 
         $groupMember->setIsActive(false);
+
+        Validator::getInstance($groupMember)->check();
 
         OrmConnector::getInstance()->persist($groupMember);
         OrmConnector::getInstance()->flush();
@@ -95,6 +91,7 @@ class GroupMemberRepository extends EntityRepository
         $group = OrmConnector::getInstance()->getRepository(Group::class)->findById($groupId);
 
         $groupMembers = $this->getUsersByGroup($group);
+
         $userData = [];
         foreach ($groupMembers as $groupMember) {
             /** @var GroupMember $groupMember */

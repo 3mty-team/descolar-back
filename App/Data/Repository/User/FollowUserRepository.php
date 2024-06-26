@@ -6,6 +6,7 @@ use Descolar\Data\Entities\User\FollowUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class FollowUserRepository extends EntityRepository
@@ -75,12 +76,16 @@ class FollowUserRepository extends EntityRepository
             $followUser->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
             $followUser->setIsActive($setFollowed);
 
+            Validator::getInstance($followUser)->check();
+
             $this->getEntityManager()->persist($followUser);
             $this->getEntityManager()->flush();
             return $followUser;
         }
 
         $follow->setIsActive($setFollowed);
+
+        Validator::getInstance($follow)->check();
 
         $this->getEntityManager()->persist($follow);
         $this->getEntityManager()->flush();
@@ -91,11 +96,8 @@ class FollowUserRepository extends EntityRepository
     private function isFollow(User $follower, User $following): bool
     {
         $follow = $this->findOneBy(["following" => $following, "follower" => $follower]);
-        if ($follow !== null) {
-            return $follow->isActive();
-        }
 
-        return false;
+        return $follow?->isActive() ?? false;
     }
 
     public function getFollowerCount(User $user): int

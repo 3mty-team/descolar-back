@@ -7,6 +7,8 @@ use DateTimeZone;
 use Descolar\Data\Entities\User\SearchHistoryUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
+use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 
@@ -56,8 +58,10 @@ class SearchHistoryUserRepository extends EntityRepository
         $searchHistory->setDate(new DateTime("now", new DateTimeZone('Europe/Paris')));
         $searchHistory->setIsActive(true);
 
-        $this->getEntityManager()->persist($searchHistory);
-        $this->getEntityManager()->flush();
+        Validator::getInstance($searchHistory)->check();
+
+        OrmConnector::getInstance()->persist($searchHistory);
+        OrmConnector::getInstance()->flush();
     }
 
     public function getSearchHistory(): array
@@ -82,6 +86,9 @@ class SearchHistoryUserRepository extends EntityRepository
 
         foreach ($searchHistory as $history) {
             $history->setIsActive(false);
+
+            Validator::getInstance($history)->check();
+
             $this->getEntityManager()->persist($history);
         }
 
@@ -94,6 +101,8 @@ class SearchHistoryUserRepository extends EntityRepository
         $searchHistory = $this->findByIdAndUser($searchHistoryId, $user);
 
         $searchHistory->setIsActive(false);
+
+        Validator::getInstance($searchHistory)->check();
         $this->getEntityManager()->persist($searchHistory);
         $this->getEntityManager()->flush();
 

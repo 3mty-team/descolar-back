@@ -9,6 +9,7 @@ use Descolar\Data\Entities\Post\PostComment;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class PostCommentRepository extends EntityRepository
@@ -76,6 +77,8 @@ class PostCommentRepository extends EntityRepository
         $postComment->setDate(new DateTime("@$timestamp", new DateTimeZone('Europe/Paris')));
         $postComment->setIsActive(true);
 
+        Validator::getInstance($postComment)->check();
+
         OrmConnector::getInstance()->persist($postComment);
         OrmConnector::getInstance()->flush();
 
@@ -92,6 +95,8 @@ class PostCommentRepository extends EntityRepository
             throw new EndpointException('You are not the author of this comment', 403);
         }
         $comment->setIsActive(false);
+
+        Validator::getInstance($comment)->check();
 
         OrmConnector::getInstance()->persist($comment);
         OrmConnector::getInstance()->flush();

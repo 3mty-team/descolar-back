@@ -10,6 +10,7 @@ use Descolar\Data\Entities\Report\ReportCategory;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class GroupMessageReportRepository extends EntityRepository
@@ -40,10 +41,6 @@ class GroupMessageReportRepository extends EntityRepository
     public function create(?int $groupMessageId, ?int $reportCategoryId, ?string $comment, ?int $date): GroupMessageReport
     {
 
-        if (empty($groupMessageId) || empty($reportCategoryId)) {
-            throw new EndpointException('Missing parameters "groupMessageId" or "reportCategory"', 400);
-        }
-
         $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupMessageId);
 
         $reporter = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
@@ -58,6 +55,8 @@ class GroupMessageReportRepository extends EntityRepository
         $groupMessageReport->setDate(new DateTime("@$date", new DateTimeZone('Europe/Paris')));
         $groupMessageReport->setIsActive(true);
 
+        Validator::getInstance($groupMessageReport)->check();
+
         OrmConnector::getInstance()->persist($groupMessageReport);
         OrmConnector::getInstance()->flush();
 
@@ -69,6 +68,8 @@ class GroupMessageReportRepository extends EntityRepository
         $groupMessageReport = $this->findById($groupMessageReportId);
 
         $groupMessageReport->setIsActive(false);
+
+        Validator::getInstance($groupMessageReport)->check();
 
         OrmConnector::getInstance()->flush();
 

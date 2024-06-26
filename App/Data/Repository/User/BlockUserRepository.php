@@ -6,6 +6,7 @@ use Descolar\Data\Entities\User\BlockUser;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class BlockUserRepository extends EntityRepository
@@ -59,6 +60,8 @@ class BlockUserRepository extends EntityRepository
             $blockUser->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
             $blockUser->setIsActive($setBlocked);
 
+            Validator::getInstance($blockUser)->check();
+
             $this->getEntityManager()->persist($blockUser);
             $this->getEntityManager()->flush();
             return $blockUser;
@@ -66,6 +69,8 @@ class BlockUserRepository extends EntityRepository
 
         $block->setDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
         $block->setIsActive($setBlocked);
+
+        Validator::getInstance($block)->check();
 
         $this->getEntityManager()->persist($block);
         $this->getEntityManager()->flush();
@@ -81,11 +86,8 @@ class BlockUserRepository extends EntityRepository
     private function isBlocked(User $blocking, User $blocked): bool
     {
         $blocked = $this->findOneBy(["blocking" => $blocking, "blocked" => $blocked]);
-        if ($blocked !== null) {
-            return $blocked->isActive();
-        }
 
-        return false;
+        return $blocked?->isActive() ?? false;
     }
 
     /**

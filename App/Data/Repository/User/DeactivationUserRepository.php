@@ -5,7 +5,9 @@ namespace Descolar\Data\Repository\User;
 use DateTimeZone;
 use Descolar\Data\Entities\User\DeactivationUser;
 use Descolar\Data\Entities\User\User;
+use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 
@@ -16,21 +18,15 @@ class DeactivationUserRepository extends EntityRepository
     {
         /** @var DeactivationUser $deactivationUser */
         $deactivationUser = $this->findOneBy(["user" => $user]);
-        if ($deactivationUser === null) {
-            return false;
-        }
 
-        return $deactivationUser->isActive();
+        return $deactivationUser?->isActive() ?? false;
     }
 
     public function checkFinalDeactivation(User $user): bool
     {
         $deactivationUser = $this->findOneBy(["user" => $user]);
-        if ($deactivationUser === null) {
-            return false;
-        }
 
-        return $deactivationUser->isFinal();
+        return $deactivationUser->isFinal() ?? false;
     }
 
     /**
@@ -52,6 +48,8 @@ class DeactivationUserRepository extends EntityRepository
         $deactivationUser->setIsFinal($forever);
         $deactivationUser->setIsActive(true);
 
+        Validator::getInstance($deactivationUser)->check();
+
         $this->getEntityManager()->persist($deactivationUser);
         $this->getEntityManager()->flush();
 
@@ -72,10 +70,12 @@ class DeactivationUserRepository extends EntityRepository
     {
         $deactivationUser = $this->findOneBy(["user" => $user]);
         if ($deactivationUser === null) {
-            return "User is not deactivated.";
+            throw new EndpointException("User is not deactivated", 400);
         }
 
         $deactivationUser->setIsActive(false);
+
+        Validator::getInstance($deactivationUser)->check();
 
         $this->getEntityManager()->persist($deactivationUser);
         $this->getEntityManager()->flush();

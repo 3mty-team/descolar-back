@@ -10,6 +10,7 @@ use Descolar\Data\Entities\Group\GroupMessageLike;
 use Descolar\Data\Entities\User\User;
 use Descolar\Managers\Endpoint\Exceptions\EndpointException;
 use Descolar\Managers\Orm\OrmConnector;
+use Descolar\Managers\Validator\Validator;
 use Doctrine\ORM\EntityRepository;
 
 class GroupMessageLikeRepository extends EntityRepository
@@ -36,15 +37,14 @@ class GroupMessageLikeRepository extends EntityRepository
     {
         $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid());
-
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID(App::getUserUuid());
 
         $groupMessageLike = $this->getGroupMessageLike($groupMessage, $user);
         if ($groupMessageLike !== null && !$groupMessageLike->isActive()) {
             $groupMessageLike->setIsActive(true);
+
+            Validator::getInstance($groupMessageLike)->check();
+
             OrmConnector::getInstance()->persist($groupMessageLike);
             OrmConnector::getInstance()->flush();
             return $groupMessageLike;
@@ -56,6 +56,8 @@ class GroupMessageLikeRepository extends EntityRepository
         $groupMessageLike->setLikeDate(new DateTime());
         $groupMessageLike->setIsActive(true);
 
+        Validator::getInstance($groupMessageLike)->check();
+
         OrmConnector::getInstance()->persist($groupMessageLike);
         OrmConnector::getInstance()->flush();
 
@@ -66,11 +68,7 @@ class GroupMessageLikeRepository extends EntityRepository
     {
         $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
 
-        $user = OrmConnector::getInstance()->getRepository(User::class)->find(App::getUserUuid());
-
-        if ($user === null) {
-            throw new EndpointException('User not logged', 403);
-        }
+        $user = OrmConnector::getInstance()->getRepository(User::class)->findByUUID(App::getUserUuid());
 
         $groupMessageLike = $this->getGroupMessageLike($groupMessage, $user);
 
@@ -79,6 +77,9 @@ class GroupMessageLikeRepository extends EntityRepository
         }
 
         $groupMessageLike->setIsActive(false);
+
+        Validator::getInstance($groupMessageLike)->check();
+
         OrmConnector::getInstance()->persist($groupMessageLike);
         OrmConnector::getInstance()->flush();
 
