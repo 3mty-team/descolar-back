@@ -112,7 +112,7 @@ class PostEndpoint extends AbstractEndpoint
         });
     }
 
-    #[Delete('/post/:postId', variables: ["postId" => RouteParam::NUMBER], name: 'deletePost', auth: true)]
+    #[Delete('/post/:postId', variables: ["postId" => RouteParam::NUMBER], name: 'deletePost', auth: true, moderationAuth: true)]
     #[OA\Delete(path: "/post/{postId}", summary: "deletePost", tags: ["Post"], parameters: [new PathParameter("postId", "postId", "Post ID", required: true)],
         responses: [new OA\Response(response: 200, description: "Post deleted")])]
     private function deletePost(int $postId): void

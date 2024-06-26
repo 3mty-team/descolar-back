@@ -98,7 +98,7 @@ class GroupMessageEndpoint extends AbstractEndpoint
         });
     }
 
-    #[Delete('/group/:messageId/message', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteGroupMessageByMessageId', auth: true)]
+    #[Delete('/group/:messageId/message', variables: ["messageId" => RouteParam::NUMBER], name: 'deleteGroupMessageByMessageId', auth: true, moderationAuth: true)]
     #[OA\Delete(path: "/group/{messageId}/message", summary: "deleteGroupMessage", tags: ["Group"], parameters: [new PathParameter("messageId", "messageId", "Message ID", required: true)], responses: [new OA\Response(response: 200, description: "Group message deleted")])]
     private function deleteGroupMessageByMessageId(int $groupId, $messageId): void
     {
