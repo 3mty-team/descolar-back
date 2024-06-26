@@ -48,7 +48,7 @@ class MessageEndpoint extends AbstractEndpoint
     {
         $this->reply(function ($response){
             [$receiver, $content, $date, $medias] = Requester::getInstance()->trackMany(
-                "receiver_uuid", "content", "date", "medias"
+                "receiver_uuid", "content", "send_timestamp", "medias"
             );
 
             $medias = @json_decode($medias);
