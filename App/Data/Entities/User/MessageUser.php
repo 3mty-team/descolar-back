@@ -6,6 +6,7 @@ use DateTimeInterface;
 use Descolar\Data\Entities\Media\Media;
 use Descolar\Data\Repository\User\MessageUserRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageUserRepository::class)]
@@ -128,6 +129,9 @@ class MessageUser
 
     public function getMedias(): Collection
     {
+        if(!isset($this->medias)) {
+            $this->medias = new ArrayCollection();
+        }
         return $this->medias;
     }
 
@@ -138,6 +142,6 @@ class MessageUser
 
     public function addMedia(Media $media): void
     {
-        $this->medias->add($media);
+        $this->getMedias()->add($media);
     }
 }
