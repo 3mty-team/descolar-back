@@ -19,7 +19,7 @@ class FormationRepository extends EntityRepository
             ->getResult();
     }
 
-    public function findById(int $id): Formation|int
+    public function findById(?int $id): Formation
     {
         $formation = $this->find($id);
 

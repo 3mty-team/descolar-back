@@ -22,7 +22,7 @@ class GroupRepository extends EntityRepository
             ->getResult();
     }
 
-    public function findById(int $id): Group
+    public function findById(?int $id): Group
     {
         $group = $this->find($id);
 

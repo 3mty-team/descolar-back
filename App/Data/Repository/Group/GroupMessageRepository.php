@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityRepository;
 class GroupMessageRepository extends EntityRepository
 {
 
-    public function findById(int $groupId, int $messageId, bool $checkActive = true): GroupMessage
+    public function findById(?int $groupId, ?int $messageId, bool $checkActive = true): GroupMessage
     {
         if ($checkActive) {
             $groupMessage = $this->findOneBy(['group' => $groupId, 'id' => $messageId, 'isActive' => 1]);

@@ -23,7 +23,7 @@ class MediaRepository extends EntityRepository
         ];
     }
 
-    public function findById(int $id): Media
+    public function findById(?int $id): Media
     {
         $media = $this->createQueryBuilder('m')
             ->where('m.id = :id')
@@ -39,7 +39,7 @@ class MediaRepository extends EntityRepository
         return $media;
     }
 
-    public function findByUrl(string $url): Media
+    public function findByUrl(?string $url): Media
     {
         $media = $this->createQueryBuilder('m')
             ->where('m.path = :url')

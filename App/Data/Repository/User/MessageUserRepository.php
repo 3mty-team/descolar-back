@@ -50,7 +50,7 @@ class MessageUserRepository extends EntityRepository
         return $this->queryMessages($sender, $receiver, $range, $timestamp);
     }
 
-    public function findById(int $id): MessageUser|int
+    public function findById(?int $id): MessageUser|int
     {
         $message = $this->find($id);
 

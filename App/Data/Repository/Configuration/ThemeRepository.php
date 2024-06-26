@@ -23,7 +23,7 @@ class ThemeRepository extends EntityRepository
         return $themesArray;
     }
 
-    public function getThemeById(int $themeId): Theme
+    public function getThemeById(?int $themeId): Theme
     {
         $theme = $this->find($themeId);
 

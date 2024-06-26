@@ -46,7 +46,7 @@ class UserRepository extends EntityRepository
         return $this->findByUuid($userUUID);
     }
 
-    public function findByUuid(string $userUUID): User
+    public function findByUuid(?string $userUUID): User
     {
         $user = $this->find($userUUID);
         if ($user === null) {
@@ -104,7 +104,7 @@ class UserRepository extends EntityRepository
         return $user;
     }
 
-    public function findByUsername(string $username): array
+    public function findByUsername(?string $username): array
     {
         OrmConnector::getInstance()->getRepository(SearchHistoryUser::class)->addToSearchHistory($username);
 

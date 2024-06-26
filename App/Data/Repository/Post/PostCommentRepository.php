@@ -55,7 +55,7 @@ class PostCommentRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findById(int $id): PostComment
+    public function findById(?int $id): PostComment
     {
         $postComment = $this->find($id);
         if ($postComment === null) {
