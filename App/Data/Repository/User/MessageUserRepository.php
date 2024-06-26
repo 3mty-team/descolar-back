@@ -19,11 +19,13 @@ class MessageUserRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('mu')
             ->select('mu')
-            ->where('mu.sender = :firstUser AND mu.receiver = :secondUser')
-            ->orWhere('mu.sender = :secondUser AND mu.receiver = :firstUser')
-            ->setParameter('firstUser', $firstUser)
-            ->setParameter('secondUser', $secondUser)
-            ->orderBy('mu.date', 'DESC')
+            ->where('mu.sender = :firstUserSender AND mu.receiver = :secondUserReceiver')
+            ->orWhere('mu.sender = :secondUserSender AND mu.receiver = :firstUserReceiver')
+            ->setParameter('firstUserSender', $firstUser)
+            ->setParameter('secondUserReceiver', $secondUser)
+            ->setParameter('firstUserReceiver', $firstUser)
+            ->setParameter('secondUserSender', $secondUser)
+            ->orderBy('mu.date', 'ASC')
             ->setMaxResults($range);
 
         if ($timestamp) {
