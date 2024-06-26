@@ -29,17 +29,17 @@ class MessageEndpoint extends AbstractEndpoint
     }
 
     #[Get('/message/conversation/:userUUID/:range', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER], name: 'getAllMessageUserInRange', auth: true)]
-    private function getAllMessageUserInRange(int $range): void
+    private function getAllMessageUserInRange(string $userUUID, int $range): void
     {
-        $this->_getAllMessages($range, null, null);
+        $this->_getAllMessages($range, $userUUID, null);
     }
 
     #[Get('/message/conversation/:userUUID/:range/:timestamp', variables: ["userUUID" => RouteParam::UUID, "range" => RouteParam::NUMBER, "timestamp" => RouteParam::TIMESTAMP], name: 'getAllMessageUserInRangeWithTimestamp', auth: true)]
     #[OA\Get(path: "/message/conversation/{userUUID}/{range}/{timestamp}", summary: "getAllMessageUserInRangeWithTimestamp", tags: ["Message"], parameters: [new PathParameter("userUUID", "userUUID", "userUUID", required: true), new PathParameter("range", "range", "Range", required: true), new PathParameter("timestamp", "timestamp", "Timestamp", required: false)],
         responses: [new OA\Response(response: 200, description: "All posts retrieved")])]
-    private function getAllMessageUserInRangeWithTimestamp(int $range, int $timestamp): void
+    private function getAllMessageUserInRangeWithTimestamp(string $userUUID, int $range, int $timestamp): void
     {
-        $this->_getAllMessages($range, timestamp: $timestamp);
+        $this->_getAllMessages($range, $userUUID, $timestamp);
     }
 
     #[Post('/message', name: 'createMessage', auth: true)]
