@@ -18,7 +18,7 @@ class Login
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "user_id")]
     #[Validate\Validate("user")]
     #[Validate\NotNull]
-    #[Validate\Unique(clazzEntity: User::class, fieldEntity: "user")]
+    #[Validate\Unique(clazzEntity: Login::class, fieldEntity: "user")]
     private User $user;
 
     #[ORM\Column(name: "login_password", type: "string", length: 255)]

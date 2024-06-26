@@ -32,8 +32,6 @@ class ValidatorChecker implements IValidator
         self::$instances[$this->clazzName] = $this;
 
         $this->saveContainers();
-
-        //TODO check if containers are ok (Not same name, etc)...
     }
 
     public static function buildChecker(object $entity, array $containers): ValidatorChecker
@@ -57,42 +55,44 @@ class ValidatorChecker implements IValidator
     {
         $nameList = [];
 
-        foreach ($this->containers as $container) {
-            $name = $container->getName();
-            if (in_array($name, $nameList)) {
-                throw new ValidateNameIsDuplicatedException($name, $this->clazzName);
+        foreach ($this->containers as $containerList) {
+            foreach ($containerList as $container) {
+                $name = $container->getName();
+                if (in_array($name, $nameList)) {
+                    throw new ValidateNameIsDuplicatedException($name, $this->clazzName);
+                }
+                $nameList[] = $name;
             }
-            $nameList[] = $name;
         }
     }
 
-    private function checkOne(PropertyContainer $propertyContainer): void
+    private function checkOne(PropertyContainer $container, Property $property): void
     {
-        $propertyCheckName = $this->getPropertyName($propertyContainer->getClazzName());
+        $containerName = $this->getPropertyName($container->getName());
+        $propertyName = $this->getPropertyName(get_class($property));
 
         $reflectionEntity = new \ReflectionObject($this->entity);
-        $propertyReflection = $reflectionEntity->getProperty($propertyCheckName);
+        $propertyReflection = $reflectionEntity->getProperty("$containerName");
         $propertyValue = $this->getPropertyValue($propertyReflection);
 
-        /** @var Property $property */
-        foreach ($propertyContainer->getProperties() as $property) {
-            $propertyName = get_class($property);
-
-            if (!$property->check($propertyValue)) {
-                throw new PropertyIsNotValidException($propertyCheckName, $this->clazzName);
-            }
+        if(!$property->check($propertyValue)){
+            throw new PropertyIsNotValidException($propertyName, $containerName, $this->clazzName);
         }
+
     }
 
     #[Override] public function check(string ...$ignoreProperties): void
     {
         $propertiesToIgnore = [...$ignoreProperties];
         foreach ($this->containers as $container) {
+
             if (in_array($container->getName(), $propertiesToIgnore)) {
                 continue;
             }
 
-            $this->checkOne($container);
+            foreach ($container->getProperties() as $property) {
+                $this->checkOne($container, $property);
+            }
         }
     }
 
@@ -101,7 +101,7 @@ class ValidatorChecker implements IValidator
         foreach ($this->containers as $container) {
             if ($container->getName() === $propertyName) {
                 foreach ($container->getProperties() as $property) {
-                    $this->checkOne($property);
+                    $this->checkOne($container, $property);
                 }
             }
         }

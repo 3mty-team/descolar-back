@@ -29,7 +29,7 @@ class Unique extends Property
 
     #[Override] public function check(mixed $content): bool
     {
-        if(!class_exists($this->clazzEntity)) {
+        if (!class_exists($this->clazzEntity)) {
             return false;
         }
 
