@@ -14,17 +14,33 @@ use Doctrine\ORM\EntityRepository;
 class UserThemePreferencesRepository extends EntityRepository
 {
 
-    public function getThemePreferenceToJson(): array
+    public function getThemeById($themeId): ?Theme
     {
+        $theme = OrmConnector::getInstance()->getRepository(Theme::class)->find($themeId);
+        if ($theme === null) {
+            throw new EndpointException('Theme does not exist', 404);
+        }
 
+        return $theme;
+    }
+
+    public function getThemePreferencesFromLoggedUser(): UserThemePreferences
+    {
         $loggedUser = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
-        $theme = $this->findOneBy(["user" => $loggedUser])->getTheme();
+        $theme = $this->findOneBy(["user" => $loggedUser]);
         if ($theme === null) {
             throw new EndpointException('User theme preference does not exist', 404);
         }
 
-        return OrmConnector::getInstance()->getRepository(Theme::class)->toJson($theme);
+        return $theme;
+    }
+
+    public function getThemePreferenceToJson(): array
+    {
+        $themePreferences = $this->getThemePreferencesFromLoggedUser();
+
+        return OrmConnector::getInstance()->getRepository(Theme::class)->toJson($themePreferences->getTheme());
     }
     public function createThemePreference(?int $themeId): ?Theme
     {
@@ -53,9 +69,8 @@ class UserThemePreferencesRepository extends EntityRepository
     public function updateThemePreference($themeId): ?Theme
     {
 
-        $userThemePreference = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
-
-        $theme = $this->getThemeById($themeId);
+        $userThemePreference = $this->getThemePreferencesFromLoggedUser();
+        $theme = OrmConnector::getInstance()->getRepository(Theme::class)->getThemeById($themeId);
 
         $userThemePreference->setTheme($theme);
 
