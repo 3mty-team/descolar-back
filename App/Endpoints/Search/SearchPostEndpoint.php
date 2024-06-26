@@ -2,9 +2,7 @@
 
 namespace Descolar\Endpoints\Search;
 
-use Descolar\Adapters\Router\Annotations\Get;
-use Descolar\Adapters\Router\Utils\RequestUtils;
-use Descolar\App;
+use Descolar\Adapters\Router\Annotations\Post as PostAttribute;
 use Descolar\Data\Entities\Post\Post;
 use Descolar\Managers\Endpoint\AbstractEndpoint;
 use Descolar\Managers\Orm\OrmConnector;
@@ -13,8 +11,8 @@ use OpenAPI\Attributes as OA;
 
 class SearchPostEndpoint extends AbstractEndpoint
 {
-    #[Get('/search/post', name: 'searchUserByName', auth: true)]
-    #[OA\Get(path: "/search/post", summary: "searchUserByName", tags: ["Search"], responses: [new OA\Response(response: 200, description: "Posts retrieved")])]
+    #[PostAttribute('/search/post', name: 'searchUserByName', auth: true)]
+    #[OA\Post(path: "/search/post", summary: "searchUserByName", tags: ["Search"], responses: [new OA\Response(response: 200, description: "Posts retrieved")])]
     private function searchPostByContent(): void
     {
         $this->reply(function ($response) {

@@ -89,17 +89,19 @@ class GroupMessageLikeRepository extends EntityRepository
     public function toJson(int $groupId, int $messageId)
     {
 
+
+        /** @var GroupMessage $groupMessage */
         $groupMessage = OrmConnector::getInstance()->getRepository(GroupMessage::class)->findById($groupId, $messageId);
         $groupLikes = $this->getUsersLikeByMessageId($groupMessage);
 
         $users = [];
         foreach ($groupLikes as $groupLike) {
-            /** @var GroupMessageLike $groupMessage */
+            /** @var GroupMessageLike $groupLike */
             $users[] = OrmConnector::getInstance()->getRepository(User::class)->toReduceJson($groupLike->getUser());
         }
 
         return [
-            "group" => OrmConnector::getInstance()->getRepository(Group::class)->toJson($groupMessage->getGroupMessage()->getGroup()),
+            "group" => OrmConnector::getInstance()->getRepository(Group::class)->toJson($groupMessage->getGroup()),
             "likes" => $users,
         ];
 
