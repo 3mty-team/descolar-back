@@ -19,6 +19,9 @@ class Group
     private int $id;
 
     #[ORM\Column(name: "group_name", type: "string", length: 150)]
+    #[Validate\Validate("name")]
+    #[Validate\NotNull]
+    #[Validate\Length(max: 150)]
     private string $name;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
