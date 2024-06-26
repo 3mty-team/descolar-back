@@ -78,8 +78,8 @@ class FollowUserRepository extends EntityRepository
 
             Validator::getInstance($followUser)->check();
 
-            $this->getEntityManager()->persist($followUser);
-            $this->getEntityManager()->flush();
+            OrmConnector::getInstance()->persist($followUser);
+            OrmConnector::getInstance()->flush();
             return $followUser;
         }
 
@@ -87,8 +87,8 @@ class FollowUserRepository extends EntityRepository
 
         Validator::getInstance($follow)->check();
 
-        $this->getEntityManager()->persist($follow);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($follow);
+        OrmConnector::getInstance()->flush();
 
         return $follow;
     }

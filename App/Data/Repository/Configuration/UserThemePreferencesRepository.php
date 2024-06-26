@@ -44,8 +44,8 @@ class UserThemePreferencesRepository extends EntityRepository
 
         Validator::getInstance($userThemePreference)->check();
 
-        $this->getEntityManager()->persist($userThemePreference);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($userThemePreference);
+        OrmConnector::getInstance()->flush();
 
         return $theme;
     }
@@ -61,8 +61,8 @@ class UserThemePreferencesRepository extends EntityRepository
 
         Validator::getInstance($userThemePreference)->check();
 
-        $this->getEntityManager()->persist($userThemePreference);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($userThemePreference);
+        OrmConnector::getInstance()->flush();
 
         return $theme;
     }

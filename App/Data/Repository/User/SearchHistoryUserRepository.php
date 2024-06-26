@@ -50,7 +50,7 @@ class SearchHistoryUserRepository extends EntityRepository
 
     public function addToSearchHistory(string $search): void
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $searchHistory = new SearchHistoryUser();
         $searchHistory->setUser($user);
@@ -66,7 +66,7 @@ class SearchHistoryUserRepository extends EntityRepository
 
     public function getSearchHistory(): array
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         return $this->createQueryBuilder('sh')
             ->select('sh')
@@ -80,7 +80,7 @@ class SearchHistoryUserRepository extends EntityRepository
 
     public function clearSearchHistory(): void
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
 
         $searchHistory = $this->findByUser($user);
 
@@ -89,22 +89,22 @@ class SearchHistoryUserRepository extends EntityRepository
 
             Validator::getInstance($history)->check();
 
-            $this->getEntityManager()->persist($history);
+            OrmConnector::getInstance()->persist($history);
         }
 
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->flush();
     }
 
     public function removeSearchHistoryById(int $searchHistoryId): int
     {
-        $user = $this->getEntityManager()->getRepository(User::class)->getLoggedUser();
+        $user = OrmConnector::getInstance()->getRepository(User::class)->getLoggedUser();
         $searchHistory = $this->findByIdAndUser($searchHistoryId, $user);
 
         $searchHistory->setIsActive(false);
 
         Validator::getInstance($searchHistory)->check();
-        $this->getEntityManager()->persist($searchHistory);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($searchHistory);
+        OrmConnector::getInstance()->flush();
 
         return $searchHistoryId;
     }

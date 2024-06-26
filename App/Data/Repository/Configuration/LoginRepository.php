@@ -34,8 +34,8 @@ class LoginRepository extends EntityRepository
 
         Validator::getInstance($login)->check();
 
-        $this->getEntityManager()->persist($login);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($login);
+        OrmConnector::getInstance()->flush();
         return $login;
     }
 

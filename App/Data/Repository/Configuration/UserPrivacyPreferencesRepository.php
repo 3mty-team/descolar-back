@@ -43,8 +43,8 @@ class UserPrivacyPreferencesRepository extends EntityRepository
 
         Validator::getInstance($userPrivacyPreferences)->check();
 
-        $this->getEntityManager()->persist($userPrivacyPreferences);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($userPrivacyPreferences);
+        OrmConnector::getInstance()->flush();
 
         return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }
@@ -73,8 +73,8 @@ class UserPrivacyPreferencesRepository extends EntityRepository
             $userPrivacyPreferences->setSearchVisibility($searchVisibility);
         }
 
-        $this->getEntityManager()->persist($userPrivacyPreferences);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($userPrivacyPreferences);
+        OrmConnector::getInstance()->flush();
 
         return $this->userPrivacyPreferenceToJson($userPrivacyPreferences);
     }

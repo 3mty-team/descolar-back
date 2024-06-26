@@ -182,15 +182,15 @@ class UserRepository extends EntityRepository
 
             Validator::getInstance($deactivationUser)->check();
 
-            $this->getEntityManager()->persist($deactivationUser);
-            $this->getEntityManager()->flush();
+            OrmConnector::getInstance()->persist($deactivationUser);
+            OrmConnector::getInstance()->flush();
         }
 
         $user->setIsActive(false);
 
         Validator::getInstance($user)->check();
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($user);
+        OrmConnector::getInstance()->flush();
 
         return $user->getUUID();
     }
@@ -206,8 +206,8 @@ class UserRepository extends EntityRepository
 
         Validator::getInstance($user)->check();
 
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($user);
+        OrmConnector::getInstance()->flush();
 
         return $user;
     }

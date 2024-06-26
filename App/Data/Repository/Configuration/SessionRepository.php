@@ -29,8 +29,8 @@ class SessionRepository extends EntityRepository
 
         Validator::getInstance($session)->check();
 
-        $this->getEntityManager()->persist($session);
-        $this->getEntityManager()->flush();
+        OrmConnector::getInstance()->persist($session);
+        OrmConnector::getInstance()->flush();
 
         return $session;
     }
