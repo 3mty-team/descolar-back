@@ -7,6 +7,7 @@ use Descolar\Adapters\Media\Exceptions\UploadMediaException;
 use Descolar\Adapters\Media\Types\Image;
 use Descolar\Adapters\Media\Types\Video;
 use Descolar\Data\Entities\Media\Media as MediaEntity;
+use Descolar\Managers\Env\EnvReader;
 use Descolar\Managers\Media\Interfaces\IMedia;
 use Descolar\Managers\Media\Interfaces\IMediaManager;
 use Descolar\Managers\Media\Interfaces\IMediaType;
@@ -43,6 +44,22 @@ class MediaAdapter implements IMediaManager
         };
     }
 
+    private function scanMedia(array $media): void
+    {
+        $needToSecure = EnvReader::getInstance()->get('SECURE_UPLOADS') ?: false;
+
+        if(!$needToSecure) {
+            return;
+        }
+
+        $path = $media['tmp_name'];
+        $scanResult = shell_exec("clamscan " . escapeshellarg($path));
+
+        if(!str_contains($scanResult, 'OK')) {
+            throw new UploadMediaException("File is suspicious: $media[name]");
+        }
+    }
+
     /**
      * @param array{name: string, type: string, tmp_name: string, weight: int} $media the media to be saved
      * @return IMedia the saved media
@@ -51,6 +68,7 @@ class MediaAdapter implements IMediaManager
     {
         $extensionType = $this->getExtensionType($media['type']);
 
+        $this->scanMedia($media);
 
         $extension = pathinfo($media['name'], PATHINFO_EXTENSION);
         $newName = uniqid(base64_encode($media['name'])) . ".$extension";
