@@ -1,4 +1,4 @@
-# descolar/descolar-back
+# descolar-back - Descolar Backend
 
 ## Description
 
@@ -11,14 +11,20 @@ The API is built using PHP 8.3, without any framework.
 ## Getting Started
 
 Download links:
-- **SSH clone URL:** 
-  - ```ssh://git@git.jetbrains.space/3mty/descolar/descolar-back.git```
-- **HTTPS clone URL:** 
-  - https://git.jetbrains.space/3mty/descolar/descolar-back.git
-
+- Space
+  - **SSH clone URL:** 
+    - ```ssh://git@git.jetbrains.space/3mty/descolar/descolar-back.git```
+  - **HTTPS clone URL:** 
+    - https://git.jetbrains.space/3mty/descolar/descolar-back.git
+- GitHub
+  - **SSH clone URL:** 
+    - ```ssh://git@github.com:3mty-team/descolar-back.git```
+  - **HTTPS clone URL:** 
+    - https://github.com/3mty-team/descolar-back.git
 
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
 
 ## Prerequisites
 
@@ -29,6 +35,7 @@ What things you need to install the software and how to install them.
 2. Install Composer Files 
     - ```composer install```
 3. Have a LAMP server installed (Linux, Apache, MySQL, PHP8.3>=).
+
 
 ## Libraries & Tools
 
@@ -52,6 +59,7 @@ What things you need to install the software and how to install them.
 4. Laragon https://laragon.org/
 5. Postman https://www.postman.com/
 6. Swagger https://swagger.io/
+
 
 ## Contact
 
